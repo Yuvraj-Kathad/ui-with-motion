@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Brand Colors */
+  --color-brand-primary: #2D264B;
+  --color-purple-04: #6911EE;
+  
+  /* Platinum Scale */
+  --color-platinum-13: #FFFFFF;
+  --color-platinum-12: #FBFCFD;
+  --color-platinum-11: #F7F9FB;
+  --color-platinum-10: #EEF1F4;
+  --color-platinum-09: #E6E9EC;
+  --color-platinum-08: #DEE1E4;
+  --color-platinum-06: #CBCED1;
+  --color-platinum-05: #B7BABD;
+  --color-platinum-03: #7D7F82;
+  --color-platinum-02: #626467;
+  --color-platinum-01: #1F2123;
+  
+  /* Black Scale */
+  --color-black-950: #050505;
+  --color-black-900: #3D3D3D;
+  --color-black-800: #454545;
+  --color-black-500: #6D6D6D;
+  --color-black-400: #888888;
+  --color-black-300: #B0B0B0;
+  --color-black-100: #E7E7E7;
+  
+  /* Accents */
+  --color-blue-01: #0E3067;
+  --color-blue-02: #1566E5;
+  --color-blue-10: #EAF2FF;
+  --color-blue-11: #F5F9FF;
+  --color-green-03: #00963D;
+  --color-green-04: #16A34A;
+  --color-green-05: #4FBE6B;
+  --color-green-07: #A9E1B2;
+  --color-green-s: #8DC63F;
+  --color-orange-03: #DB7100;
+  --color-orange-04: #E87D02;
+  --color-yellow-04: #FFCB00;
+  --color-red-03: #CC0615;
+
+  /* Typography */
+  --font-sans: var(--font-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-work: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radii */
+  --radius-pill: 40px;
+  --radius-pill-sm: 20px;
+  --radius-input: 32px;
+  --radius-footer: 64px;
+  --radius-footer-mobile: 36px;
+}
+
+:root {
+  --background: #FBFCFD;
+  --foreground: #454545;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
