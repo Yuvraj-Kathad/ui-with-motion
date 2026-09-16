@@ -22,6 +22,7 @@ export function Navbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +33,19 @@ export function Navbar({
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md transition-all border-b border-[#E7E7E7]/60">
+      {/* Search Overlay */}
+      <AnimatePresence>
+        {isSearchFocused && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 h-screen w-screen bg-[#090A0B]/60 backdrop-blur-sm z-40"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Desktop & Tablet Navigation */}
       <div className="hidden md:flex items-center justify-between w-full max-w-[1440px] mx-auto px-6 lg:px-[70px] py-[7px] min-h-[65px]">
         {/* Left: Brand Logo & Navigation Link */}
@@ -62,15 +76,91 @@ export function Navbar({
         </div>
 
         {/* Center: Search Field */}
-        <div className="w-full max-w-[397px] mx-6">
+        <div 
+          className={`w-full mx-6 transition-all duration-300 ease-in-out relative z-50 ${
+            isSearchFocused ? "max-w-[700px]" : "max-w-[397px]"
+          }`}
+        >
           <form onSubmit={handleSearchSubmit}>
             <SearchInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
               placeholder="Search ui components"
               className="w-full"
             />
           </form>
+
+          {/* Search Suggestions Dropdown */}
+          <AnimatePresence>
+            {isSearchFocused && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-[calc(100%+12px)] left-0 w-full bg-white border border-[#E7E7E7] rounded-[16px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-4 z-50 flex flex-col gap-4"
+              >
+                <div className="flex flex-col gap-6">
+                  {/* Type of component section */}
+                  <div>
+                    <h4 className="font-sans font-medium text-[12px] text-[#7D7F82] mb-3 uppercase tracking-wider px-3">
+                      Type of component
+                    </h4>
+                    <div className="flex flex-wrap gap-2 px-3">
+                      {["Buttons", "Cards", "Inputs", "Navigation", "Layouts", "Typography"].map((type) => (
+                        <button
+                          key={type}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setSearchQuery(type);
+                            setIsSearchFocused(false);
+                            if (onSearchSubmit) onSearchSubmit(type);
+                          }}
+                          className="px-4 py-2 bg-white hover:bg-[#F7F9FB] border border-[#DEE1E4] rounded-[100px] font-sans text-[14px] text-black transition-colors"
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Suggestions section */}
+                  <div>
+                    <h4 className="font-sans font-medium text-[12px] text-[#7D7F82] mb-2 uppercase tracking-wider px-3">
+                      Suggestions
+                    </h4>
+                    <div className="flex flex-col gap-1">
+                      {["Buttons", "Cards & Layouts", "Form Inputs", "Navigation"].map((item) => (
+                        <button
+                          key={item}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setSearchQuery(item);
+                            setIsSearchFocused(false);
+                            if (onSearchSubmit) onSearchSubmit(item);
+                          }}
+                          className="flex items-center gap-3 px-3 py-2.5 hover:bg-[#F7F9FB] rounded-xl text-left transition-colors"
+                        >
+                          <Image
+                            src="/icons/search-mobile.svg"
+                            alt="Search"
+                            width={16}
+                            height={16}
+                            className="opacity-50"
+                          />
+                          <span className="font-sans font-medium text-[14px] text-black">
+                            {item}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Right: Pricing & CTA / Account */}
