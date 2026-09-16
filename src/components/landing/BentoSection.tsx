@@ -12,7 +12,7 @@ export function BentoSection() {
   const row3Items = SHOWCASE_ITEMS.filter((item) => item.row === 3);
 
   return (
-    <section id="components" className="w-full py-16 md:py-24 bg-white">
+    <section id="components" className="w-full pt-12 pb-16 md:pt-16 md:pb-24">
       <Container>
         {/* Section Heading */}
         <div className="text-center mb-12 md:mb-16">

@@ -7,7 +7,7 @@ import { ExploreButton } from "@/components/ui/ExploreButton";
 
 export function Hero() {
   return (
-    <section className="relative w-full overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28">
+    <section className="relative w-full overflow-hidden pt-16 pb-12 md:pt-24 md:pb-16">
       <Container>
         <div className="flex flex-col items-center justify-center text-center max-w-[792px] mx-auto">
           {/* Title & Subtitle Copy */}
