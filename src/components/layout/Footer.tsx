@@ -30,7 +30,7 @@ export function Footer() {
             {/* Top row: Brand + Features + Upcoming + Bubbles/Badge */}
             <div className="flex flex-wrap lg:flex-nowrap items-start justify-between gap-10 lg:gap-[60px] xl:gap-[100px]">
               {/* Brand Artwork Composition */}
-              <div className="relative w-[320px] lg:w-[357px] h-[260px] lg:h-[296px] shrink-0 overflow-hidden">
+              <div className="relative w-[320px] lg:w-[500px] h-[260px] lg:h-[500px] shrink-0 overflow-hidden">
                 <Image
                   src="/images/footer-branding.png"
                   alt="UIWithMotion"
@@ -77,55 +77,7 @@ export function Footer() {
                 </ul>
               </div>
 
-              {/* Decorative Bubbles & Rotating Badge */}
-              <div className="relative w-[195px] h-[254px] shrink-0 self-start">
-                {/* Floating Bubbles */}
-                <div className="absolute top-0 left-0 w-[74px] h-[115px]">
-                  <Image
-                    src="/icons/bubbles-desktop.svg"
-                    alt="Bubbles"
-                    width={74}
-                    height={115}
-                    className="size-full object-contain"
-                  />
-                </div>
 
-                {/* Rotating Badge Group */}
-                <div className="absolute top-[95px] left-1/2 -translate-x-1/2 w-[158.5px] h-[158.5px]">
-                  {/* Outer Rotating Text Ring */}
-                  <div className="absolute inset-0 flex items-center justify-center animate-spin-slow">
-                    <Image
-                      src="/icons/badge-ring.svg"
-                      alt="Stay Creative Stay Fantastic"
-                      width={158}
-                      height={158}
-                      className="size-full object-contain drop-shadow-md"
-                    />
-                  </div>
-
-                  {/* Inner Green Circle */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65.3px] h-[65.3px] pointer-events-none">
-                    <Image
-                      src="/icons/badge-circle.svg"
-                      alt=""
-                      width={65}
-                      height={65}
-                      className="size-full object-contain"
-                    />
-                  </div>
-
-                  {/* Center Arrow */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[24px] h-[24px] pointer-events-none">
-                    <Image
-                      src="/icons/badge-arrow.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                      className="size-full object-contain"
-                    />
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Bottom Row: Instagram & Copyright */}
@@ -171,7 +123,7 @@ export function Footer() {
       <div className="block md:hidden w-full bg-[#F7F8F9] rounded-tl-[36px] rounded-tr-[36px] pt-[56px] overflow-hidden border-t border-[#DEE1E4]">
         <div className="px-6 flex flex-col gap-[40px]">
           {/* Brand Artwork */}
-          <div className="relative w-[208px] h-[172px] shrink-0">
+          <div className="relative w-[357px] h-[296px] shrink-0">
             <Image
               src="/images/footer-branding.png"
               alt="UIWithMotion"
@@ -215,50 +167,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Decorative Bubbles & Badge */}
-          <div className="relative w-[195px] h-[254px]">
-            <div className="absolute top-0 left-0 w-[74px] h-[115px]">
-              <Image
-                src="/icons/bubbles-mobile.svg"
-                alt="Bubbles"
-                width={74}
-                height={115}
-                className="size-full object-contain"
-              />
-            </div>
 
-            <div className="absolute top-[95px] left-1/2 -translate-x-1/2 w-[158.5px] h-[158.5px]">
-              <div className="absolute inset-0 flex items-center justify-center animate-spin-slow">
-                <Image
-                  src="/icons/badge-ring.svg"
-                  alt="Stay Creative Stay Fantastic"
-                  width={158}
-                  height={158}
-                  className="size-full object-contain drop-shadow-md"
-                />
-              </div>
-
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65.3px] h-[65.3px] pointer-events-none">
-                <Image
-                  src="/icons/badge-circle.svg"
-                  alt=""
-                  width={65}
-                  height={65}
-                  className="size-full object-contain"
-                />
-              </div>
-
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[24px] h-[24px] pointer-events-none">
-                <Image
-                  src="/icons/badge-arrow.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="size-full object-contain"
-                />
-              </div>
-            </div>
-          </div>
 
           {/* Social Link */}
           <a
