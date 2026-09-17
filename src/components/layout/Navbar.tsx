@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { IconWrapper } from "@/components/ui/IconWrapper";
 
+import { useRouter } from "next/navigation";
+
 export interface NavbarProps {
   variant?: "logged-out" | "logged-in";
   userAvatarUrl?: string;
@@ -19,15 +21,27 @@ export function Navbar({
   userAvatarUrl,
   onSearchSubmit,
 }: NavbarProps) {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearchSubmit = (e?: React.FormEvent, query?: string) => {
+    if (e) e.preventDefault();
+    const q = query ?? searchQuery;
+    
+    // Return search bar to default state
+    setIsSearchFocused(false);
+    setMobileSearchOpen(false);
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     if (onSearchSubmit) {
-      onSearchSubmit(searchQuery);
+      onSearchSubmit(q);
+    } else if (q.trim()) {
+      router.push(`/components?search=${encodeURIComponent(q.trim())}`);
     }
   };
 
@@ -116,7 +130,7 @@ export function Navbar({
                           onClick={() => {
                             setSearchQuery(type);
                             setIsSearchFocused(false);
-                            if (onSearchSubmit) onSearchSubmit(type);
+                            handleSearchSubmit(undefined, type);
                           }}
                           className="px-4 py-2 bg-white hover:bg-[#F7F9FB] border border-[#DEE1E4] rounded-[100px] font-sans text-[14px] text-black transition-colors"
                         >
@@ -139,7 +153,7 @@ export function Navbar({
                           onClick={() => {
                             setSearchQuery(item);
                             setIsSearchFocused(false);
-                            if (onSearchSubmit) onSearchSubmit(item);
+                            handleSearchSubmit(undefined, item);
                           }}
                           className="flex items-center gap-3 px-3 py-2.5 hover:bg-[#F7F9FB] rounded-xl text-left transition-colors"
                         >
@@ -177,7 +191,6 @@ export function Navbar({
               variant="primary"
               size="md"
               href="/login"
-              className="!w-[98px] !px-[16px] !py-[12px] !text-[16px]"
             >
               Sign up
             </Button>
@@ -262,9 +275,8 @@ export function Navbar({
           {variant === "logged-out" ? (
             <Button
               variant="primary"
-              size="md"
+              size="sm"
               href="/login"
-              className="!w-[98px] !px-[16px] !py-[12px] !text-[16px]"
             >
               Sign up
             </Button>

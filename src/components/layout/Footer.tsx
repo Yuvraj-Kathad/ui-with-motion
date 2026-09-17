@@ -23,14 +23,14 @@ const UPCOMING_ITEMS: FooterLinkItem[] = [
 export function Footer() {
   return (
     <footer className="w-full bg-[#FBFCFD] pt-12">
-      {/* Desktop & Tablet Footer (Figma Node 1023:3313) */}
-      <div className="hidden md:block w-full max-w-[1440px] mx-auto px-6 lg:px-[70px]">
-        <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-tl-[64px] rounded-tr-[64px] px-8 lg:px-[70px] py-[80px] shadow-sm">
-          <div className="flex flex-col gap-[32px] w-full max-w-[1290px] mx-auto">
-            {/* Top row: Brand + Features + Upcoming + Bubbles/Badge */}
-            <div className="flex flex-wrap lg:flex-nowrap items-start justify-between gap-10 lg:gap-[60px] xl:gap-[100px]">
+      {/* Desktop & Tablet Footer */}
+      <div className="hidden md:flex flex-col w-full max-w-[1440px] mx-auto px-[70px]">
+        {/* Figma Node 1023:3313 */}
+        <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-tl-[64px] rounded-tr-[64px] px-[70px] py-[40px] overflow-clip">
+          <div className="flex flex-col items-end w-full max-w-[1290.52px] mx-auto">
+            <div className="flex items-center justify-between w-full">
               {/* Brand Artwork Composition */}
-              <div className="relative w-[320px] lg:w-[500px] h-[260px] lg:h-[500px] shrink-0 overflow-hidden">
+              <div className="relative w-[357px] h-[296px] shrink-0">
                 <Image
                   src="/images/footer-branding.png"
                   alt="UX With Motion"
@@ -41,81 +41,81 @@ export function Footer() {
               </div>
 
               {/* Features Column */}
-              <div className="flex flex-col gap-[32px] shrink-0 min-w-[120px]">
+              <div className="flex flex-col gap-[32px] shrink-0 w-[100px]">
                 <h3 className="font-sans font-bold text-[20px] text-black leading-[1.2]">
                   Features
                 </h3>
-                <ul className="flex flex-col gap-[28px] list-none p-0 m-0 font-sans font-medium text-[16px] text-black">
-                  {FEATURE_LINKS.map((link) => (
-                    <li key={link.label}>
-                      {link.href ? (
-                        <Link
-                          href={link.href}
-                          className="hover:text-[#7D7F82] transition-colors leading-[1.2]"
-                        >
-                          {link.label}
-                        </Link>
-                      ) : (
-                        <span className="leading-[1.2]">{link.label}</span>
-                      )}
-                    </li>
-                  ))}
+                <ul className="flex flex-col gap-[32px] list-none p-0 m-0 font-sans font-medium text-[16px] text-black whitespace-nowrap">
+                  <li>
+                    <Link href="/components" className="hover:text-[#7D7F82] transition-colors leading-[1.2]">
+                      Components
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/pricing" className="hover:text-[#7D7F82] transition-colors leading-[1.2]">
+                      Pricing
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/contact" className="hover:text-[#7D7F82] transition-colors leading-[1.2]">
+                      Contact us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/collection" className="hover:text-[#7D7F82] transition-colors leading-[1.2]">
+                      Collection
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
-              {/* What's new coming Column */}
-              <div className="flex flex-col gap-[32px] shrink-0 min-w-[180px]">
-                <h3 className="font-sans font-bold text-[20px] text-black leading-[1.2]">
-                  What’s new coming
-                </h3>
-                <ul className="flex flex-col gap-[28px] list-none p-0 m-0 font-sans font-medium text-[16px] text-black">
-                  {UPCOMING_ITEMS.map((item) => (
-                    <li key={item.label}>
-                      <span className="leading-[1.2]">{item.label}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-
-            </div>
-
-            {/* Bottom Row: Instagram & Copyright */}
-            <div className="flex items-center justify-between pt-8 border-t border-[#DEE1E4]/60">
-              <a
-                href="https://instagram.com/uxwithmotion"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 group text-[#1F2123] hover:text-[#4FBE6B] transition-colors"
-                aria-label="Instagram @uxwithmotion"
-              >
-                <div className="relative size-[35px] shrink-0 transition-transform group-hover:scale-105">
-                  <Image
-                    src="/icons/instagram.svg"
-                    alt="Instagram"
-                    width={35}
-                    height={35}
-                    className="size-full object-contain"
-                  />
-                </div>
-                <span className="font-sans font-semibold text-[14px]">
-                  @uxwithmotion
-                </span>
-              </a>
-
-              <div className="flex items-center gap-6 font-sans text-[13px] text-[#7D7F82]">
-                <span>© {new Date().getFullYear()} UX With Motion</span>
-                <span>•</span>
-                <Link href="/privacy" className="hover:text-black transition-colors">
-                  Privacy Policy
-                </Link>
-                <span>•</span>
-                <Link href="/terms" className="hover:text-black transition-colors">
-                  Terms & Conditions
-                </Link>
+              {/* Image 2 / Badges */}
+              <div className="relative w-[199.5px] h-[255px] shrink-0">
+                {/* Fallback image as placeholder since footer-badges.png is missing */}
+                <Image
+                  src="/images/branding-logo.png"
+                  alt="Badges"
+                  fill
+                  className="object-contain object-right"
+                />
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Bottom Row: Instagram & Copyright */}
+        <div className="flex items-center justify-between h-[80px] px-[49px]">
+          <div className="flex items-center gap-6 font-sans text-[14px] text-[#454545]">
+            <span>© {new Date().getFullYear()} Uxwithmotion • </span>
+            <Link href="/privacy" className="hover:text-black transition-colors underline">
+              Privacy Policy
+            </Link>
+            <span> • </span>
+            <Link href="/terms" className="hover:text-black transition-colors underline">
+              Terms & Conditions
+            </Link>
+          </div>
+          
+          <a
+            href="https://instagram.com/uxwithmotion"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 group text-[#1F2123] hover:text-[#4FBE6B] transition-colors"
+            aria-label="Instagram @uxwithmotion"
+          >
+            <div className="relative size-[35px] shrink-0 transition-transform group-hover:scale-105">
+              <Image
+                src="/icons/instagram.svg"
+                alt="Instagram"
+                width={35}
+                height={35}
+                className="size-full object-contain"
+              />
+            </div>
+            <span className="font-sans font-semibold text-[14px]">
+              @uxwithmotion
+            </span>
+          </a>
         </div>
       </div>
 
@@ -134,7 +134,7 @@ export function Footer() {
 
           {/* Features Group */}
           <div className="flex flex-col gap-[18px]">
-            <h4 className="font-sans font-bold text-[16px] text-[#181A1B]">
+            <h4 className="font-title font-bold text-[16px] text-[#181A1B]">
               Features
             </h4>
             <div className="flex flex-col gap-[14px]">
@@ -152,7 +152,7 @@ export function Footer() {
 
           {/* What's new coming Group */}
           <div className="flex flex-col gap-[18px]">
-            <h4 className="font-sans font-bold text-[16px] text-[#181A1B]">
+            <h4 className="font-title font-bold text-[16px] text-[#181A1B]">
               What’s new coming
             </h4>
             <div className="flex flex-col gap-[14px]">

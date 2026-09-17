@@ -22,7 +22,7 @@ export function FeatureStepCard({ step, className = "" }: FeatureStepCardProps) 
 
       {/* Text Copy Frame (Figma: 12px gap, 20px Bold Title, 16px Medium Description) */}
       <div className="flex flex-col gap-[12px] items-start text-left w-full max-w-[380px]">
-        <h3 className="font-sans font-bold text-[20px] text-black leading-[1.2]">
+        <h3 className="font-title font-bold text-[20px] text-black leading-[1.2]">
           {step.title}
         </h3>
         <p className="font-sans font-medium text-[16px] text-[#7D7F82] leading-[1.2]">

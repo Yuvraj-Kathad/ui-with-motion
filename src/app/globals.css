@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+/* Tailwind CSS v4 @theme directive; the standard CSS language service does not know it. */
+/* css-lsp-disable-next-line */
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -46,9 +48,7 @@
   --color-red-03: #CC0615;
 
   /* Typography */
-  --font-sans: var(--font-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-work: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-plus-jakarta), sans-serif;
 
   /* Radii */
   --radius-pill: 40px;
@@ -66,7 +66,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-plus-jakarta), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -82,4 +82,17 @@ body {
 
 .animate-spin-slow {
   animation: spin-slow 20s linear infinite;
+}
+
+@utility font-sans {
+  font-family: var(--font-plus-jakarta), sans-serif;
+}
+@utility font-title {
+  font-family: "gcGudlak", sans-serif;
+}
+@utility font-inter {
+  font-family: var(--font-plus-jakarta), sans-serif;
+}
+@utility font-work {
+  font-family: var(--font-plus-jakarta), sans-serif;
 }

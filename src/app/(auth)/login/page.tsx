@@ -36,7 +36,7 @@ export default function LoginPage() {
       </Link>
 
       {/* Heading (Figma Node 1023:3349) */}
-      <h1 className="mt-12 sm:mt-16 md:mt-[84px] font-sans font-bold text-[32px] sm:text-[44px] md:text-[61px] leading-[1.2] text-black tracking-[-0.02em] text-balance">
+      <h1 className="mt-12 sm:mt-16 md:mt-[84px] font-title font-bold text-[32px] sm:text-[44px] md:text-[61px] leading-[1.2] text-black tracking-[-0.02em] text-balance">
         Welcome to UX With Motion
       </h1>
 
