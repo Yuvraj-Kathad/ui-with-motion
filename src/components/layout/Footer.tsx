@@ -71,9 +71,8 @@ export function Footer() {
 
               {/* Image 2 / Badges */}
               <div className="relative w-[199.5px] h-[255px] shrink-0">
-                {/* Fallback image as placeholder since footer-badges.png is missing */}
                 <Image
-                  src="/images/branding-logo.png"
+                  src="/images/footer-badges-new.png"
                   alt="Badges"
                   fill
                   className="object-contain object-right"
