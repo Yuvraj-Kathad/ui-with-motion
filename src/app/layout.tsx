@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Inter, Work_Sans } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta-sans",
@@ -23,8 +21,13 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "UIWithMotion",
-  description: "Premium UI, starting here. Discover 50+ thoughtfully crafted UI components.",
+  title: "UX With Motion",
+  description: "Premium UI, starting here. Discover 50+ thoughtfully crafted UI components to explore, learn from, and get inspired.",
+  openGraph: {
+    title: "UX With Motion",
+    description: "Premium UI, starting here. Discover 50+ thoughtfully crafted UI components to explore, learn from, and get inspired.",
+    siteName: "UX With Motion",
+  },
 };
 
 export default function RootLayout({
@@ -35,11 +38,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${jakarta.variable} ${inter.variable} ${workSans.variable} min-h-screen flex flex-col justify-between bg-[#FBFCFD] text-[#454545]`}
+        className={`${jakarta.variable} ${inter.variable} ${workSans.variable} min-h-screen bg-[#FBFCFD] text-[#454545]`}
       >
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

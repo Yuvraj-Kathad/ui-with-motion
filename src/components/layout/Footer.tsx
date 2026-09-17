@@ -33,7 +33,7 @@ export function Footer() {
               <div className="relative w-[320px] lg:w-[500px] h-[260px] lg:h-[500px] shrink-0 overflow-hidden">
                 <Image
                   src="/images/footer-branding.png"
-                  alt="UIWithMotion"
+                  alt="UX With Motion"
                   fill
                   priority
                   className="object-contain object-left-top"
@@ -104,7 +104,7 @@ export function Footer() {
               </a>
 
               <div className="flex items-center gap-6 font-sans text-[13px] text-[#7D7F82]">
-                <span>© {new Date().getFullYear()} UIWithMotion</span>
+                <span>© {new Date().getFullYear()} UX With Motion</span>
                 <span>•</span>
                 <Link href="/privacy" className="hover:text-black transition-colors">
                   Privacy Policy
@@ -126,7 +126,7 @@ export function Footer() {
           <div className="relative w-[357px] h-[296px] shrink-0">
             <Image
               src="/images/footer-branding.png"
-              alt="UIWithMotion"
+              alt="UX With Motion"
               fill
               className="object-contain object-left-top"
             />
@@ -194,7 +194,7 @@ export function Footer() {
 
         {/* Mobile Copyright Bar */}
         <div className="bg-white border-t border-[#D9DDE1] px-6 py-6 flex flex-col gap-2 font-inter font-normal text-[11px] text-[#74777C]">
-          <p>© {new Date().getFullYear()} UIWithMotion</p>
+          <p>© {new Date().getFullYear()} UX With Motion</p>
           <p className="underline">Privacy Policy • Terms & Conditions</p>
         </div>
       </div>

@@ -53,12 +53,12 @@ export function Navbar({
           <Link
             href="/"
             className="flex items-center hover:opacity-90 transition-opacity"
-            aria-label="UIWithMotion Home"
+            aria-label="UX With Motion Home"
           >
             <div className="relative w-[48.97px] h-[51px] shrink-0">
               <Image
                 src="/icons/logo.svg"
-                alt="UIWithMotion Logo"
+                alt="UX With Motion Logo"
                 width={49}
                 height={51}
                 priority
@@ -176,7 +176,7 @@ export function Navbar({
             <Button
               variant="primary"
               size="md"
-              href="/signup"
+              href="/login"
               className="!w-[98px] !px-[16px] !py-[12px] !text-[16px]"
             >
               Sign up
@@ -206,12 +206,12 @@ export function Navbar({
         <Link
           href="/"
           className="flex items-center hover:opacity-90 transition-opacity"
-          aria-label="UIWithMotion Home"
+          aria-label="UX With Motion Home"
         >
           <div className="relative w-[48.97px] h-[51px] shrink-0">
             <Image
               src="/icons/logo.svg"
-              alt="UIWithMotion Logo"
+              alt="UX With Motion Logo"
               width={49}
               height={51}
               priority
@@ -263,7 +263,7 @@ export function Navbar({
             <Button
               variant="primary"
               size="md"
-              href="/signup"
+              href="/login"
               className="!w-[98px] !px-[16px] !py-[12px] !text-[16px]"
             >
               Sign up
@@ -339,7 +339,7 @@ export function Navbar({
                 <Button
                   variant="primary"
                   fullWidth
-                  href="/signup"
+                  href="/login"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Sign up
