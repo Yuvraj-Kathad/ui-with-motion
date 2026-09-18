@@ -1,23 +1,28 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter, Work_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta-sans",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
-const workSans = Work_Sans({
-  variable: "--font-work-sans",
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const gcGudlak = localFont({
+  variable: "--font-gc-gudlak",
+  display: "swap",
+  src: [
+    { path: "./fonts/GCGudlakDemo-ExtraLight.ttf", weight: "200" },
+    { path: "./fonts/GCGudlakDemo-Light.ttf", weight: "300" },
+    { path: "./fonts/GCGudlakDemo-Regular.ttf", weight: "400" },
+    { path: "./fonts/GCGudlakDemo-Medium.ttf", weight: "500" },
+    { path: "./fonts/GCGudlakDemo-SemiBold.ttf", weight: "600" },
+    { path: "./fonts/GCGudlakDemo-Bold.ttf", weight: "700" },
+    { path: "./fonts/GCGudlakDemo-ExtraBold.ttf", weight: "800" },
+    { path: "./fonts/GCGudlakDemo-Thin.ttf", weight: "100" },
+  ],
 });
 
 export const metadata: Metadata = {
@@ -38,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${jakarta.variable} ${inter.variable} ${workSans.variable} min-h-screen bg-[#FBFCFD] text-[#454545]`}
+        className={`${plusJakarta.variable} ${gcGudlak.variable} min-h-screen bg-[#FBFCFD] text-[#454545] font-sans`}
       >
         {children}
       </body>

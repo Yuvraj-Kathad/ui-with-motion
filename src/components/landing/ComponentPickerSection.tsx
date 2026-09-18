@@ -9,7 +9,7 @@ export function ComponentPickerSection() {
       <Container>
         {/* Section Heading (Figma: text-[61px] on desktop, 80px bottom spacing) */}
         <div className="text-center mb-12 md:mb-16 lg:mb-20">
-          <h2 className="font-sans font-bold text-[32px] sm:text-[44px] md:text-[61px] leading-[1.12] text-black tracking-[-0.02em] text-balance">
+          <h2 className="font-title font-bold text-[32px] sm:text-[44px] md:text-[61px] leading-[1.12] text-black tracking-[-0.02em] text-balance">
             Pick a component. Make it yours.
           </h2>
         </div>
