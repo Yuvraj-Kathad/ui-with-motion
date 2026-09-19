@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { SearchInput } from "@/components/ui/SearchInput";
@@ -286,25 +287,77 @@ export function Navbar({
         </div>
       </div>
 
-      {/* Mobile Search Expandable Bar */}
+      {/* Mobile Search Expandable Bar (Full Screen Overlay) */}
       <AnimatePresence>
         {mobileSearchOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden overflow-hidden bg-white border-t border-[#E7E7E7] px-5 py-3"
+            className="fixed inset-0 z-[100] bg-white flex flex-col pt-4 px-4 pb-6 overflow-y-auto md:hidden"
           >
-            <form onSubmit={handleSearchSubmit}>
-              <SearchInput
-                autoFocus
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search ui components..."
-                className="w-full"
-              />
-            </form>
+            {/* Header row with search input and close button */}
+            <div className="flex items-center gap-3 w-full mb-6 mt-2">
+              <button onClick={() => setMobileSearchOpen(false)} className="shrink-0 p-2 ml-[-8px]">
+                <ArrowLeft size={24} className="text-[#1F2123]" />
+              </button>
+              <div className="flex-1">
+                <form onSubmit={handleSearchSubmit}>
+                  <SearchInput
+                    autoFocus
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search anything"
+                    className="w-full h-[56px] text-[16px] rounded-[48px]"
+                  />
+                </form>
+              </div>
+            </div>
+
+            {/* Type of Component */}
+            <div className="flex flex-col gap-3 mb-8 px-1">
+              <h3 className="font-sans font-medium text-[12px] text-[#7D7F82] uppercase tracking-wider">Type of Component</h3>
+              <div className="flex flex-wrap gap-2">
+                {['Button', 'Input field', 'Search bar', 'Product cards', 'filter'].map((tag, i) => (
+                  <button 
+                    key={tag} 
+                    onClick={() => {
+                      setSearchQuery(tag);
+                      handleSearchSubmit(undefined, tag);
+                    }}
+                    className="flex items-center gap-1.5 px-[12px] py-[6px] border border-[#B7BABD] rounded-[36px] bg-white hover:bg-[#F7F9FB] transition-colors"
+                  >
+                    <span className="font-sans font-medium text-[14px] text-black">{tag}</span>
+                    <span className="font-sans font-medium text-[12px] text-[#1F2123]/50">{[4, 10, 6, 1, 1][i]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Suggestions */}
+            <div className="flex flex-col gap-2 px-1">
+              <h3 className="font-sans font-medium text-[12px] text-[#7D7F82] uppercase tracking-wider mb-2">Suggestions</h3>
+              {['Buttons', 'Cards & Layouts', 'Form Inputs', 'Navigation'].map(sug => (
+                <button 
+                  key={sug} 
+                  onClick={() => {
+                    setSearchQuery(sug);
+                    handleSearchSubmit(undefined, sug);
+                  }}
+                  className="flex items-center gap-3 py-3 hover:bg-black/5 rounded-lg transition-colors text-left"
+                >
+                  <Image
+                    src="/icons/search-mobile.svg"
+                    alt="Search"
+                    width={16}
+                    height={16}
+                    className="opacity-50"
+                  />
+                  <span className="font-sans font-medium text-[16px] text-black">{sug}</span>
+                </button>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

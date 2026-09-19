@@ -183,7 +183,7 @@ function ComponentsContent() {
           
           {/* Card 1: Star Button */}
           {matches("Star button", ["Buttons"]) && (
-            <ComponentCard title="Star button">
+            <ComponentCard id="star-button" title="Star button">
               {({ playState, customStyles }) => (
                 <button 
                   className={`relative border border-[#E7E7E7] px-[24px] py-[12px] rounded-full shadow-[0_2px_10px_rgb(0,0,0,0.02)] overflow-hidden group transition-all duration-300 ${playState === 'hover' ? 'scale-105 shadow-md' : ''} ${playState === 'active' ? 'scale-95 bg-[#F7F9FB]' : ''} hover:scale-105 ${customStyles ? 'text-white' : 'bg-white text-black'}`}
@@ -199,7 +199,7 @@ function ComponentsContent() {
 
           {/* Card 2: Continue Arrow */}
           {matches("Icon button", ["Buttons"]) && (
-            <ComponentCard title="Icon button">
+            <ComponentCard id="icon-button" title="Icon button">
               {({ playState }) => (
                 <button 
                   className={`relative h-[44px] w-[145px] rounded-full flex items-center shadow-sm border border-[#EAF2FF] transition-all duration-300 ${playState === 'hover' ? 'scale-105 shadow-md' : ''} ${playState === 'active' ? 'scale-95' : ''} hover:scale-105 bg-[#F5F9FF]`}
@@ -217,7 +217,7 @@ function ComponentsContent() {
 
           {/* Card 3: Continue Glow */}
           {matches("Glow button", ["Buttons"]) && (
-            <ComponentCard title="Glow button">
+            <ComponentCard id="glow-button" title="Glow button">
               {({ playState }) => (
                 <button className={`relative bg-[#F9F9F9] border px-[28px] py-[12px] rounded-full overflow-hidden flex items-center justify-center group transition-colors ${playState === 'hover' || playState === 'active' ? 'border-[#CBCED1]' : 'border-[#DEE1E4]'}`}>
                   <span className="font-sans font-medium text-[16px] text-black relative z-10">
@@ -231,7 +231,7 @@ function ComponentsContent() {
 
           {/* Card 4: Continue Union */}
           {matches("Union button", ["Buttons"]) && (
-            <ComponentCard title="Union button">
+            <ComponentCard id="union-button" title="Union button">
               {({ playState }) => (
                 <button className={`relative bg-white border border-[#DEE1E4] h-[46px] px-[28px] rounded-[16px] flex items-center justify-center transition-all duration-300 ${playState === 'hover' ? 'shadow-md -translate-y-1' : 'shadow-sm'} ${playState === 'active' ? 'shadow-inner bg-[#F7F9FB] translate-y-0' : ''} hover:shadow-md`}>
                   <span className="font-sans font-medium text-[16px] text-[#1F2123]">
@@ -244,7 +244,7 @@ function ComponentsContent() {
 
           {/* Card 5: Magic Button */}
           {matches("Magic button", ["Buttons"]) && (
-            <ComponentCard title="Magic button">
+            <ComponentCard id="magic-button" title="Magic button">
               {({ playState }) => (
                 <button className={`bg-[#EEF1F4] border transition-all duration-300 px-[24px] py-[12px] rounded-full flex gap-2 items-center ${playState === 'hover' ? 'border-[#DEE1E4] shadow-sm scale-105' : 'border-transparent'} ${playState === 'active' ? 'scale-95 bg-[#DEE1E4]' : ''} hover:border-[#DEE1E4]`}>
                   <Star size={18} className={`transition-all ${playState === 'hover' || playState === 'loading' ? 'text-yellow-500 fill-yellow-500' : 'text-[#1F2123]'}`} />
@@ -256,7 +256,7 @@ function ComponentsContent() {
 
           {/* Card 6: Accept Button */}
           {matches("Accept button", ["Buttons"]) && (
-            <ComponentCard title="Accept button">
+            <ComponentCard id="accept-button" title="Accept button">
               {({ playState }) => (
                 <button className={`relative bg-[#F6CC44] px-[28px] py-[12px] rounded-full flex items-center justify-center group transition-all duration-300 ${playState === 'hover' ? 'scale-105 shadow-[0_8px_20px_rgba(246,204,68,0.4)]' : 'shadow-[0_4px_14px_rgba(246,204,68,0.3)]'} ${playState === 'active' ? 'scale-95 shadow-none' : ''} hover:scale-105`}>
                   <div className={`absolute inset-0 rounded-full bg-white/20 transition-opacity ${playState === 'hover' ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100`}></div>
@@ -270,7 +270,7 @@ function ComponentsContent() {
 
           {/* Card 7: Like Button */}
           {matches("Like button", ["Buttons"]) && (
-            <ComponentCard title="Like button">
+            <ComponentCard id="like-button" title="Like button">
               {({ playState }) => (
                 <button className={`bg-[#FBFCFD] border border-[#DEE1E4] px-[24px] py-[12px] rounded-full flex gap-[10px] items-center transition-all duration-300 shadow-sm ${playState === 'hover' ? 'bg-[#F7F9FB] scale-105' : ''} ${playState === 'active' || playState === 'loading' ? 'bg-[#FFEBEC] border-[#FFB3B8]' : ''} hover:bg-[#F7F9FB]`}>
                   <Heart size={18} className={`transition-transform duration-300 text-[#CC0615] ${playState === 'active' || playState === 'loading' ? 'fill-[#CC0615] scale-125' : (playState === 'hover' ? 'fill-[#CC0615]/50' : 'fill-transparent')}`} />
@@ -284,7 +284,7 @@ function ComponentsContent() {
 
           {/* Card 8: Generate Button */}
           {matches("Generate button", ["Buttons"]) && (
-            <ComponentCard title="Generate button">
+            <ComponentCard id="generate-button" title="Generate button">
               {({ playState }) => (
                 <button className={`relative bg-[#0E3067] px-[28px] py-[12px] rounded-full flex items-center justify-center group overflow-hidden transition-all duration-300 ${playState === 'hover' ? 'shadow-[#0E3067]/30 shadow-xl scale-105' : 'shadow-lg'} ${playState === 'active' ? 'scale-95' : ''}`}>
                   <div className={`absolute top-[-5px] left-[-2px] h-[120%] bg-[#1566E5]/20 blur-[8px] rounded-full transition-all duration-500 ${playState === 'hover' || playState === 'loading' ? 'w-[100%]' : 'w-[60%]'} group-hover:w-[100%]`}></div>
@@ -298,7 +298,7 @@ function ComponentsContent() {
 
           {/* Card 9: Send Button */}
           {matches("Send button", ["Buttons"]) && (
-            <ComponentCard title="Send button">
+            <ComponentCard id="send-button" title="Send button">
               {({ playState }) => (
                 <button className={`bg-[#F5F9FF] border border-[#EAF2FF] px-[26px] py-[12px] rounded-full flex gap-[12px] items-center transition-all duration-300 ${playState === 'hover' ? 'bg-[#EAF2FF] scale-105 shadow-sm' : ''} ${playState === 'active' ? 'scale-95' : ''} hover:bg-[#EAF2FF]`}>
                   <Send size={18} className={`text-[#1566E5] transition-transform duration-500 ${playState === 'loading' ? 'translate-x-10 opacity-0' : (playState === 'hover' ? 'translate-x-1 -translate-y-1' : '')}`} />

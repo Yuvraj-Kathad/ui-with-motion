@@ -16,6 +16,7 @@ export interface ComponentCustomStyles {
 }
 
 export interface ComponentCardProps {
+  id: string;
   title: string;
   tags?: ComponentTag[];
   children: React.ReactNode | ((props: { 
@@ -55,8 +56,10 @@ function injectMappedColors(node: React.ReactNode, colorMapping: Record<string, 
   }
 
   const element = node as React.ReactElement;
+  if (!element || typeof element !== 'object' || !element.props) return node;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const props: any = { ...element.props };
+  const props: any = { ...(element.props as any) };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const injectedStyle: any = { ...(props.style || {}) };
   let modified = false;
@@ -152,11 +155,34 @@ function injectMappedColors(node: React.ReactNode, colorMapping: Record<string, 
   return React.cloneElement(element, props);
 }
 
-export function ComponentCard({ title, tags = DEFAULT_TAGS, children }: ComponentCardProps) {
+export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children }: ComponentCardProps) {
   const [isSaved, setIsSaved] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playState, setPlayState] = useState<'idle' | 'hover' | 'active' | 'loading'>('idle');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("saved_components") || "[]");
+    setIsSaved(saved.includes(id));
+  }, [id]);
+
+  const toggleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const saved = JSON.parse(localStorage.getItem("saved_components") || "[]");
+    let newSaved;
+    if (isSaved) {
+      newSaved = saved.filter((savedId: string) => savedId !== id);
+    } else {
+      if (!saved.includes(id)) {
+        newSaved = [...saved, id];
+      } else {
+        newSaved = saved;
+      }
+    }
+    localStorage.setItem("saved_components", JSON.stringify(newSaved));
+    setIsSaved(!isSaved);
+    window.dispatchEvent(new Event("saved_components_changed"));
+  };
 
   const [customStyles, setCustomStyles] = useState<ComponentCustomStyles | undefined>(undefined);
 
@@ -260,7 +286,7 @@ export function ComponentCard({ title, tags = DEFAULT_TAGS, children }: Componen
           )}
         </button>
         <button 
-            onClick={(e) => { e.stopPropagation(); setIsSaved(!isSaved); }}
+            onClick={toggleSave}
             className={`flex items-center justify-center size-[34px] transition-colors ${isSaved ? 'text-black' : 'text-[#B0B0B0] hover:text-black'}`}
             aria-label={isSaved ? "Saved" : "Bookmark"}
           >
