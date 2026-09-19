@@ -8,12 +8,26 @@ import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleGoogleSignIn = () => {
-    // Supabase integration deferred to next task per requirements
+  const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const { createClient } = await import('@/lib/supabase/browser');
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) {
+        console.error('Error signing in with Google:', error.message);
+        setIsLoading(false);
+      }
+      // Note: we do not set isLoading(false) on success because the page will redirect
+    } catch (err) {
+      console.error('Unexpected error during sign in:', err);
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
