@@ -15,11 +15,88 @@ const FigmaIcon = ({ size = 24, className = "" }) => (
 );
 
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState, useRef, useEffect } from "react";
+import { Check, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+type FilterDropdownProps = {
+  label: string;
+  options: string[];
+  selected: string[];
+  onChange: (newSelected: string[]) => void;
+};
+
+function FilterDropdown({ label, options, selected, onChange }: FilterDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      setIsOpen(!isOpen);
+    }
+  };
+
+  return (
+    <div ref={ref} className="relative z-20" onKeyDown={handleKeyDown}>
+      <button 
+        onClick={() => setIsOpen(!isOpen)} 
+        className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[12px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors"
+      >
+        <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">{label}</span>
+        <ChevronDown size={24} className={`text-[#1F2123] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-[calc(100%+8px)] left-0 w-[201px] bg-[#F7F9FB] border border-[#B7BABD] rounded-[16px] flex flex-col items-start overflow-clip shadow-lg"
+          >
+            {options.map((option) => {
+              const isChecked = selected.includes(option);
+              return (
+                <div 
+                  key={option} 
+                  onClick={() => {
+                    onChange(isChecked ? selected.filter(o => o !== option) : [...selected, option]);
+                  }} 
+                  className="w-full flex items-center justify-between p-[12px] cursor-pointer hover:bg-[#EEF1F4] transition-colors group"
+                >
+                  <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">{option}</span>
+                  <div className={`size-[20px] rounded-[4px] border flex items-center justify-center transition-colors ${isChecked ? 'bg-black border-black' : 'border-[#B7BABD] group-hover:border-[#7D7F82] bg-white'}`}>
+                    {isChecked && <Check size={14} className="text-white" strokeWidth={3} />}
+                  </div>
+                </div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 function ComponentsContent() {
   const searchParams = useSearchParams();
   const search = searchParams?.get("search")?.toLowerCase() || "";
+  const [isFigmaActive, setIsFigmaActive] = useState(false);
+  
+  const [selectedStates, setSelectedStates] = useState<string[]>([]);
+  const [selectedLicence, setSelectedLicence] = useState<string[]>([]);
+  const [selectedCode, setSelectedCode] = useState<string[]>([]);
 
   const matches = (title: string, tags: string[] = []) => {
     if (!search) return true;
@@ -32,32 +109,65 @@ function ComponentsContent() {
   return (
     <div className="w-full min-h-screen bg-[#FBFCFD] pb-32">
       {/* Header Toolbar Region */}
-      <div className="w-full max-w-[1440px] mx-auto px-[70px] py-[40px]">
+      <div className="w-full max-w-[1440px] mx-auto px-[70px] py-[40px] flex flex-col gap-[20px]">
         <div className="flex flex-wrap items-center gap-[18px]">
           {/* Dropdown Filters */}
-          <button className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[12px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors">
-            <span className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap">States</span>
-            <ChevronDown size={24} className="text-[#1F2123]" />
-          </button>
-          
-          <button className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[12px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors">
-            <span className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap">Licence</span>
-            <ChevronDown size={24} className="text-[#1F2123]" />
-          </button>
-          
-          <button className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[12px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors">
-            <span className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap">Code</span>
-            <ChevronDown size={24} className="text-[#1F2123]" />
-          </button>
+          <FilterDropdown label="States" options={["Default", "Hover", "Loading", "Pressed"]} selected={selectedStates} onChange={setSelectedStates} />
+          <FilterDropdown label="Licence" options={["Free", "Premium"]} selected={selectedLicence} onChange={setSelectedLicence} />
+          <FilterDropdown label="Code" options={["HTML & CSS", "Next Js"]} selected={selectedCode} onChange={setSelectedCode} />
           
           {/* Figma Button */}
-          <button className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[8px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors">
-            <div className="size-[32px] bg-white rounded-full flex items-center justify-center shadow-sm border border-[#EEF1F4]">
-              <FigmaIcon size={16} className="text-black" />
+          <button 
+            onClick={() => setIsFigmaActive(!isFigmaActive)}
+            className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[8px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors"
+          >
+            <div className="size-[32px] flex items-center justify-center shrink-0">
+              <FigmaIcon size={24} className="text-black" />
             </div>
-            <span className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap">Figma</span>
+            <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">Figma</span>
+            {isFigmaActive && (
+              <div className="size-[28px] bg-[#EEF1F4] rounded-full flex items-center justify-center shrink-0 ml-[4px]">
+                <X size={16} className="text-[#1F2123]" />
+              </div>
+            )}
           </button>
         </div>
+
+        {/* Selected Chips Row */}
+        {(selectedStates.length > 0 || selectedLicence.length > 0 || selectedCode.length > 0) && (
+          <div className="flex flex-wrap items-center gap-[13px]">
+            {selectedStates.length > 0 && (
+              <div className="bg-[#EEF1F4] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[8px] flex items-center gap-[8px]">
+                <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">
+                  {selectedStates.join(", ")}
+                </span>
+                <button onClick={() => setSelectedStates([])} className="size-[32px] flex items-center justify-center rounded-full hover:bg-black/5 transition-colors shrink-0">
+                   <X size={16} className="text-[#1F2123]" />
+                </button>
+              </div>
+            )}
+            {selectedLicence.length > 0 && (
+              <div className="bg-[#EEF1F4] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[8px] flex items-center gap-[8px]">
+                <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">
+                  {selectedLicence.join(", ")}
+                </span>
+                <button onClick={() => setSelectedLicence([])} className="size-[32px] flex items-center justify-center rounded-full hover:bg-black/5 transition-colors shrink-0">
+                   <X size={16} className="text-[#1F2123]" />
+                </button>
+              </div>
+            )}
+            {selectedCode.length > 0 && (
+              <div className="bg-[#EEF1F4] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[8px] flex items-center gap-[8px]">
+                <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">
+                  {selectedCode.join(", ")}
+                </span>
+                <button onClick={() => setSelectedCode([])} className="size-[32px] flex items-center justify-center rounded-full hover:bg-black/5 transition-colors shrink-0">
+                   <X size={16} className="text-[#1F2123]" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Component Grid */}
@@ -74,9 +184,11 @@ function ComponentsContent() {
           {/* Card 1: Star Button */}
           {matches("Star button", ["Buttons"]) && (
             <ComponentCard title="Star button">
-              {({ playState }) => (
-                <button className={`relative border border-[#E7E7E7] px-[24px] py-[12px] rounded-full shadow-[0_2px_10px_rgb(0,0,0,0.02)] overflow-hidden group transition-all duration-300 ${playState === 'hover' ? 'scale-105 shadow-md' : ''} ${playState === 'active' ? 'scale-95 bg-[#F7F9FB]' : ''} hover:scale-105`}>
-                  <span className="relative z-10 font-sans font-medium text-[16px] text-black">
+              {({ playState, customStyles }) => (
+                <button 
+                  className={`relative border border-[#E7E7E7] px-[24px] py-[12px] rounded-full shadow-[0_2px_10px_rgb(0,0,0,0.02)] overflow-hidden group transition-all duration-300 ${playState === 'hover' ? 'scale-105 shadow-md' : ''} ${playState === 'active' ? 'scale-95 bg-[#F7F9FB]' : ''} hover:scale-105 ${customStyles ? 'text-white' : 'bg-white text-black'}`}
+                >
+                  <span className="relative z-10 font-sans">
                     {playState === 'loading' ? 'Processing...' : 'Continue'}
                   </span>
                   <div className={`absolute -bottom-8 left-1/2 -translate-x-1/2 w-[80px] h-[40px] rounded-full transition-colors duration-300 blur-[12px] ${playState === 'hover' || playState === 'loading' ? 'bg-[#9CC2FF]/80' : 'bg-[#9CC2FF]/40'} group-hover:bg-[#9CC2FF]/60`}></div>
@@ -89,11 +201,13 @@ function ComponentsContent() {
           {matches("Icon button", ["Buttons"]) && (
             <ComponentCard title="Icon button">
               {({ playState }) => (
-                <button className={`relative bg-[#F5F9FF] h-[44px] w-[145px] rounded-full flex items-center shadow-sm border border-[#EAF2FF] transition-all duration-300 ${playState === 'hover' ? 'scale-105 shadow-md' : ''} ${playState === 'active' ? 'scale-95' : ''} hover:scale-105`}>
-                  <span className="pl-5 font-sans font-medium text-[16px] text-black">
+                <button 
+                  className={`relative h-[44px] w-[145px] rounded-full flex items-center shadow-sm border border-[#EAF2FF] transition-all duration-300 ${playState === 'hover' ? 'scale-105 shadow-md' : ''} ${playState === 'active' ? 'scale-95' : ''} hover:scale-105 bg-[#F5F9FF]`}
+                >
+                  <span className={`pl-5 font-sans text-black`}>
                     {playState === 'loading' ? 'Loading' : 'Continue'}
                   </span>
-                  <div className={`absolute right-0 top-0 bottom-0 aspect-square bg-[#1566E5] rounded-full flex items-center justify-center text-white shadow-md transition-all duration-300 ${playState === 'hover' ? 'scale-110 translate-x-1' : ''} ${playState === 'loading' ? 'animate-pulse' : ''}`}>
+                  <div className={`absolute right-0 top-0 bottom-0 aspect-square rounded-full flex items-center justify-center shadow-md transition-all duration-300 ${playState === 'hover' ? 'scale-110 translate-x-1' : ''} ${playState === 'loading' ? 'animate-pulse' : ''} bg-[#1566E5] text-white`}>
                     <ArrowRight size={18} />
                   </div>
                 </button>
