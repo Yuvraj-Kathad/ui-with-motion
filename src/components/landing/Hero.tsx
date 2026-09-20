@@ -59,7 +59,7 @@ export function Hero() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             >
-              <ExploreButton href="#components" label="Explore Components" />
+              <ExploreButton href="/components" label="Explore Components" />
             </motion.div>
           </div>
         </div>
