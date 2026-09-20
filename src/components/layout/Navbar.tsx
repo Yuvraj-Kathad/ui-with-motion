@@ -104,6 +104,7 @@ export function Navbar({
             <SearchInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onClear={() => setSearchQuery("")}
               onFocus={() => setIsSearchFocused(true)}
               onBlur={() => setIsSearchFocused(false)}
               placeholder="Search ui components"
@@ -308,6 +309,7 @@ export function Navbar({
                     autoFocus
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onClear={() => setSearchQuery("")}
                     placeholder="Search anything"
                     className="w-full h-[56px] text-[16px] rounded-[48px]"
                   />

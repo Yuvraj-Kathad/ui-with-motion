@@ -1,31 +1,42 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { ExploreButton } from "@/components/ui/ExploreButton";
 
 export function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   return (
-    <section className="relative w-full overflow-hidden pt-16 pb-12 md:pt-24 md:pb-24 bg-[#F7F9FB]">
+    <section className="relative w-full overflow-hidden pt-8 pb-12 md:pt-16 md:pb-24 bg-white">
       <Container>
         <div className="flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-[60px] max-w-[1294px] mx-auto">
           
-          {/* Left Artwork */}
+          {/* Left Artwork / Video */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="w-full md:w-1/2 flex justify-center md:justify-start"
           >
-            <div className="relative w-full max-w-[511px] aspect-[511/424]">
-              <Image 
-                src="/images/hero-artwork.png" 
-                alt="UX with Motion"
-                fill
-                priority
-                className="object-contain"
+            <div className="relative w-full max-w-[560px] aspect-[511/424] rounded-[24px] overflow-hidden">
+              <video
+                ref={videoRef}
+                src="/videos/ux with motion final animation.mp4"
+                autoPlay
+                muted
+                playsInline
+                onTimeUpdate={() => {
+                  // Adjust this value (in seconds) to cut off the black part at the end
+                  const cutoffTime = 4.7; 
+                  if (videoRef.current && videoRef.current.currentTime >= cutoffTime) {
+                    videoRef.current.currentTime = 0;
+                    videoRef.current.play();
+                  }
+                }}
+                className="w-full h-full object-cover scale-[1.2]"
               />
             </div>
           </motion.div>
@@ -48,7 +59,7 @@ export function Hero() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             >
-              <ExploreButton href="#components" label="Explore Components" />
+              <ExploreButton href="/components" label="Explore Components" />
             </motion.div>
           </div>
         </div>
