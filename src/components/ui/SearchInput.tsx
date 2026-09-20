@@ -50,7 +50,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <div
-        className={`bg-[#EEF1F4] border border-[#E7E7E7] focus-within:border-[#B0B0B0] focus-within:bg-white flex items-center gap-3 px-4 py-3 rounded-[32px] transition-all ${className}`}
+        className={`border border-[#E7E7E7] focus-within:border-[#B0B0B0] flex items-center gap-3 px-4 py-3 rounded-[32px] transition-all ${className} ${hasValue ? 'bg-[#F1F4F6]' : 'bg-[#EEF1F4]'}`}
       >
         <div className="relative shrink-0 size-[20px] sm:size-[24px] pointer-events-none">
           <Image

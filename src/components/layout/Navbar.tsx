@@ -292,73 +292,96 @@ export function Navbar({
       <AnimatePresence>
         {mobileSearchOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-white flex flex-col pt-4 px-4 pb-6 overflow-y-auto md:hidden"
+            className="fixed inset-0 h-[100dvh] w-screen bg-[#090A0B]/60 backdrop-blur-md z-[100] flex flex-col items-center pt-[11px] md:hidden"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setMobileSearchOpen(false);
+            }}
           >
-            {/* Header row with search input and close button */}
-            <div className="flex items-center gap-3 w-full mb-6 mt-2">
-              <button onClick={() => setMobileSearchOpen(false)} className="shrink-0 p-2 ml-[-8px]">
-                <ArrowLeft size={24} className="text-[#1F2123]" />
-              </button>
-              <div className="flex-1">
-                <form onSubmit={handleSearchSubmit}>
-                  <SearchInput
-                    autoFocus
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onClear={() => setSearchQuery("")}
-                    placeholder="Search anything"
-                    className="w-full h-[56px] text-[16px] rounded-[48px]"
-                  />
-                </form>
-              </div>
-            </div>
+            <div className="w-full max-w-[342px] flex flex-col gap-[10px]">
+              {/* Search Bar Row */}
+              <form onSubmit={(e) => handleSearchSubmit(e, searchQuery)} className="w-full">
+                <SearchInput
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onClear={() => setSearchQuery("")}
+                  placeholder="Search ui components"
+                  className="w-full bg-white !px-[24px] !py-[16px] h-[56px] !rounded-[32px]"
+                  autoFocus
+                />
+              </form>
 
-            {/* Type of Component */}
-            <div className="flex flex-col gap-3 mb-8 px-1">
-              <h3 className="font-sans font-medium text-[12px] text-[#7D7F82] uppercase tracking-wider">Type of Component</h3>
-              <div className="flex flex-wrap gap-2">
-                {['Button', 'Input field', 'Search bar', 'Product cards', 'filter'].map((tag, i) => (
-                  <button 
-                    key={tag} 
-                    onClick={() => {
-                      setSearchQuery(tag);
-                      handleSearchSubmit(undefined, tag);
-                    }}
-                    className="flex items-center gap-1.5 px-[12px] py-[6px] border border-[#B7BABD] rounded-[36px] bg-white hover:bg-[#F7F9FB] transition-colors"
-                  >
-                    <span className="font-sans font-medium text-[14px] text-black">{tag}</span>
-                    <span className="font-sans font-medium text-[12px] text-[#1F2123]/50">{[4, 10, 6, 1, 1][i]}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+              {/* Suggestions Box */}
+              <div className="bg-white w-full rounded-[24px] p-[20px] shadow-sm flex flex-col gap-[20px] max-h-[80vh] overflow-y-auto">
+                {/* Type of Component */}
+                <div className="flex flex-col gap-[10px]">
+                  <h2 className="font-sans font-medium text-[12px] uppercase text-[#7D7F82] tracking-[0.6px]">
+                    Type of Component
+                  </h2>
+                  <div className="flex flex-wrap gap-[8px]">
+                    {/* Tags */}
+                    {[
+                      { label: "Button", count: "4" },
+                      { label: "Input field", count: "10" },
+                      { label: "Search bar", count: "6" },
+                      { label: "Product cards", count: "1" },
+                      { label: "filter", count: "1" },
+                    ].map((tag, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-[7px] h-[34px] px-[13px] rounded-full bg-black/5 cursor-pointer hover:bg-black/10 transition-colors"
+                        onClick={() => {
+                          setSearchQuery(tag.label);
+                          handleSearchSubmit(undefined, tag.label);
+                        }}
+                      >
+                        <span className="font-sans font-medium text-[12px] text-[#3C3B37]">
+                          {tag.label}
+                        </span>
+                        <span className="font-mono font-medium text-[11px] text-[#85847E] uppercase tracking-[0.66px]">
+                          {tag.count}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Suggestions */}
-            <div className="flex flex-col gap-2 px-1">
-              <h3 className="font-sans font-medium text-[12px] text-[#7D7F82] uppercase tracking-wider mb-2">Suggestions</h3>
-              {['Buttons', 'Cards & Layouts', 'Form Inputs', 'Navigation'].map(sug => (
-                <button 
-                  key={sug} 
-                  onClick={() => {
-                    setSearchQuery(sug);
-                    handleSearchSubmit(undefined, sug);
-                  }}
-                  className="flex items-center gap-3 py-3 hover:bg-black/5 rounded-lg transition-colors text-left"
-                >
-                  <Image
-                    src="/icons/search-mobile.svg"
-                    alt="Search"
-                    width={16}
-                    height={16}
-                    className="opacity-50"
-                  />
-                  <span className="font-sans font-medium text-[16px] text-black">{sug}</span>
-                </button>
-              ))}
+                {/* Suggestions List */}
+                <div className="flex flex-col gap-[8px]">
+                  <h2 className="font-sans font-medium text-[12px] uppercase text-[#7D7F82] tracking-[0.6px] px-[12px]">
+                    Suggestions
+                  </h2>
+                  <div className="flex flex-col">
+                    {["Buttons", "Cards & Layouts", "Form Inputs", "Navigation"].map(
+                      (sugg, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => {
+                            setSearchQuery(sugg);
+                            handleSearchSubmit(undefined, sugg);
+                          }}
+                          className="flex items-center gap-[12px] px-[12px] py-[10px] rounded-[12px] hover:bg-black/5 transition-colors text-left"
+                        >
+                          <Image
+                            src="/icons/search.svg"
+                            alt="Search"
+                            width={16}
+                            height={16}
+                            className="opacity-50"
+                          />
+                          <span className="font-sans font-medium text-[14px] text-black">
+                            {sugg}
+                          </span>
+                        </button>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

@@ -57,7 +57,7 @@ export default function AdminLoginPage() {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-[400px]">
           <h1 className="font-title font-bold text-[32px] sm:text-[44px] leading-[1.2] text-black tracking-[-0.02em] mb-12">
-            Welcome to UX With Motion
+            Welcome to Admin
           </h1>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-6">
@@ -75,7 +75,7 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full h-[52px] px-5 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5]"
+                className="w-full h-[52px] px-5 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
               />
             </div>
 
@@ -93,7 +93,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full h-[52px] px-5 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5]"
+                className="w-full h-[52px] px-5 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
               />
             </div>
 

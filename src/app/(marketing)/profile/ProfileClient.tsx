@@ -105,7 +105,7 @@ export function ProfileClient({ user }: { user: any }) {
         <div className="flex flex-col lg:flex-row gap-[40px] items-start">
           
           {/* Left Column: User Identity Card */}
-          <div className="w-full lg:w-[340px] shrink-0 bg-white border border-[#E7E7E7] rounded-[24px] p-[32px] flex flex-col items-center shadow-[0px_12px_12px_rgba(31,33,35,0.03)]">
+          <div className="w-full lg:w-[340px] shrink-0 bg-white border border-[#E7E7E7] rounded-[24px] p-[32px] flex flex-col items-center">
             {/* Avatar with Hover Edit */}
             <div className="relative size-[80px] rounded-full overflow-hidden mb-[24px] group cursor-pointer border border-[#E7E7E7]" onClick={() => fileInputRef.current?.click()}>
               {avatarUrl !== "/icons/user-placeholder.png" ? (
@@ -144,7 +144,7 @@ export function ProfileClient({ user }: { user: any }) {
           <div className="flex-1 flex flex-col w-full gap-[40px]">
             
             {/* Profile Form Section */}
-            <div className="bg-white border border-[#E7E7E7] rounded-[32px] p-[32px] shadow-[0px_12px_12px_rgba(31,33,35,0.03)] flex flex-col gap-[32px]">
+            <div className="bg-white border border-[#E7E7E7] rounded-[32px] p-[32px] flex flex-col gap-[32px]">
               <div>
                 <h3 className="font-sans font-bold text-[24px] text-black mb-2">Profile Settings</h3>
                 <p className="font-inter text-[14px] text-[#7D7F82]">Update your personal details here.</p>
@@ -152,30 +152,30 @@ export function ProfileClient({ user }: { user: any }) {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-[24px]">
                 <div className="flex flex-col gap-[8px]">
-                  <label className="font-sans font-medium text-[14px] text-black">First Name</label>
+                  <label className="font-sans font-semibold text-[14px] text-[#1F2123]">First Name</label>
                   <input 
                     type="text" 
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full h-[56px] bg-[#EEF1F4] rounded-[16px] px-[20px] font-sans text-[16px] text-black focus:outline-none focus:ring-2 focus:ring-black/5 transition-all" 
+                    className={`w-full h-[48px] px-[16px] py-[12px] rounded-[24px] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#1F2123] transition-colors ${firstName ? 'bg-[#F1F4F6]' : 'bg-[#EEF1F4]'}`} 
                   />
                 </div>
                 <div className="flex flex-col gap-[8px]">
-                  <label className="font-sans font-medium text-[14px] text-black">Last Name</label>
+                  <label className="font-sans font-semibold text-[14px] text-[#1F2123]">Last Name</label>
                   <input 
                     type="text" 
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full h-[56px] bg-[#EEF1F4] rounded-[16px] px-[20px] font-sans text-[16px] text-black focus:outline-none focus:ring-2 focus:ring-black/5 transition-all" 
+                    className={`w-full h-[48px] px-[16px] py-[12px] rounded-[24px] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#1F2123] transition-colors ${lastName ? 'bg-[#F1F4F6]' : 'bg-[#EEF1F4]'}`} 
                   />
                 </div>
                 <div className="flex flex-col gap-[8px] md:col-span-2">
-                  <label className="font-sans font-medium text-[14px] text-black">Email ID</label>
+                  <label className="font-sans font-semibold text-[14px] text-[#1F2123]">Email ID</label>
                   <input 
                     type="email" 
                     defaultValue={email}
                     readOnly
-                    className="w-full h-[56px] bg-[#EEF1F4] rounded-[16px] px-[20px] font-sans text-[16px] text-[#7D7F82] focus:outline-none transition-all opacity-80 cursor-not-allowed" 
+                    className={`w-full h-[48px] px-[16px] py-[12px] rounded-[24px] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#7D7F82] transition-colors opacity-80 cursor-not-allowed ${email ? 'bg-[#F1F4F6]' : 'bg-[#EEF1F4]'}`} 
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export function ProfileClient({ user }: { user: any }) {
             </div>
 
             {/* Plan Comparison Section */}
-            <div className="bg-white border border-[#E7E7E7] rounded-[32px] p-[32px] shadow-[0px_12px_12px_rgba(31,33,35,0.03)] flex flex-col gap-[32px]">
+            <div className="bg-white border border-[#E7E7E7] rounded-[32px] p-[32px] flex flex-col gap-[32px]">
               <div>
                 <h3 className="font-sans font-bold text-[24px] text-black mb-2">Current Subscription</h3>
                 <p className="font-inter text-[14px] text-[#7D7F82]">Manage your billing and plan details.</p>
@@ -226,7 +226,7 @@ export function ProfileClient({ user }: { user: any }) {
                 </div>
 
                 {/* Premium Plan Card */}
-                <div className="flex-1 border border-[#1F2123] rounded-[24px] p-[24px] flex flex-col items-start relative overflow-hidden bg-white shadow-[0px_24px_48px_-12px_rgba(0,0,0,0.1)]">
+                <div className="flex-1 border border-[#1F2123] rounded-[24px] p-[24px] flex flex-col items-start relative overflow-hidden bg-white">
                   <div className="absolute top-[24px] right-[24px] bg-[#1F2123] text-white font-sans font-medium text-[10px] uppercase tracking-wider px-[12px] py-[6px] rounded-[100px]">
                     RECOMMENDED
                   </div>
@@ -267,7 +267,7 @@ export function ProfileClient({ user }: { user: any }) {
 
             {/* Saved Components Section */}
             {savedIds.length > 0 && (
-              <div className="bg-white border border-[#E7E7E7] rounded-[32px] p-[32px] shadow-[0px_12px_12px_rgba(31,33,35,0.03)] flex flex-col gap-[32px]">
+              <div className="bg-white border border-[#E7E7E7] rounded-[32px] p-[32px] flex flex-col gap-[32px]">
                 <div className="flex items-center justify-between">
                   <h3 className="font-sans font-bold text-[24px] text-black">
                     Saved Components <span className="font-medium text-[#7D7F82] text-[18px]">({savedIds.length} items collected)</span>

@@ -96,3 +96,12 @@ body {
 @utility font-work {
   font-family: var(--font-plus-jakarta), sans-serif;
 }
+/* Override browser autofill background color globally */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 50px #F1F4F6 inset !important;
+  -webkit-text-fill-color: inherit !important;
+}
+

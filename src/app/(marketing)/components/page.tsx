@@ -47,7 +47,7 @@ function FilterDropdown({ label, options, selected, onChange }: FilterDropdownPr
   };
 
   return (
-    <div ref={ref} className="relative z-20" onKeyDown={handleKeyDown}>
+    <div ref={ref} className={`relative ${isOpen ? 'z-50' : 'z-20'}`} onKeyDown={handleKeyDown}>
       <button 
         onClick={() => setIsOpen(!isOpen)} 
         className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[12px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors"
@@ -109,7 +109,7 @@ function ComponentsContent() {
   return (
     <div className="w-full min-h-screen bg-[#FBFCFD] pb-32">
       {/* Header Toolbar Region */}
-      <div className="w-full max-w-[1440px] mx-auto px-[70px] py-[40px] flex flex-col gap-[20px]">
+      <div className="w-full max-w-[1440px] mx-auto px-[20px] lg:px-[70px] py-[40px] flex flex-col gap-[20px]">
         <div className="flex flex-wrap items-center gap-[18px]">
           {/* Dropdown Filters */}
           <FilterDropdown label="States" options={["Default", "Hover", "Loading", "Pressed"]} selected={selectedStates} onChange={setSelectedStates} />

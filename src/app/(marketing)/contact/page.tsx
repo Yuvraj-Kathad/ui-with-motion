@@ -38,7 +38,7 @@ export default function ContactUsPage() {
                 type="text" 
                 id="fullName"
                 placeholder="e.g. Sarah Connor"
-                className="h-[48px] px-[16px] py-[12px] rounded-[24px] bg-[#EEF1F4] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#1F2123] placeholder:text-[#7D7F82]"
+                className="h-[48px] px-[16px] py-[12px] rounded-[24px] bg-[#EEF1F4] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#1F2123] placeholder:text-[#7D7F82] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
               />
             </div>
             
@@ -48,7 +48,7 @@ export default function ContactUsPage() {
                 type="email" 
                 id="emailAddress"
                 placeholder="e.g. sarah@motion.design"
-                className="h-[48px] px-[16px] py-[12px] rounded-[24px] bg-[#EEF1F4] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#1F2123] placeholder:text-[#7D7F82]"
+                className="h-[48px] px-[16px] py-[12px] rounded-[24px] bg-[#EEF1F4] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#1F2123] placeholder:text-[#7D7F82] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
               />
             </div>
             
@@ -58,7 +58,7 @@ export default function ContactUsPage() {
                 type="text" 
                 id="subject"
                 placeholder="How can we help you?"
-                className="h-[48px] px-[16px] py-[12px] rounded-[24px] bg-[#EEF1F4] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#1F2123] placeholder:text-[#7D7F82]"
+                className="h-[48px] px-[16px] py-[12px] rounded-[24px] bg-[#EEF1F4] border border-[#DEE1E4] focus:outline-none focus:ring-2 focus:ring-[#1F2123]/10 font-inter text-[14px] text-[#1F2123] placeholder:text-[#7D7F82] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
               />
             </div>
             
