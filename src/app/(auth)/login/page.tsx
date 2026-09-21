@@ -43,6 +43,7 @@ export default function LoginPage() {
             src="/images/branding-logo.png"
             alt="UX With Motion Logo"
             fill
+            sizes="(max-width: 640px) 130px, (max-width: 768px) 150px, 171px"
             priority
             className="object-contain"
           />

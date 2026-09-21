@@ -71,21 +71,12 @@ export function ProfileClient({ user }: { user: any }) {
     setAvatarUrl(objectUrl);
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      // Simulate an upload delay for the UI
+      await new Promise((resolve) => setTimeout(resolve, 500));
       
-      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+      alert("Profile photo uploads will be enabled in a future update once the storage infrastructure is ready.");
       
-      if (uploadError) {
-        console.error("Upload error:", uploadError);
-        alert("Upload failed. Make sure you have a public 'avatars' bucket in Supabase.");
-      } else {
-        const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-        await supabase.auth.updateUser({ data: { avatar_url: data.publicUrl } });
-        setAvatarUrl(data.publicUrl);
-        router.refresh();
-      }
+      // We keep the local objectUrl preview so they can see what it would look like
     } catch (err) {
       console.error(err);
     } finally {

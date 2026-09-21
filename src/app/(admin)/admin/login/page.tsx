@@ -47,6 +47,7 @@ export default function AdminLoginPage() {
             src="/images/branding-logo.png"
             alt="UX With Motion"
             fill
+            sizes="357px"
             priority
             className="object-contain"
           />
@@ -70,7 +71,9 @@ export default function AdminLoginPage() {
               </label>
               <input
                 id="email"
+                name="email"
                 type="email"
+                autoComplete="username"
                 placeholder="Enter your admin email id"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -88,7 +91,9 @@ export default function AdminLoginPage() {
               </label>
               <input
                 id="password"
+                name="password"
                 type="password"
+                autoComplete="current-password"
                 placeholder="Enter your admin password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

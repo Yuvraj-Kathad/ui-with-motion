@@ -27,10 +27,14 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Use getClaims for primary authorization without making a database query
-  // Wait, the API for getClaims is: await supabase.auth.getClaims()
-  // No, actually checking the session is often simpler: await supabase.auth.getSession()
-  await supabase.auth.getClaims()
+  // Use getUser() to refresh the session automatically. 
+  // We wrap it in a try-catch to prevent unhandled AuthApiErrors (like 'refresh_token_not_found') 
+  // from crashing the request. The SSR client's setAll callback automatically clears the stale cookies.
+  try {
+    await supabase.auth.getUser()
+  } catch (_err) {
+    // Gracefully recover by ignoring the error; the user is now treated as logged out.
+  }
 
   // The proxy is primarily responsible for refreshing the session.
   // Route protection is handled gracefully at the component level or by layouts as needed.

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/browser";
+import { sendAdminPasswordReset } from "./actions";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -15,13 +15,7 @@ export default function ForgotPasswordPage() {
     setErrorMessage("");
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        // Redirect back to auth callback with the next destination
-        redirectTo: `${window.location.origin}/auth/callback?next=/admin/update-password`,
-      });
-
-      if (error) throw error;
+      await sendAdminPasswordReset(email);
       setStatus("success");
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Failed to send reset email");
@@ -36,7 +30,7 @@ export default function ForgotPasswordPage() {
           Reset Password
         </h1>
         <p className="text-[#888888] text-base mb-8">
-          Enter your admin email address and we&apos;ll send you a link to reset your password.
+          If this account is eligible for Admin access, you will receive a password-reset email.
         </p>
 
         {status === "success" ? (
@@ -51,7 +45,9 @@ export default function ForgotPasswordPage() {
               </label>
               <input
                 id="email"
+                name="email"
                 type="email"
+                autoComplete="email"
                 placeholder="Enter your admin email id"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

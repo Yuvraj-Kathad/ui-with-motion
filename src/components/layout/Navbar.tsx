@@ -77,7 +77,7 @@ export function Navbar({
               <div className="relative w-[48.97px] h-[51px] shrink-0">
                 <Image
                   src="/icons/logo.svg"
-                  alt="UX With Motion Logo"
+                  alt="Component Logo"
                   width={49}
                   height={51}
                   priority
