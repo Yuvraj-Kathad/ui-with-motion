@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Play, Edit, Trash2 } from "lucide-react";
 
@@ -8,17 +8,71 @@ type ComponentItem = {
   id: string;
   title: string;
   status: "Draft" | "Publish";
+  htmlCode: string;
+  cssCode: string;
+  nextjsCode: string;
 };
 
+const STAR_HTML = `<button class="star-btn">
+  <svg class="star-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+  </svg>
+  <span>Star</span>
+</button>`;
+
+const STAR_CSS = `.star-btn { display: flex; align-items: center; gap: 8px; padding: 10px 20px; background-color: #1F2123; color: #FFFFFF; border: none; border-radius: 44px; font-family: sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; } .star-btn:hover { background-color: #333333; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); } .star-btn:active { transform: translateY(0); } .star-icon { width: 18px; height: 18px; transition: transform 0.5s ease; } .star-btn:hover .star-icon { transform: rotate(144deg) scale(1.1); fill: #FFD700; stroke: #FFD700; }`;
+
 export default function AdminComponentsPage() {
-  // Use state so we can actually delete items from the UI
-  const [components, setComponents] = useState<ComponentItem[]>([
-    { id: "1", title: "Star button", status: "Draft" },
-  ]);
+  const [components, setComponents] = useState<ComponentItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadComponents = () => {
+      const saved = localStorage.getItem("ui_motion_components");
+      if (saved) {
+        setComponents(JSON.parse(saved));
+      } else {
+        const initial: ComponentItem[] = [{
+          id: "1",
+          title: "Star button",
+          status: "Draft",
+          htmlCode: STAR_HTML,
+          cssCode: STAR_CSS,
+          nextjsCode: ""
+        }];
+        setComponents(initial);
+        localStorage.setItem("ui_motion_components", JSON.stringify(initial));
+      }
+      setIsLoaded(true);
+    };
+
+    loadComponents();
+
+    window.addEventListener("components_updated", loadComponents);
+    return () => window.removeEventListener("components_updated", loadComponents);
+  }, []);
 
   const handleDelete = (id: string) => {
-    setComponents((prev) => prev.filter((c) => c.id !== id));
+    const updated = components.filter((c) => c.id !== id);
+    setComponents(updated);
+    localStorage.setItem("ui_motion_components", JSON.stringify(updated));
   };
+
+  const getPreviewHtml = (comp: ComponentItem) => {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>${comp.cssCode}</style>
+      </head>
+      <body style="margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; background: transparent;">
+        ${comp.htmlCode}
+      </body>
+      </html>
+    `;
+  };
+
+  if (!isLoaded) return <div className="flex-1 bg-[#F6F7F8]" />;
 
   return (
     <div className="flex flex-col h-full bg-[#F6F7F8]">
@@ -80,12 +134,13 @@ export default function AdminComponentsPage() {
                   </div>
                   
                   {/* Preview Area */}
-                  <div className="h-[151px] w-full bg-[#f7f9fb] flex items-center justify-center shrink-0 border-y border-[#e9eaeb]">
-                    <div className="bg-white p-3 rounded-full shadow-sm flex items-center justify-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                        <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/>
-                      </svg>
-                    </div>
+                  <div className="h-[151px] w-full bg-[#f7f9fb] relative shrink-0 border-y border-[#e9eaeb]">
+                    <iframe 
+                      srcDoc={getPreviewHtml(comp)}
+                      className="absolute inset-0 w-full h-full border-none pointer-events-none"
+                      tabIndex={-1}
+                      sandbox="allow-scripts allow-same-origin"
+                    />
                   </div>
                   
                   {/* Card Footer */}

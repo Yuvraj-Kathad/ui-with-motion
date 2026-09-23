@@ -2,17 +2,42 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import HtmlCssEditor from "@/components/admin/HtmlCssEditor";
 import NextjsEditor from "@/components/admin/NextjsEditor";
 
 export default function EditComponentPage() {
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const componentId = params?.id;
+
   const [activeTab, setActiveTab] = useState<"htmlcss" | "nextjs">("htmlcss");
-  const [htmlCode, setHtmlCode] = useState('<div class="demo">\n  <h1>Hello from HTML</h1>\n</div>');
-  const [cssCode, setCssCode] = useState('.demo {\n  padding: 20px;\n  background-color: #EEF2FF;\n  border-radius: 8px;\n  color: #1566E5;\n  font-family: sans-serif;\n  text-align: center;\n}');
-  const [nextjsCode, setNextjsCode] = useState('function App() {\n  const [count, setCount] = React.useState(0);\n  return (\n    <div className="p-6 bg-indigo-50 rounded-xl text-center font-sans">\n      <h1 className="text-xl text-indigo-600 font-bold mb-4">Hello from Next.js</h1>\n      <button \n        onClick={() => setCount(c => c + 1)}\n        className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"\n      >\n        Clicked {count} times\n      </button>\n    </div>\n  );\n}');
+  const [componentTitle, setComponentTitle] = useState("Update Component");
+  
+  const [htmlCode, setHtmlCode] = useState("");
+  const [cssCode, setCssCode] = useState("");
+  const [nextjsCode, setNextjsCode] = useState("");
 
   const [previewSrcDoc, setPreviewSrcDoc] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [showPublishConfirm, setShowPublishConfirm] = useState(false);
+
+  // Load from local storage on mount
+  useEffect(() => {
+    if (componentId) {
+      const existing = JSON.parse(localStorage.getItem("ui_motion_components") || "[]");
+      const comp = existing.find((c: any) => c.id === componentId);
+      if (comp) {
+        setComponentTitle(comp.title);
+        setHtmlCode(comp.htmlCode || "");
+        setCssCode(comp.cssCode || "");
+        setNextjsCode(comp.nextjsCode || "");
+      }
+    }
+    setIsLoaded(true);
+  }, [componentId]);
 
   useEffect(() => {
     if (activeTab === "htmlcss") {
@@ -33,6 +58,10 @@ export default function EditComponentPage() {
         .replace(/export\s+default\s+/g, '')
         .replace(/export\s+/g, '');
 
+      // Dynamically find the component name (first capitalized function/variable)
+      const componentMatch = cleanedCode.match(/(?:function|const|let|var)\s+([A-Z]\w*)/);
+      const componentName = componentMatch ? componentMatch[1] : 'App';
+
       setPreviewSrcDoc(`
         <!DOCTYPE html>
         <html>
@@ -48,11 +77,17 @@ export default function EditComponentPage() {
             try {
               ${cleanedCode}
               const root = ReactDOM.createRoot(document.getElementById('root'));
-              const ComponentToRender = typeof App !== 'undefined' ? App : (typeof Component !== 'undefined' ? Component : null);
+              
+              // Attempt to render the dynamically found component, fallback to App or Component
+              let ComponentToRender = null;
+              if (typeof ${componentName} !== 'undefined') ComponentToRender = ${componentName};
+              else if (typeof App !== 'undefined') ComponentToRender = App;
+              else if (typeof Component !== 'undefined') ComponentToRender = Component;
+
               if (ComponentToRender) {
                 root.render(React.createElement(ComponentToRender));
               } else {
-                root.render(React.createElement('div', { style: { color: 'red' } }, 'Error: Could not find function App() or Component()'));
+                root.render(React.createElement('div', { style: { color: 'red' } }, 'Error: Could not find a React component to render. Make sure your function name starts with a capital letter.'));
               }
             } catch (err) {
               document.getElementById('root').innerHTML = '<div style="color: red; padding: 20px;">' + err.message + '</div>';
@@ -64,6 +99,36 @@ export default function EditComponentPage() {
     }
   }, [htmlCode, cssCode, nextjsCode, activeTab]);
 
+  const handleSave = (status: "Draft" | "Publish") => {
+    setIsSaving(true);
+    
+    // Simulate API call for now
+    setTimeout(() => {
+      const existing = JSON.parse(localStorage.getItem("ui_motion_components") || "[]");
+      
+      const updated = existing.map((c: any) => {
+        if (c.id === componentId) {
+          return {
+            ...c,
+            htmlCode,
+            cssCode,
+            nextjsCode,
+            status: status
+          };
+        }
+        return c;
+      });
+
+      localStorage.setItem("ui_motion_components", JSON.stringify(updated));
+      window.dispatchEvent(new Event("components_updated"));
+
+      router.push("/admin/components");
+      router.refresh();
+    }, 500);
+  };
+
+  if (!isLoaded) return <div className="flex-1 bg-[#F6F7F8]" />;
+
   return (
     <div className="flex flex-col h-full bg-[#F6F7F8]">
       {/* Header */}
@@ -74,7 +139,7 @@ export default function EditComponentPage() {
         >
           <ChevronLeft className="w-6 h-6" />
         </Link>
-        <h1 className="text-2xl font-bold text-[#111111]">Update &ldquo;star button&rdquo;</h1>
+        <h1 className="text-2xl font-bold text-[#111111]">{componentTitle}</h1>
       </header>
 
       {/* Main Content Area - Split Pane */}
@@ -140,16 +205,51 @@ export default function EditComponentPage() {
 
           {/* Action Footer */}
           <div className="h-[80px] bg-white border-t border-[#E9EAEB] flex items-center justify-end px-6 gap-4">
-            <button className="bg-[#F6F7F8] text-[#888888] px-6 py-2.5 rounded-[44px] text-sm font-medium hover:bg-[#E9EAEB] transition-colors">
+            <button 
+              onClick={() => setShowPublishConfirm(true)}
+              className="bg-[#F6F7F8] text-[#888888] px-6 py-2.5 rounded-[44px] text-sm font-medium hover:bg-[#E9EAEB] transition-colors"
+            >
               Publish
             </button>
-            <button className="bg-[#1F2123] text-white px-6 py-2.5 rounded-[44px] text-sm font-medium hover:opacity-90 transition-opacity">
-              Save as Draft
+            <button 
+              onClick={() => handleSave("Draft")}
+              disabled={isSaving}
+              className="bg-[#1F2123] text-white px-6 py-2.5 rounded-[44px] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {isSaving ? "Saving..." : "Save as Draft"}
             </button>
           </div>
         </div>
 
       </div>
+
+      {/* Publish Confirmation Modal */}
+      {showPublishConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 text-center">
+            <h3 className="text-xl font-bold text-[#111111] mb-2">Publish Component</h3>
+            <p className="text-[#888888] mb-6">Are you sure you want to publish this component? It will become live.</p>
+            <div className="flex justify-center gap-3">
+              <button 
+                onClick={() => setShowPublishConfirm(false)}
+                className="px-5 py-2.5 text-[#888888] font-medium hover:text-[#111111] transition-colors bg-[#F6F7F8] rounded-full hover:bg-[#E9EAEB]"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  setShowPublishConfirm(false);
+                  handleSave("Publish");
+                }}
+                className="bg-[#1F2123] text-white px-5 py-2.5 rounded-full font-medium transition-opacity hover:opacity-90"
+              >
+                Publish
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -9,18 +9,23 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
     "framer-motion": "^13.3.0",
     "lucide-react": "^1.46.0",
     "next": "16.3.5",
+    "prismjs": "^1.30.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "react-simple-code-editor": "^0.14.1",
+    "resend": "^6.28.1",
     "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/prismjs": "^1.26.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

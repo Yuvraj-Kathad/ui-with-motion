@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Editor from "@monaco-editor/react";
 
 interface HtmlCssEditorProps {
   htmlCode: string;
@@ -15,27 +16,47 @@ export default function HtmlCssEditor({
   cssCode,
   setCssCode,
 }: HtmlCssEditorProps) {
+  const commonOptions = {
+    minimap: { enabled: false },
+    fontSize: 14,
+    fontFamily: '"Fira Code", "Consolas", monospace',
+    wordWrap: 'on' as const,
+    scrollBeyondLastLine: false,
+    padding: { top: 16 },
+    tabSize: 2,
+  };
+
   return (
     <div className="flex flex-col h-full w-full">
-      <div className="flex-1 flex flex-col p-4 border-b border-[#333]">
-        <label className="text-white text-xs font-medium mb-2">HTML</label>
-        <textarea
-          value={htmlCode}
-          onChange={(e) => setHtmlCode(e.target.value)}
-          className="flex-1 bg-transparent text-[#E9EAEB] font-mono text-sm outline-none resize-none"
-          spellCheck={false}
-          placeholder="<div>Hello World</div>"
-        />
+      <div className="flex-1 flex flex-col border-b border-[#333]">
+        <div className="p-4 border-b border-[#333]">
+          <label className="text-white text-xs font-medium">HTML</label>
+        </div>
+        <div className="flex-1 relative pt-4">
+          <Editor
+            height="100%"
+            defaultLanguage="html"
+            theme="vs-dark"
+            value={htmlCode}
+            onChange={(value) => setHtmlCode(value || "")}
+            options={commonOptions}
+          />
+        </div>
       </div>
-      <div className="flex-1 flex flex-col p-4">
-        <label className="text-white text-xs font-medium mb-2">CSS</label>
-        <textarea
-          value={cssCode}
-          onChange={(e) => setCssCode(e.target.value)}
-          className="flex-1 bg-transparent text-[#E9EAEB] font-mono text-sm outline-none resize-none"
-          spellCheck={false}
-          placeholder=".demo { color: red; }"
-        />
+      <div className="flex-1 flex flex-col">
+        <div className="p-4 border-b border-[#333]">
+          <label className="text-white text-xs font-medium">CSS</label>
+        </div>
+        <div className="flex-1 relative pt-4">
+          <Editor
+            height="100%"
+            defaultLanguage="css"
+            theme="vs-dark"
+            value={cssCode}
+            onChange={(value) => setCssCode(value || "")}
+            options={commonOptions}
+          />
+        </div>
       </div>
     </div>
   );
