@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { PaymentPageContent, defaultPaymentContent } from "@/components/admin/payment/types";
 import { Trash2, Plus } from "lucide-react";
+import { createClient } from "@/lib/supabase/browser";
 
 // Helper components for the UI Editor
 
@@ -62,22 +63,42 @@ export default function AdminPaymentPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("payment_page_content");
-    if (saved) {
+    const loadData = async () => {
       try {
-        setContent(JSON.parse(saved));
+        const supabase = createClient();
+        const { data, error } = await supabase.from('payment_page_content').select('content').eq('id', 1).single();
+        if (data && data.content) {
+          setContent(data.content);
+        }
       } catch (e) {
-        console.error("Failed to parse payment content", e);
+        console.error("Failed to load payment content from Supabase", e);
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+    loadData();
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true);
-    localStorage.setItem("payment_page_content", JSON.stringify(content));
-    window.dispatchEvent(new Event("payment_content_updated"));
-    setTimeout(() => setSaving(false), 500);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('payment_page_content')
+        .upsert({ id: 1, content: content, updated_at: new Date().toISOString() });
+        
+      if (error) throw error;
+      
+      // Also update local storage for local events if needed in same window
+      localStorage.setItem("payment_page_content", JSON.stringify(content));
+      window.dispatchEvent(new Event("payment_content_updated"));
+      alert("Changes saved successfully! The public pricing page is now updated.");
+    } catch (e: any) {
+      console.error("Failed to save to Supabase", e);
+      alert("Failed to save changes. Error: " + (e.message || JSON.stringify(e)));
+    } finally {
+      setSaving(false);
+    }
   };
 
   const updateSection = (section: keyof PaymentPageContent, key: string, value: any) => {
@@ -164,7 +185,10 @@ export default function AdminPaymentPage() {
               <div className="flex gap-[24px] w-full">
                 <InputField fullWidth={false} label="Monthly Price" value={content.premiumPlan.monthlyPrice} onChange={v => updateSection('premiumPlan', 'monthlyPrice', v)} />
                 <InputField fullWidth={false} label="Price Period" value={content.premiumPlan.pricePeriod} onChange={v => updateSection('premiumPlan', 'pricePeriod', v)} />
-                <InputField fullWidth={false} label="Yearly Price" value={content.premiumPlan.yearlyPrice} onChange={v => updateSection('premiumPlan', 'yearlyPrice', v)} />
+              </div>
+              <div className="flex gap-[24px] w-full">
+                <InputField fullWidth={false} label="Yearly Price (Big)" value={content.premiumPlan.yearlyPriceBig || "₹2,999"} onChange={v => updateSection('premiumPlan', 'yearlyPriceBig', v)} />
+                <InputField fullWidth={false} label="Yearly Price (Subtext)" value={content.premiumPlan.yearlyPrice} onChange={v => updateSection('premiumPlan', 'yearlyPrice', v)} />
               </div>
               <InputField label="Savings Note" value={content.premiumPlan.savingsNote} onChange={v => updateSection('premiumPlan', 'savingsNote', v)} />
               <InputField label="Button Text" value={content.premiumPlan.buttonText} onChange={v => updateSection('premiumPlan', 'buttonText', v)} />

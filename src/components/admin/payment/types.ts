@@ -20,6 +20,7 @@ export interface PaymentPageContent {
     description: string;
     monthlyPrice: string;
     pricePeriod: string;
+    yearlyPriceBig: string;
     yearlyPrice: string;
     savingsNote: string;
     buttonText: string;
@@ -73,6 +74,7 @@ export const defaultPaymentContent: PaymentPageContent = {
     description: "Unlock the complete component library and build faster.",
     monthlyPrice: "₹399",
     pricePeriod: "/month",
+    yearlyPriceBig: "₹2,999",
     yearlyPrice: "or ₹2,999/year",
     savingsNote: "Save ₹1,789 with yearly billing",
     buttonText: "Get Premium",

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Check, XCircle, Plus, Minus, ChevronRight } from "lucide-react";
 import { PaymentPageContent, defaultPaymentContent } from "@/components/admin/payment/types";
+import { createClient } from "@/lib/supabase/browser";
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
@@ -12,16 +13,22 @@ export default function PricingPage() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const loadContent = () => {
-      const saved = localStorage.getItem("payment_page_content");
-      if (saved) {
-        try {
-          setContent(JSON.parse(saved));
-        } catch (e) {
-          console.error(e);
+    const loadContent = async () => {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase.from('payment_page_content').select('content').eq('id', 1).single();
+        if (data && data.content) {
+          setContent(data.content);
+        } else {
+          // Fallback to local storage if nothing in DB yet
+          const saved = localStorage.getItem("payment_page_content");
+          if (saved) setContent(JSON.parse(saved));
         }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoaded(true);
       }
-      setIsLoaded(true);
     };
 
     loadContent();
@@ -114,7 +121,7 @@ export default function PricingPage() {
           <div className="flex flex-col gap-1">
             <div className="flex items-end gap-2">
               <span className="font-inter font-bold text-[56px] leading-[1] text-[#1F2123]">
-                {billingCycle === "monthly" ? content.premiumPlan.monthlyPrice : content.premiumPlan.monthlyPrice}
+                {billingCycle === "monthly" ? content.premiumPlan.monthlyPrice : (content.premiumPlan.yearlyPriceBig || "₹2,999")}
               </span>
               <span className="font-sans font-medium text-[16px] text-[#7D7F82] mb-2">
                 {billingCycle === "monthly" ? content.premiumPlan.pricePeriod : "/year"}
