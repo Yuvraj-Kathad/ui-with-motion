@@ -37,6 +37,11 @@ export default function AdminSidebar() {
       label: "Components",
       href: "/admin/components",
       icon: <LayoutGrid className="w-5 h-5" />,
+    },
+    {
+      label: "Price edit",
+      href: "/admin/payment",
+      icon: null,
     }
   ];
 
