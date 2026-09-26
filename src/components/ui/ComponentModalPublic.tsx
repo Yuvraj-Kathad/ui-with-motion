@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { X, Check, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { componentRegistry } from "@/lib/registry/components";
+
 export type ComponentItem = {
   id: string;
   title: string;
   status: string;
-  htmlCode: string;
-  cssCode: string;
-  nextjsCode: string;
+  registry_id: string;
+  tags?: string[];
 };
 
 export interface ComponentModalPublicProps {
@@ -25,23 +26,9 @@ export function ComponentModalPublic({
   const [activeTab, setActiveTab] = useState<"customisation" | "code">("customisation");
   const [copied, setCopied] = useState<string | false>(false);
 
-  const getPreviewHtml = () => {
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          ::-webkit-scrollbar { display: none; }
-          * { -ms-overflow-style: none; scrollbar-width: none; }
-          ${component.cssCode}
-        </style>
-      </head>
-      <body style="margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background-color: transparent;">
-        ${component.htmlCode}
-      </body>
-      </html>
-    `;
-  };
+  const registryEntry = componentRegistry[component.registry_id];
+  const snippets = registryEntry?.snippets || { html: "", css: "", nextjs: "" };
+
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -71,11 +58,12 @@ export function ComponentModalPublic({
             >
               {/* Left Side: Preview Area */}
               <div className="bg-[#FBFCFD] border border-[#B7BABD] rounded-[28px] w-full md:w-[572px] h-full shrink-0 relative flex items-center justify-center overflow-hidden">
-                <iframe 
-                  srcDoc={getPreviewHtml()}
-                  className="absolute inset-0 w-full h-full border-none pointer-events-auto scale-110 transform transition-transform"
-                  sandbox="allow-scripts allow-same-origin"
-                />
+                <div className="w-full h-full flex items-center justify-center transform scale-110">
+                  {(() => {
+                    const RegistryComponent = registryEntry?.component;
+                    return RegistryComponent ? <RegistryComponent /> : null;
+                  })()}
+                </div>
               </div>
 
               {/* Right Side: Panel Area */}
@@ -207,7 +195,7 @@ export function ComponentModalPublic({
                         Code
                       </h3>
 
-                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(component.nextjsCode, "nextjs")}>
+                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.nextjs, "nextjs")}>
                         <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Next.js Code</span>
                         <div className="flex items-center gap-[10px]">
                           <span className="text-[#B0B0B0] text-[17.28px]">|</span>
@@ -215,7 +203,7 @@ export function ComponentModalPublic({
                         </div>
                       </div>
 
-                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(component.htmlCode + "\n\n<style>\n" + component.cssCode + "\n</style>", "html")}>
+                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.html + "\n\n<style>\n" + snippets.css + "\n</style>", "html")}>
                         <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">HTML-CSS Code</span>
                         <div className="flex items-center gap-[10px]">
                           <span className="text-[#B0B0B0] text-[17.28px]">|</span>

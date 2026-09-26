@@ -1,8 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { ComponentCard } from "@/components/ui/ComponentCard";
-import { ChevronDown, Heart, Star, Send, ArrowRight } from "lucide-react";
+import { ChevronDown, Check, X, Play, Bookmark, Square } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ComponentModalPublic, ComponentItem } from "@/components/ui/ComponentModalPublic";
+import { getPublishedComponents } from "@/lib/admin/components/queries";
+import { componentRegistry } from "@/lib/registry/components";
 
 const FigmaIcon = ({ size = 24, className = "" }) => (
   <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,11 +18,6 @@ const FigmaIcon = ({ size = 24, className = "" }) => (
     <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z" />
   </svg>
 );
-
-import { useSearchParams } from "next/navigation";
-import { Suspense, useState, useRef, useEffect } from "react";
-import { Check, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 type FilterDropdownProps = {
   label: string;
@@ -89,18 +89,6 @@ function FilterDropdown({ label, options, selected, onChange }: FilterDropdownPr
   );
 }
 
-import { ComponentModalPublic } from "@/components/ui/ComponentModalPublic";
-import { Play, Bookmark, Square } from "lucide-react";
-
-type ComponentItem = {
-  id: string;
-  title: string;
-  status: string;
-  htmlCode: string;
-  cssCode: string;
-  nextjsCode: string;
-};
-
 function ComponentsContent() {
   const searchParams = useSearchParams();
   const search = searchParams?.get("search")?.toLowerCase() || "";
@@ -118,11 +106,12 @@ function ComponentsContent() {
   const [savedIds, setSavedIds] = useState<string[]>([]);
 
   useEffect(() => {
-    const loadComponents = () => {
-      const saved = localStorage.getItem("ui_motion_components");
-      if (saved) {
-        const all = JSON.parse(saved) as ComponentItem[];
-        setComponents(all.filter(c => c.status === "Publish"));
+    const loadComponents = async () => {
+      try {
+        const published = await getPublishedComponents();
+        setComponents(published || []);
+      } catch (e) {
+        console.error(e);
       }
       
       const bookmarks = JSON.parse(localStorage.getItem("saved_components") || "[]");
@@ -132,31 +121,12 @@ function ComponentsContent() {
     };
 
     loadComponents();
-    window.addEventListener("components_updated", loadComponents);
     window.addEventListener("saved_components_changed", loadComponents);
     return () => {
-      window.removeEventListener("components_updated", loadComponents);
       window.removeEventListener("saved_components_changed", loadComponents);
     }
   }, []);
 
-  const getPreviewHtml = (comp: ComponentItem) => {
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          ::-webkit-scrollbar { display: none; }
-          * { -ms-overflow-style: none; scrollbar-width: none; }
-          ${comp.cssCode}
-        </style>
-      </head>
-      <body style="margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background-color: transparent;">
-        ${comp.htmlCode}
-      </body>
-      </html>
-    `;
-  };
 
   const filteredComponents = components.filter(comp => {
     if (!search) return true;
@@ -246,12 +216,12 @@ function ComponentsContent() {
                   
                   {/* Component Display Area */}
                   <div className="h-[151px] w-full relative flex items-center justify-center shrink-0 overflow-hidden bg-transparent pointer-events-none">
-                    <iframe 
-                      srcDoc={getPreviewHtml(comp)}
-                      className="absolute inset-0 w-full h-full border-none pointer-events-none"
-                      tabIndex={-1}
-                      sandbox="allow-scripts allow-same-origin"
-                    />
+                    <div className="absolute inset-0 w-full h-full flex items-center justify-center transform scale-75">
+                      {(() => {
+                        const RegistryComponent = componentRegistry[comp.registry_id]?.component;
+                        return RegistryComponent ? <RegistryComponent /> : null;
+                      })()}
+                    </div>
                   </div>
                   
                   {/* Footer Area */}
@@ -260,25 +230,13 @@ function ComponentsContent() {
                       {comp.title}
                     </h3>
                     <div className="flex gap-[4px] h-[24px] items-center">
-                      {comp.htmlCode && (
-                        <div className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] px-2 rounded-[4px] overflow-hidden">
+                      {(comp.tags || []).map((tag: string, i: number) => (
+                        <div key={i} className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] px-2 rounded-[4px] overflow-hidden">
                           <span className="font-sans font-normal text-[13px] leading-[1.2] text-[#7D7F82] whitespace-nowrap">
-                            Html & css
+                            {tag}
                           </span>
                         </div>
-                      )}
-                      {comp.nextjsCode && (
-                        <div className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] px-2 rounded-[4px] overflow-hidden">
-                          <span className="font-sans font-normal text-[13px] leading-[1.2] text-[#7D7F82] whitespace-nowrap">
-                            Next js
-                          </span>
-                        </div>
-                      )}
-                      <div className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] px-2 rounded-[4px] overflow-hidden">
-                        <span className="font-sans font-normal text-[12px] leading-[1.2] text-[#7D7F82] whitespace-nowrap">
-                          Figma
-                        </span>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>

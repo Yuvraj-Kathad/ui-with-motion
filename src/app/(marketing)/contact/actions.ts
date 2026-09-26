@@ -1,12 +1,7 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 const resend = new Resend(process.env.RESEND_API_KEY || "");
 
 export async function submitContactForm(formData: FormData) {
@@ -16,50 +11,63 @@ export async function submitContactForm(formData: FormData) {
     const subject = formData.get("subject") as string;
     const message = formData.get("message") as string;
 
-    if (!fullName || !emailAddress || !subject || !message) {
-      return { success: false, error: "All fields are required" };
+    // 1. Strict Server-Side Validation
+    if (!fullName || typeof fullName !== "string" || fullName.trim().length < 2 || fullName.length > 100) {
+      return { success: false, error: "Please provide a valid full name." };
     }
 
-    // 1. Store in Supabase
-    if (supabaseUrl && supabaseKey) {
-      const { error: dbError } = await supabase
-        .from("contact_submissions")
-        .insert([{ full_name: fullName, email: emailAddress, subject, message }]);
+    if (!emailAddress || typeof emailAddress !== "string" || emailAddress.length > 254) {
+      return { success: false, error: "Please provide a valid email address." };
+    }
 
-      if (dbError) {
-        console.error("Supabase insert error:", dbError);
-        return { success: false, error: "Failed to store submission in database: " + dbError.message };
-      }
-    } else {
-      console.warn("Supabase credentials not found. Skipping database insert.");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailAddress)) {
+      return { success: false, error: "Please provide a valid email address." };
+    }
+
+    if (!subject || typeof subject !== "string" || subject.trim().length < 2 || subject.length > 200) {
+      return { success: false, error: "Please provide a valid subject." };
+    }
+
+    if (!message || typeof message !== "string" || message.trim().length < 10 || message.length > 5000) {
+      return { success: false, error: "Message must be between 10 and 5000 characters." };
     }
 
     // 2. Send emails via Resend
-    if (process.env.RESEND_API_KEY) {
-      // Email to owner
-      await resend.emails.send({
-        from: "UX With Motion <onboarding@resend.dev>",
-        to: "gfxwithsahil@gmail.com",
-        subject: `New Contact Form Submission: ${subject}`,
-        text: `Name: ${fullName}\nEmail: ${emailAddress}\nSubject: ${subject}\nMessage:\n${message}`,
-      });
+    if (!process.env.RESEND_API_KEY) {
+      console.warn("RESEND_API_KEY is not set. Contact form submission skipped.");
+      return { success: false, error: "Email service is currently unavailable. Please try again later." };
+    }
 
-      // Confirmation email to user
-      // NOTE: Resend test API keys can only send emails to the verified email address (owner).
-      // For this to actually reach the user, you need a verified domain in Resend.
-      await resend.emails.send({
-        from: "UX With Motion <onboarding@resend.dev>",
-        to: emailAddress,
-        subject: "Thank you for reaching out to us",
-        text: `Hi ${fullName},\n\nThank you for reaching out to us, we will get back to you soon.\n\nBest,\nUX With Motion Team`,
-      });
-    } else {
-      console.warn("RESEND_API_KEY is not set. Emails were not sent.");
+    const { error: sendError } = await resend.emails.send({
+      from: "UX With Motion <onboarding@resend.dev>",
+      to: "gfxwithsahil@gmail.com",
+      replyTo: emailAddress,
+      subject: `New Contact Form Submission: ${subject.trim()}`,
+      text: `Name: ${fullName.trim()}\nEmail: ${emailAddress.trim()}\nSubject: ${subject.trim()}\nMessage:\n${message.trim()}`,
+    });
+
+    if (sendError) {
+      console.error("Resend error:", sendError);
+      return { success: false, error: "Failed to send message. Please try again later." };
+    }
+
+    // Confirmation email to user
+    const { error: userError } = await resend.emails.send({
+      from: "UX With Motion <onboarding@resend.dev>",
+      to: emailAddress.trim(),
+      subject: "Thank you for reaching out to us",
+      text: `Hi ${fullName.trim()},\n\nThank you for reaching out to us, we will get back to you soon.\n\nBest,\nUX With Motion Team`,
+    });
+
+    if (userError) {
+       console.error("Resend user confirmation error:", userError);
+       // We still return success to the user since the primary message was delivered to the admin
     }
 
     return { success: true };
   } catch (error: any) {
-    console.error("Action error:", error);
-    return { success: false, error: error.message || "An unexpected error occurred" };
+    console.error("Contact form error:", error);
+    return { success: false, error: "An unexpected error occurred. Please try again later." };
   }
 }
