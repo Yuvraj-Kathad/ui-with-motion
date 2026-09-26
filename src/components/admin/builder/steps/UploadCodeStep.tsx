@@ -8,16 +8,25 @@ export function UploadCodeStep() {
   const { state, updateState } = useBuilder();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [activeTab, setActiveTab] = useState<"react" | "html" | "css">("react");
+  const [isRegistryIdDirty, setIsRegistryIdDirty] = useState(false);
 
-  // Auto-generate registry ID from title if it hasn't been manually edited
-  // A robust implementation would track if it was manually touched, but for V1:
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
-    const generatedId = newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    updateState({ 
-      title: newTitle,
-      registry_id: generatedId // Basic sync for V1
-    });
+    
+    if (!isRegistryIdDirty) {
+      const generatedId = newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      updateState({ 
+        title: newTitle,
+        registry_id: generatedId
+      });
+    } else {
+      updateState({ title: newTitle });
+    }
+  };
+
+  const handleRegistryIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsRegistryIdDirty(true);
+    updateState({ registry_id: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') });
   };
 
   const handleSnippetChange = (type: "react" | "html" | "css", value: string) => {
@@ -148,7 +157,7 @@ export function UploadCodeStep() {
               <input
                 type="text"
                 value={state.registry_id}
-                onChange={(e) => updateState({ registry_id: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
+                onChange={handleRegistryIdChange}
                 placeholder="e.g., my-component"
                 className="w-full h-10 px-3 rounded-lg border border-[#E9EAEB] font-mono text-sm focus:border-[#111111] focus:ring-1 focus:ring-[#111111] outline-none transition-shadow bg-white"
               />
