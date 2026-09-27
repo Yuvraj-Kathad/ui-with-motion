@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutGrid, LogOut } from "lucide-react";
+import { LayoutGrid, LogOut, CreditCard } from "lucide-react";
 import { createClient } from "@/lib/supabase/browser";
 
 export default function AdminSidebar() {
@@ -36,12 +36,12 @@ export default function AdminSidebar() {
     {
       label: "Components",
       href: "/admin/components",
-      icon: <LayoutGrid className="w-5 h-5" />,
+      icon: <LayoutGrid className="w-[24px] h-[24px]" />,
     },
     {
       label: "Price edit",
       href: "/admin/payment",
-      icon: null,
+      icon: <CreditCard className="w-[24px] h-[24px]" />,
     }
   ];
 
@@ -74,29 +74,18 @@ export default function AdminSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-start justify-center overflow-clip px-[24px] py-[12px] relative shrink-0 w-full transition-colors ${
+                className={`flex items-center gap-[12px] px-[24px] py-[12px] w-full transition-colors ${
                   isActive ? "bg-[#ffcea2]" : "bg-white hover:bg-[#ffcea2]/30"
                 }`}
               >
-                <div className="flex gap-[12px] items-center justify-center relative shrink-0">
-                  <div className="relative shrink-0 size-[24px]">
-                    <div className="absolute inset-0 overflow-clip">
-                      <div className="absolute inset-[0.03%_0] flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`size-full transition-colors ${isActive ? 'text-[#c05d00]' : 'text-[#1f2123]'}`}>
-                          <path d="M12 1.5L16.5 6L12 10.5L7.5 6L12 1.5Z" fill="currentColor" />
-                          <path d="M12 13.5L16.5 18L12 22.5L7.5 18L12 13.5Z" fill="currentColor" />
-                          <path d="M22.5 12L18 16.5L13.5 12L18 7.5L22.5 12Z" fill="currentColor" />
-                          <path d="M10.5 12L6 16.5L1.5 12L6 7.5L10.5 12Z" fill="currentColor" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <p className={`[word-break:break-word] font-sans font-medium leading-[1.2] relative shrink-0 text-[16px] text-center whitespace-nowrap ${
-                    isActive ? "text-[#c05d00]" : "text-[#1f2123]"
-                  }`}>
-                    {item.label}
-                  </p>
+                <div className={`flex items-center justify-center shrink-0 ${isActive ? 'text-[#c05d00]' : 'text-[#1f2123]'}`}>
+                  {item.icon}
                 </div>
+                <p className={`font-sans font-medium text-[16px] leading-[1.2] whitespace-nowrap ${
+                  isActive ? "text-[#c05d00]" : "text-[#1f2123]"
+                }`}>
+                  {item.label}
+                </p>
               </Link>
             );
           })}

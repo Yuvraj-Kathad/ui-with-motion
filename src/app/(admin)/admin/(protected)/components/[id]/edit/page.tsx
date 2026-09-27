@@ -64,7 +64,7 @@ export default function EditComponentPage() {
         >
           <ChevronLeft className="w-6 h-6" />
         </Link>
-        <h1 className="text-2xl font-bold text-[#111111]">Update {initialState.title || "Component"}</h1>
+        <h1 className="text-[16px] font-bold text-[#111111]">Update {initialState.title || "Component"}</h1>
       </header>
 
       {/* Main Content Area */}

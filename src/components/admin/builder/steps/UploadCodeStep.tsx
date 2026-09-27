@@ -2,7 +2,171 @@
 
 import React, { useState } from "react";
 import { useBuilder } from "../BuilderContext";
-import { Code, LayoutTemplate, Box, ChevronDown } from "lucide-react";
+import { Code, LayoutTemplate, Box, ChevronDown, ChevronRight, Info } from "lucide-react";
+import Editor from "@monaco-editor/react";
+import { LivePreviewIframe } from "../../preview/LivePreviewIframe";
+
+// ─── Code Format Suggestion Panels ──────────────────────────────────────────
+
+function ReactFormatGuide() {
+  const [open, setOpen] = useState(false);
+  const example = `"use client";
+
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+// ✅ Allowed: framer-motion, lucide-react, tailwindcss
+
+export default function MyButton() {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="bg-black text-white px-6 py-3
+        rounded-full font-medium text-sm
+        hover:bg-gray-800 transition-colors"
+    >
+      Click me
+    </motion.button>
+  );
+}`;
+
+  return (
+    <div className="rounded-xl border border-blue-200 bg-blue-50 overflow-hidden text-left">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-blue-800 hover:bg-blue-100 transition-colors"
+      >
+        <Info className="w-4 h-4 shrink-0 text-blue-500" />
+        <span className="flex-1 text-left">Code format guide — React / Next.js</span>
+        {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4 border-t border-blue-200 pt-3 flex flex-col gap-3">
+          <p className="text-xs text-blue-700 font-medium">Paste a self-contained React component following this template:</p>
+
+          <pre className="text-[11.5px] bg-[#1e1e1e] text-[#d4d4d4] rounded-lg p-4 overflow-x-auto whitespace-pre leading-relaxed font-mono">
+            {example}
+          </pre>
+
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs font-semibold text-blue-800 mb-0.5">Rules:</p>
+            {[
+              ["✅", "Start with", '"use client";'],
+              ["✅", "Export as", "export default function ComponentName()"],
+              ["✅", "Allowed imports:", "framer-motion, lucide-react, react"],
+              ["✅", "Style with", "Tailwind CSS classes"],
+              ["❌", "No external API calls or", "fetch / axios"],
+              ["❌", "No imports from other local files", ""],
+              ["❌", "No", "next/image, next/link, next/router"],
+              ["❌", "No", "useEffect calling external endpoints"],
+            ].map(([icon, label, code], i) => (
+              <p key={i} className="text-xs text-blue-700">
+                {icon} {label}{" "}
+                {code && <code className="bg-blue-100 text-blue-800 px-1 py-0.5 rounded font-mono">{code}</code>}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HtmlCssFormatGuide() {
+  const [open, setOpen] = useState(false);
+  const htmlExample = `<button class="my-btn">
+  Click me
+</button>`;
+  const cssExample = `.my-btn {
+  background: #000;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: sans-serif;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.my-btn:hover {
+  background: #333;
+  transform: scale(1.03);
+}
+
+.my-btn:active {
+  transform: scale(0.97);
+}`;
+
+  return (
+    <div className="rounded-xl border border-green-200 bg-green-50 overflow-hidden text-left">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-green-800 hover:bg-green-100 transition-colors"
+      >
+        <Info className="w-4 h-4 shrink-0 text-green-500" />
+        <span className="flex-1 text-left">Code format guide — HTML / CSS</span>
+        {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4 border-t border-green-200 pt-3 flex flex-col gap-3">
+          <p className="text-xs text-green-700 font-medium">Two separate tabs: HTML body content + CSS styles.</p>
+
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs font-semibold text-green-800">HTML tab:</p>
+            <pre className="text-[11.5px] bg-[#1e1e1e] text-[#d4d4d4] rounded-lg p-4 overflow-x-auto whitespace-pre leading-relaxed font-mono">
+              {htmlExample}
+            </pre>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs font-semibold text-green-800">CSS tab:</p>
+            <pre className="text-[11.5px] bg-[#1e1e1e] text-[#d4d4d4] rounded-lg p-4 overflow-x-auto whitespace-pre leading-relaxed font-mono">
+              {cssExample}
+            </pre>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs font-semibold text-green-800 mb-0.5">Rules:</p>
+            {[
+              ["✅", "HTML tab:", "body content only — no <html>, <head>, <body> tags"],
+              ["✅", "CSS tab:", "all styles using class selectors"],
+              ["✅", "CSS animations and transitions are allowed"],
+              ["❌", "No <style> tags in HTML", "— put all CSS in the CSS tab"],
+              ["❌", "No external CDN links", "(Google Fonts, Bootstrap, etc.)"],
+            ].map(([icon, label, desc], i) => (
+              <p key={i} className="text-xs text-green-700">
+                {icon} <span className="font-medium">{label}</span>{desc ? ` ${desc}` : ""}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Step Component ─────────────────────────────────────────────────────
+
+const MONACO_OPTIONS = {
+  minimap: { enabled: false },
+  fontSize: 13,
+  fontFamily: '"Fira Code", "Cascadia Code", "Consolas", monospace',
+  fontLigatures: true,
+  wordWrap: "on" as const,
+  scrollBeyondLastLine: false,
+  padding: { top: 14, bottom: 14 },
+  tabSize: 2,
+  lineNumbers: "on" as const,
+  renderLineHighlight: "gutter" as const,
+  scrollbar: { verticalScrollbarSize: 6, horizontalScrollbarSize: 6 },
+  quickSuggestions: true,
+  formatOnPaste: true,
+  automaticLayout: true,
+};
 
 export function UploadCodeStep() {
   const { state, updateState } = useBuilder();
@@ -12,13 +176,9 @@ export function UploadCodeStep() {
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
-    
     if (!isRegistryIdDirty) {
-      const generatedId = newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      updateState({ 
-        title: newTitle,
-        registry_id: generatedId
-      });
+      const generatedId = newTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      updateState({ title: newTitle, registry_id: generatedId });
     } else {
       updateState({ title: newTitle });
     }
@@ -26,25 +186,35 @@ export function UploadCodeStep() {
 
   const handleRegistryIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsRegistryIdDirty(true);
-    updateState({ registry_id: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') });
+    updateState({ registry_id: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") });
   };
 
-  const handleSnippetChange = (type: "react" | "html" | "css", value: string) => {
-    updateState({
-      snippets: {
-        ...state.snippets,
-        [type]: value
-      }
-    });
+  const handleSnippetChange = (type: "react" | "html" | "css", value: string | undefined) => {
+    updateState({ snippets: { ...state.snippets, [type]: value || "" } });
   };
+
+  const editorLanguage = activeTab === "react" ? "typescript" : activeTab === "css" ? "css" : "html";
+
+  const hasCode =
+    state.source_type === "react"
+      ? !!state.snippets.react?.trim()
+      : state.source_type === "html_css"
+      ? !!(state.snippets.html?.trim() || state.snippets.css?.trim())
+      : !!(state.snippets.react?.trim() || state.snippets.html?.trim() || state.snippets.css?.trim());
+
+  const previewKey = `${state.snippets.react}||${state.snippets.html}||${state.snippets.css}`;
 
   return (
-    <div className="flex-1 flex gap-8 p-8 overflow-hidden h-full">
-      {/* Configuration Panel */}
-      <div className="flex-1 max-w-2xl bg-white border border-[#E9EAEB] rounded-2xl p-6 overflow-y-auto flex flex-col gap-6">
+    <div className="flex-1 flex gap-6 p-6 overflow-hidden h-full">
+
+      {/* ── LEFT: Config + Code Editor ── */}
+      <div className="flex-1 max-w-[520px] bg-white border border-[#E9EAEB] rounded-2xl overflow-y-auto flex flex-col gap-5 p-6">
+
+
+        {/* Header */}
         <div>
           <h2 className="text-xl font-bold text-[#111111] mb-1">Component Details</h2>
-          <p className="text-sm text-[#888888]">Define the core information and upload the source code.</p>
+          <p className="text-sm text-[#888888]">Define info and paste your source code.</p>
         </div>
 
         {/* Basic Info */}
@@ -56,17 +226,16 @@ export function UploadCodeStep() {
               value={state.title}
               onChange={handleTitleChange}
               placeholder="e.g., Delete Button"
-              className="w-full h-10 px-3 rounded-lg border border-[#E9EAEB] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] outline-none transition-shadow text-sm"
+              className="w-full h-10 px-3 rounded-lg border border-[#E9EAEB] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] outline-none text-sm"
             />
           </div>
-          
           <div>
             <label className="block text-sm font-medium text-[#111111] mb-1.5">Description</label>
             <textarea
               value={state.description}
               onChange={(e) => updateState({ description: e.target.value })}
               placeholder="Briefly describe what this component does..."
-              className="w-full h-20 p-3 rounded-lg border border-[#E9EAEB] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] outline-none transition-shadow text-sm resize-none"
+              className="w-full h-20 p-3 rounded-lg border border-[#E9EAEB] focus:border-[#111111] outline-none text-sm resize-none"
             />
           </div>
         </div>
@@ -75,134 +244,148 @@ export function UploadCodeStep() {
         <div className="pt-4 border-t border-[#E9EAEB]">
           <label className="block text-sm font-medium text-[#111111] mb-3">Source Type</label>
           <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={() => updateState({ source_type: "react" })}
-              className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${state.source_type === "react" ? "border-[#111111] bg-[#fafafa]" : "border-[#E9EAEB] hover:border-[#d0d0d0]"}`}
-            >
-              <Box className={`w-6 h-6 ${state.source_type === "react" ? "text-[#111111]" : "text-[#888888]"}`} />
-              <span className={`text-sm font-medium ${state.source_type === "react" ? "text-[#111111]" : "text-[#888888]"}`}>React / Next.js</span>
-            </button>
-            <button
-              onClick={() => updateState({ source_type: "html_css" })}
-              className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${state.source_type === "html_css" ? "border-[#111111] bg-[#fafafa]" : "border-[#E9EAEB] hover:border-[#d0d0d0]"}`}
-            >
-              <LayoutTemplate className={`w-6 h-6 ${state.source_type === "html_css" ? "text-[#111111]" : "text-[#888888]"}`} />
-              <span className={`text-sm font-medium ${state.source_type === "html_css" ? "text-[#111111]" : "text-[#888888]"}`}>HTML / CSS</span>
-            </button>
-            <button
-              onClick={() => updateState({ source_type: "both" })}
-              className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${state.source_type === "both" ? "border-[#111111] bg-[#fafafa]" : "border-[#E9EAEB] hover:border-[#d0d0d0]"}`}
-            >
-              <Code className={`w-6 h-6 ${state.source_type === "both" ? "text-[#111111]" : "text-[#888888]"}`} />
-              <span className={`text-sm font-medium ${state.source_type === "both" ? "text-[#111111]" : "text-[#888888]"}`}>Both</span>
-            </button>
+            {[
+              { key: "react", label: "React / Next.js", icon: Box, tab: "react" },
+              { key: "html_css", label: "HTML / CSS", icon: LayoutTemplate, tab: "html" },
+              { key: "both", label: "Both", icon: Code, tab: "react" },
+            ].map(({ key, label, icon: Icon, tab }) => (
+              <button
+                key={key}
+                onClick={() => { updateState({ source_type: key as any }); setActiveTab(tab as any); }}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
+                  state.source_type === key ? "border-[#111111] bg-[#fafafa]" : "border-[#E9EAEB] hover:border-[#d0d0d0]"
+                }`}
+              >
+                <Icon className={`w-6 h-6 ${state.source_type === key ? "text-[#111111]" : "text-[#888888]"}`} />
+                <span className={`text-xs font-medium text-center ${state.source_type === key ? "text-[#111111]" : "text-[#888888]"}`}>{label}</span>
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Code Editor */}
-        <div className="pt-4 border-t border-[#E9EAEB] flex flex-col flex-1">
-          <div className="flex items-center gap-2 mb-3">
-            <label className="block text-sm font-medium text-[#111111]">Source Code</label>
-          </div>
-          <div className="flex gap-1 mb-2">
+        {/* Format Guides */}
+        <div className="flex flex-col gap-2">
+          {(state.source_type === "react" || state.source_type === "both") && <ReactFormatGuide />}
+          {(state.source_type === "html_css" || state.source_type === "both") && <HtmlCssFormatGuide />}
+        </div>
+
+        {/* Code Editor — Monaco (VS Code) */}
+        <div className="pt-4 border-t border-[#E9EAEB] flex flex-col gap-2">
+          <label className="block text-sm font-medium text-[#111111]">Source Code</label>
+
+          {/* Tab pills */}
+          <div className="flex gap-1">
             {(state.source_type === "react" || state.source_type === "both") && (
-              <button 
+              <button
                 onClick={() => setActiveTab("react")}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md ${activeTab === "react" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  activeTab === "react" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"
+                }`}
               >
                 React
               </button>
             )}
             {(state.source_type === "html_css" || state.source_type === "both") && (
               <>
-                <button 
+                <button
                   onClick={() => setActiveTab("html")}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md ${activeTab === "html" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"}`}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    activeTab === "html" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"
+                  }`}
                 >
                   HTML
                 </button>
-                <button 
+                <button
                   onClick={() => setActiveTab("css")}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md ${activeTab === "css" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"}`}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    activeTab === "css" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"
+                  }`}
                 >
                   CSS
                 </button>
               </>
             )}
           </div>
-          
-          <textarea
-            value={state.snippets[activeTab] || ""}
-            onChange={(e) => handleSnippetChange(activeTab, e.target.value)}
-            placeholder={`Paste your ${activeTab.toUpperCase()} code here...`}
-            className="w-full flex-1 min-h-[250px] p-4 rounded-xl border border-[#E9EAEB] bg-[#FAFAFA] font-mono text-[13px] text-[#333333] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] outline-none transition-shadow resize-none"
-            spellCheck={false}
-          />
+
+          {/* Monaco Editor — VS Code dark theme */}
+          <div className="rounded-xl overflow-hidden" style={{ height: 300, border: "1px solid #3c3c3c" }}>
+            <Editor
+              height={300}
+              language={editorLanguage}
+              theme="vs-dark"
+              value={state.snippets[activeTab] || ""}
+              onChange={(value) => handleSnippetChange(activeTab, value)}
+              beforeMount={(monaco) => {
+                monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+                  noSemanticValidation: true,
+                  noSyntaxValidation: false,
+                });
+                monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+                  target: monaco.languages.typescript.ScriptTarget.ES2020,
+                  allowNonTsExtensions: true,
+                  jsx: monaco.languages.typescript.JsxEmit.React,
+                  allowJs: true,
+                });
+              }}
+              options={MONACO_OPTIONS}
+            />
+          </div>
         </div>
 
         {/* Advanced Settings */}
         <div className="pt-4 border-t border-[#E9EAEB]">
-          <button 
+          <button
             onClick={() => setShowAdvanced(!showAdvanced)}
             className="flex items-center gap-2 text-sm font-medium text-[#888888] hover:text-[#111111] transition-colors"
           >
             <ChevronDown className={`w-4 h-4 transition-transform ${showAdvanced ? "rotate-180" : ""}`} />
             Advanced Settings
           </button>
-          
           {showAdvanced && (
             <div className="mt-4 p-4 rounded-xl bg-[#F6F7F8] border border-[#E9EAEB]">
               <label className="block text-sm font-medium text-[#111111] mb-1.5">Registry ID</label>
-              <p className="text-xs text-[#888888] mb-3">The unique technical identifier used to map this record to the codebase registry.</p>
+              <p className="text-xs text-[#888888] mb-3">Unique technical ID used in the codebase registry.</p>
               <input
                 type="text"
                 value={state.registry_id}
                 onChange={handleRegistryIdChange}
                 placeholder="e.g., my-component"
-                className="w-full h-10 px-3 rounded-lg border border-[#E9EAEB] font-mono text-sm focus:border-[#111111] focus:ring-1 focus:ring-[#111111] outline-none transition-shadow bg-white"
+                className="w-full h-10 px-3 rounded-lg border border-[#E9EAEB] font-mono text-sm focus:border-[#111111] outline-none bg-white"
               />
             </div>
           )}
         </div>
       </div>
 
-      {/* Preview Panel */}
+      {/* ── RIGHT: Live Preview ── */}
       <div className="flex-1 bg-white border border-[#E9EAEB] rounded-2xl p-6 flex flex-col">
-        <h2 className="text-xl font-bold text-[#111111] mb-1">Safe Preview</h2>
-        <p className="text-sm text-[#888888] mb-6">Visual representation of your uploaded code.</p>
-        
-        <div className="flex-1 bg-[#F9F9F9] rounded-xl border border-[#E9EAEB] overflow-hidden flex items-center justify-center relative p-8">
-          {state.source_type === "react" ? (
-            <div className="text-center max-w-sm px-6 py-8 bg-white border border-[#E9EAEB] rounded-xl shadow-sm">
-              <Box className="w-8 h-8 text-[#888888] mx-auto mb-3" />
-              <p className="text-sm font-medium text-[#111111] mb-1">React Preview Unavailable</p>
-              <p className="text-xs text-[#888888]">React preview becomes available when a trusted registry renderer is connected.</p>
-            </div>
-          ) : (state.snippets.html || state.snippets.css) ? (
-            <iframe 
-              srcDoc={`
-                <!DOCTYPE html>
-                <html>
-                  <head>
-                    <style>
-                      body { display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: transparent; font-family: sans-serif; }
-                      ${state.snippets.css || ""}
-                    </style>
-                  </head>
-                  <body>
-                    ${state.snippets.html || ""}
-                  </body>
-                </html>
-              `}
-              className="w-full h-full border-none bg-transparent"
-              sandbox="allow-scripts"
-              title="HTML/CSS Preview"
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-[#111111] mb-1">Live Preview</h2>
+          <p className="text-sm text-[#888888]">Updates as you paste code.</p>
+        </div>
+
+        <div className="flex-1 bg-[#F9F9F9] rounded-xl border border-[#E9EAEB] overflow-hidden relative">
+          {hasCode ? (
+            <LivePreviewIframe 
+              key={previewKey}
+              sourceType={state.source_type}
+              snippets={state.snippets}
+              className="w-full h-full border-none"
             />
           ) : (
-            <p className="text-[#888888] text-sm">Upload HTML/CSS code to see preview</p>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-8">
+              <div className="w-12 h-12 bg-white border border-[#E9EAEB] rounded-xl flex items-center justify-center shadow-sm">
+                <Code className="w-5 h-5 text-[#888888]" />
+              </div>
+              <p className="text-sm font-medium text-[#111111]">No code yet</p>
+              <p className="text-xs text-[#888888] max-w-[200px]">
+                Paste your code in the editor on the left to see a live preview here.
+              </p>
+            </div>
           )}
         </div>
       </div>
+
     </div>
   );
 }

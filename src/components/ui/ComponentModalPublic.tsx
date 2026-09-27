@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { X, Check, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
 import { componentRegistry } from "@/lib/registry/components";
+import { LivePreviewIframe } from "@/components/admin/preview/LivePreviewIframe";
+import { applyModifications } from "@/lib/admin/components/parser";
 
 export type ComponentItem = {
   id: string;
@@ -10,6 +11,9 @@ export type ComponentItem = {
   status: string;
   registry_id: string;
   tags?: string[];
+  snippets?: any;
+  source_type?: string;
+  schema_definition?: any[];
 };
 
 export interface ComponentModalPublicProps {
@@ -25,10 +29,28 @@ export function ComponentModalPublic({
 }: ComponentModalPublicProps) {
   const [activeTab, setActiveTab] = useState<"customisation" | "code">("customisation");
   const [copied, setCopied] = useState<string | false>(false);
+  const [overrides, setOverrides] = useState<Record<string, string>>({});
+  
+  // Reset overrides when a new component is opened
+  useEffect(() => {
+    setOverrides({});
+  }, [component.id]);
+
+  const liveSchema = useMemo(() => {
+    return (component.schema_definition || []).map((config: any) => ({
+      ...config,
+      defaultValue: overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue
+    }));
+  }, [component.schema_definition, overrides]);
+
+  const liveSnippets = useMemo(() => {
+    if (!component.snippets) return { html: "", css: "", react: "" };
+    return applyModifications(component.snippets, component.source_type || "react", liveSchema);
+  }, [component.snippets, component.source_type, liveSchema]);
 
   const registryEntry = componentRegistry[component.registry_id];
-  const snippets = registryEntry?.snippets || { html: "", css: "", nextjs: "" };
-
+  // Fallback to registry if DB doesn't have snippets
+  const snippets = component.snippets || registryEntry?.snippets || { html: "", css: "", nextjs: "" };
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -58,11 +80,21 @@ export function ComponentModalPublic({
             >
               {/* Left Side: Preview Area */}
               <div className="bg-[#FBFCFD] border border-[#B7BABD] rounded-[28px] w-full md:w-[572px] h-full shrink-0 relative flex items-center justify-center overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center transform scale-110">
-                  {(() => {
-                    const RegistryComponent = registryEntry?.component;
-                    return RegistryComponent ? <RegistryComponent /> : null;
-                  })()}
+                <div className="w-full h-full transform">
+                  {component.snippets ? (
+                    <LivePreviewIframe 
+                      sourceType={(component.source_type as "react" | "html_css") || "react"} 
+                      snippets={liveSnippets} 
+                      className="w-full h-full border-none"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center scale-110">
+                      {(() => {
+                        const RegistryComponent = registryEntry?.component;
+                        return RegistryComponent ? <RegistryComponent /> : null;
+                      })()}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -114,79 +146,76 @@ export function ComponentModalPublic({
                         Customisation
                       </h3>
 
-                      {/* Appearance Group */}
-                      <div className="flex flex-col gap-[16px] w-full">
-                        <h4 className="font-sans font-semibold text-[14px] text-[#7D7F82]">
-                          Appearance
-                        </h4>
-                        <div className="flex gap-[16px] w-full">
-                          <div className="flex-1 flex flex-col gap-[8px]">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[24px] w-full mt-[16px]">
+                        {(component.schema_definition || []).map((config: any) => (
+                          <div key={config.id} className="flex flex-col gap-[8px]">
                             <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
-                              Corner Radius
+                              {config.label}
                             </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
-                              <span className="font-sans text-[14px] text-[#1F2123]">24px</span>
-                            </div>
-                          </div>
-                          <div className="flex-1 flex flex-col gap-[8px]">
-                            <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
-                              Color
-                            </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
-                              <span className="font-sans text-[14px] text-[#1F2123]">#3B82F6</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                            
+                            {config.type === "Color Picker" ? (
+                              (() => {
+                                let rawVal = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
+                                let hexVal = rawVal;
+                                if (hexVal.startsWith('[')) hexVal = hexVal.slice(1, -1);
+                                if (hexVal.includes('#')) hexVal = '#' + hexVal.split('#')[1].replace(/\]/g, '');
+                                hexVal = hexVal.slice(0, 7) || "#000000";
 
-                      {/* Typography Group */}
-                      <div className="flex flex-col gap-[16px] w-full">
-                        <h4 className="font-sans font-semibold text-[14px] text-[#7D7F82]">
-                          Typography
-                        </h4>
-                        <div className="flex gap-[16px] w-full">
-                          <div className="flex-1 flex flex-col gap-[8px]">
-                            <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
-                              Font Size
-                            </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
-                              <span className="font-sans text-[14px] text-[#1F2123]">16px</span>
-                            </div>
+                                return (
+                                  <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center gap-3 focus-within:border-[#1F2123] transition-colors relative">
+                                    <div className="relative shrink-0 flex items-center">
+                                      <input
+                                        type="color"
+                                        value={hexVal.startsWith('#') ? hexVal : '#000000'}
+                                        onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                                        className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
+                                      />
+                                      <div 
+                                        className="w-[20px] h-[20px] rounded-full border border-[#D7DADC] pointer-events-none" 
+                                        style={{ backgroundColor: hexVal.startsWith('#') ? hexVal : '#000000' }} 
+                                      />
+                                    </div>
+                                    <input 
+                                      type="text"
+                                      value={rawVal}
+                                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                                      className="font-sans text-[14px] text-[#1F2123] outline-none flex-1 min-w-0 bg-transparent"
+                                    />
+                                  </div>
+                                );
+                              })()
+                            ) : config.type === "Slider" ? (
+                              (() => {
+                                let rawVal = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
+                                let numVal = parseInt(String(rawVal).replace(/[^0-9-]/g, '')) || 0;
+                                return (
+                                  <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center gap-4 focus-within:border-[#1F2123] transition-colors">
+                                    <input 
+                                      type="range"
+                                      min="0"
+                                      max="100"
+                                      value={numVal}
+                                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: `${e.target.value}px` }))}
+                                      className="flex-1 accent-[#1F2123]"
+                                    />
+                                    <span className="font-sans text-[14px] text-[#1F2123] w-[40px] text-right shrink-0">
+                                      {rawVal}
+                                    </span>
+                                  </div>
+                                );
+                              })()
+                            ) : (
+                              <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between focus-within:border-[#1F2123] transition-colors">
+                                <input 
+                                  type="text"
+                                  value={overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue}
+                                  onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                                  className="font-sans text-[14px] text-[#1F2123] outline-none flex-1 min-w-0 bg-transparent"
+                                />
+                              </div>
+                            )}
                           </div>
-                          <div className="flex-1 flex flex-col gap-[8px]">
-                            <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
-                              Theme
-                            </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
-                              <span className="font-sans text-[14px] text-[#1F2123]">Light</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Animation Group */}
-                      <div className="flex flex-col gap-[16px] w-full">
-                        <h4 className="font-sans font-semibold text-[14px] text-[#7D7F82]">
-                          Animation
-                        </h4>
-                        <div className="flex gap-[16px] w-full">
-                          <div className="flex-1 flex flex-col gap-[8px]">
-                            <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
-                              Speed
-                            </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
-                              <span className="font-sans text-[14px] text-[#1F2123]">500ms</span>
-                            </div>
-                          </div>
-                          <div className="flex-1 flex flex-col gap-[8px]">
-                            <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
-                              Type
-                            </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
-                              <span className="font-sans text-[14px] text-[#1F2123]">Ease In</span>
-                            </div>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
                   ) : (
@@ -195,7 +224,7 @@ export function ComponentModalPublic({
                         Code
                       </h3>
 
-                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.nextjs, "nextjs")}>
+                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(liveSnippets.react || snippets.nextjs, "nextjs")}>
                         <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Next.js Code</span>
                         <div className="flex items-center gap-[10px]">
                           <span className="text-[#B0B0B0] text-[17.28px]">|</span>
@@ -203,7 +232,7 @@ export function ComponentModalPublic({
                         </div>
                       </div>
 
-                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.html + "\n\n<style>\n" + snippets.css + "\n</style>", "html")}>
+                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard((liveSnippets.html || snippets.html) + "\n\n<style>\n" + (liveSnippets.css || snippets.css) + "\n</style>", "html")}>
                         <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">HTML-CSS Code</span>
                         <div className="flex items-center gap-[10px]">
                           <span className="text-[#B0B0B0] text-[17.28px]">|</span>

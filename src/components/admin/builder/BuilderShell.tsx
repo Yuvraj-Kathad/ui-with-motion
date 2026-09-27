@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { useBuilder } from "./BuilderContext";
 import { StepIndicator } from "./StepIndicator";
 import { UploadCodeStep } from "./steps/UploadCodeStep";
+import { DetectElementsStep } from "./steps/DetectElementsStep";
+import { ReviewStep } from "./steps/ReviewStep";
+import { PublishStep } from "./steps/PublishStep";
 import { createComponent, updateComponent } from "@/lib/admin/components/mutations";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -75,8 +78,11 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
       case 1:
         return <UploadCodeStep />;
       case 2:
+        return <DetectElementsStep />;
       case 3:
+        return <ReviewStep />;
       case 4:
+        return <PublishStep />;
       case 5:
         return (
           <div className="flex-1 flex items-center justify-center p-8 overflow-hidden h-full">
@@ -116,19 +122,28 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
           <button
             onClick={() => handleSaveDraft(false)}
             disabled={isSaving}
-            className="px-6 py-2.5 rounded-lg border border-[#E9EAEB] text-[#111111] font-medium text-sm hover:bg-gray-50 disabled:opacity-50 transition-colors flex items-center gap-2"
+            className="px-6 py-2.5 rounded-lg border border-[#E9EAEB] text-[#1F2123] font-semibold text-sm hover:bg-gray-50 disabled:opacity-50 transition-colors flex items-center gap-2"
           >
             {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Draft"}
           </button>
         </div>
         
-        <button
-          onClick={() => handleSaveDraft(true)}
-          disabled={isSaving || state.currentStep > 1}
-          className="px-6 py-2.5 rounded-lg bg-[#111111] text-white font-medium text-sm hover:bg-black/90 disabled:opacity-50 transition-colors flex items-center gap-2"
-        >
-          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save & Continue"}
-        </button>
+        {state.currentStep < 4 ? (
+          <button
+            onClick={() => handleSaveDraft(true)}
+            disabled={isSaving}
+            className="px-6 py-2.5 rounded-lg bg-[#1F2123] text-white font-semibold text-sm hover:bg-[#333537] disabled:opacity-50 transition-colors flex items-center gap-2"
+          >
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save & Continue"}
+          </button>
+        ) : (
+          <button
+            disabled
+            className="px-6 py-2.5 rounded-lg bg-[#EEF1F4] text-[#626467] font-semibold text-sm transition-colors flex items-center gap-2 cursor-not-allowed"
+          >
+            Almost done
+          </button>
+        )}
       </div>
     </div>
   );

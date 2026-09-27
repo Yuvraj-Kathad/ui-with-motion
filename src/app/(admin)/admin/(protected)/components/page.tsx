@@ -7,6 +7,7 @@ import { getAdminComponents } from "@/lib/admin/components/queries";
 import { archiveComponent } from "@/lib/admin/components/mutations";
 import { componentRegistry } from "@/lib/registry/components";
 import { ComponentCard } from "@/components/ui/ComponentCard";
+import { LivePreviewIframe } from "@/components/admin/preview/LivePreviewIframe";
 
 export default function AdminComponentsPage() {
   const [components, setComponents] = useState<any[]>([]);
@@ -42,7 +43,7 @@ export default function AdminComponentsPage() {
   return (
     <div className="flex flex-col h-full bg-[#F6F7F8]">
       <header className="h-[63px] bg-white border-b border-[#E9EAEB] px-8 flex items-center justify-between shrink-0">
-        <h1 className="text-2xl font-bold text-[#111111]">Components</h1>
+        <h1 className="text-xl font-bold text-[#111111]">Components</h1>
         {components.length > 0 && (
           <Link
             href="/admin/components/create"
@@ -106,13 +107,18 @@ export default function AdminComponentsPage() {
                   </div>
                   
                   {/* Preview Area */}
-                  <div className="h-[151px] w-full bg-[#f7f9fb] relative flex items-center justify-center shrink-0 border-y border-[#e9eaeb]">
+                  <div className="h-[151px] w-full bg-[#f7f9fb] relative flex items-center justify-center shrink-0 border-y border-[#e9eaeb] overflow-hidden">
                     {RegisteredComponent ? (
                       <ComponentCard id={comp.id} title={comp.title} tags={comp.tags?.map((t: string) => ({label: t}))}>
                         <RegisteredComponent />
                       </ComponentCard>
                     ) : (
-                      <p className="text-gray-500">Unregistered Component: {comp.registry_id}</p>
+                      <div className="w-full h-full pointer-events-none">
+                        <LivePreviewIframe 
+                          sourceType={comp.source_type} 
+                          snippets={comp.snippets || {}} 
+                        />
+                      </div>
                     )}
                   </div>
                   
