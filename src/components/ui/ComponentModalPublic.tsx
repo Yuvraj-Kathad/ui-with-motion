@@ -224,37 +224,45 @@ export function ComponentModalPublic({
                         Code
                       </h3>
 
-                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(liveSnippets.react || snippets.nextjs, "nextjs")}>
-                        <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Next.js Code</span>
-                        <div className="flex items-center gap-[10px]">
-                          <span className="text-[#B0B0B0] text-[17.28px]">|</span>
-                          {copied === "nextjs" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                      {(liveSnippets.react || snippets.react || snippets.nextjs) && (
+                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(liveSnippets.react || snippets.react || snippets.nextjs, "nextjs")}>
+                          <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Next.js Code</span>
+                          <div className="flex items-center gap-[10px]">
+                            <span className="text-[#B0B0B0] text-[17.28px]">|</span>
+                            {copied === "nextjs" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
-                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard((liveSnippets.html || snippets.html) + "\n\n<style>\n" + (liveSnippets.css || snippets.css) + "\n</style>", "html")}>
-                        <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">HTML-CSS Code</span>
-                        <div className="flex items-center gap-[10px]">
-                          <span className="text-[#B0B0B0] text-[17.28px]">|</span>
-                          {copied === "html" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                      {(liveSnippets.html || snippets.html) && (
+                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard((liveSnippets.html || snippets.html) + "\n\n<style>\n" + (liveSnippets.css || snippets.css) + "\n</style>", "html")}>
+                          <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">HTML-CSS Code</span>
+                          <div className="flex items-center gap-[10px]">
+                            <span className="text-[#B0B0B0] text-[17.28px]">|</span>
+                            {copied === "html" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                          </div>
                         </div>
-                      </div>
+                      )}
                       
-                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard("https://figma.com", "figma")}>
-                        <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Figma Link</span>
-                        <div className="flex items-center gap-[10px]">
-                          <span className="text-[#B0B0B0] text-[17.28px]">|</span>
-                          {copied === "figma" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                      {snippets.figma && (
+                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.figma, "figma")}>
+                          <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Figma Link</span>
+                          <div className="flex items-center gap-[10px]">
+                            <span className="text-[#B0B0B0] text-[17.28px]">|</span>
+                            {copied === "figma" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
-                      <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard("Prompt placeholder", "prompt")}>
-                        <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Prompt</span>
-                        <div className="flex items-center gap-[10px]">
-                          <span className="text-[#B0B0B0] text-[17.28px]">|</span>
-                          {copied === "prompt" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                      {snippets.prompt && (
+                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.prompt, "prompt")}>
+                          <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Prompt</span>
+                          <div className="flex items-center gap-[10px]">
+                            <span className="text-[#B0B0B0] text-[17.28px]">|</span>
+                            {copied === "prompt" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                     </div>
                   )}
