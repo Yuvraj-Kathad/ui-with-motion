@@ -2,21 +2,18 @@
 
 import React, { useState, useMemo } from "react";
 import { useBuilder } from "../BuilderContext";
-import { Search, BadgeCheck, ArrowLeftRight, ChevronDown, ArrowLeft } from "lucide-react";
-import { detectProperties, DetectedProperty, applyModifications } from "@/lib/admin/components/parser";
+import { Search, BadgeCheck, ArrowLeftRight, ChevronDown, ArrowLeft, Plus } from "lucide-react";
+import { detectProperties, DetectedProperty } from "@/lib/admin/components/parser";
 import Editor from "@monaco-editor/react";
 
-function getDefaultCustomizationType(prop: DetectedProperty) {
-  if (prop.category === "COLOR") return "Color Picker";
-  if (prop.property.includes("radius") || prop.property.includes("size")) return "Slider";
-  return "Text Input";
+function getDefaultCustomizationType(prop: DetectedProperty): string {
+  if (prop.variable.includes("color") || prop.variable.includes("bg") || prop.variable.includes("background")) return "color";
+  if (prop.variable.includes("radius") || prop.variable.includes("size") || prop.variable.includes("padding") || prop.variable.includes("margin") || prop.variable.includes("width") || prop.variable.includes("height")) return "number";
+  return "text";
 }
 
 function getDefaultDisplayLabel(prop: DetectedProperty) {
-  return prop.property
-    .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+  return prop.label;
 }
 
 export function DetectElementsStep() {
@@ -28,20 +25,26 @@ export function DetectElementsStep() {
     return detectProperties(state.source_type, state.snippets);
   }, [state.source_type, state.snippets]);
 
-  const filteredProperties = detectedProperties.filter((prop) =>
-    prop.property.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    prop.value.toLowerCase().includes(searchQuery.toLowerCase())
+  const unboundProperties = useMemo(() => {
+    return (state.schema_definition || []).filter((p: any) => p.source === "unbound");
+  }, [state.schema_definition]);
+
+  const allProperties = [...detectedProperties, ...unboundProperties];
+
+  const filteredProperties = allProperties.filter((prop) =>
+    prop.variable.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (prop.defaultValue || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const getConfiguredProperty = (id: string) => {
-    return state.schema_definition?.find(p => p.id === id);
+    return state.schema_definition?.find((p: any) => p.id === id);
   };
 
-  const toggleProperty = (prop: DetectedProperty) => {
+  const toggleProperty = (prop: DetectedProperty | any) => {
     const existing = getConfiguredProperty(prop.id);
     if (existing) {
       updateState({
-        schema_definition: state.schema_definition.filter(p => p.id !== prop.id)
+        schema_definition: state.schema_definition.filter((p: any) => p.id !== prop.id)
       });
     } else {
       updateState({
@@ -49,37 +52,52 @@ export function DetectElementsStep() {
           ...(state.schema_definition || []),
           {
             id: prop.id,
+            variable: prop.variable,
             property: prop.property,
             type: getDefaultCustomizationType(prop),
             label: getDefaultDisplayLabel(prop),
-            defaultValue: prop.value
+            defaultValue: prop.defaultValue,
+            source: prop.source
           }
         ]
       });
     }
   };
 
+  const addUnboundProperty = () => {
+    const id = "--custom-var-" + Date.now();
+    updateState({
+      schema_definition: [
+        ...(state.schema_definition || []),
+        {
+          id,
+          variable: id,
+          property: id,
+          type: "text",
+          label: "Custom Property",
+          defaultValue: "",
+          source: "unbound"
+        }
+      ]
+    });
+    setEditingPropertyId(id);
+  };
+
   const updateEditingProperty = (updates: any) => {
     if (!editingPropertyId) return;
     updateState({
-      schema_definition: state.schema_definition.map(p => 
+      schema_definition: state.schema_definition.map((p: any) => 
         p.id === editingPropertyId ? { ...p, ...updates } : p
       )
     });
   };
 
-  const editingPropertyRaw = detectedProperties.find(p => p.id === editingPropertyId);
+  const editingPropertyRaw = allProperties.find(p => p.id === editingPropertyId);
   const editingPropertyConfigured = getConfiguredProperty(editingPropertyId || "");
 
-  // Apply real-time modifications so the editor reflects changes
-  const liveSnippets = useMemo(() => {
-    return applyModifications(state.snippets, state.source_type, state.schema_definition || []);
-  }, [state.snippets, state.source_type, state.schema_definition]);
-
-  // The code to display on the left side
   const displayCode = state.source_type === "react" 
-    ? liveSnippets.react 
-    : liveSnippets.html + "\n\n<style>\n" + liveSnippets.css + "\n</style>";
+    ? state.snippets.react 
+    : (state.snippets.html || "") + "\n\n<style>\n" + (state.snippets.css || "") + "\n</style>";
 
   return (
     <div className="flex-1 flex items-start gap-6 p-8 min-h-0 overflow-hidden w-full">
@@ -115,15 +133,13 @@ export function DetectElementsStep() {
         
         {!editingPropertyRaw || !editingPropertyConfigured ? (
           <>
-            {/* Header */}
             <div className="p-6 shrink-0 flex flex-col gap-1">
-              <h2 className="font-semibold text-[18px] text-[#1F2123]">Detected Elements</h2>
+              <h2 className="font-semibold text-[18px] text-[#1F2123]">Configurable Elements</h2>
               <p className="text-[14px] text-[#626467]">
-                We found {detectedProperties.length} customizable properties in your code
+                Connect detected properties or add manual ones.
               </p>
             </div>
 
-            {/* Search */}
             <div className="px-6 pb-4 shrink-0">
               <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#D7DADC] rounded-lg">
                 <Search className="w-5 h-5 text-[#626467]" />
@@ -137,29 +153,36 @@ export function DetectElementsStep() {
               </div>
             </div>
 
-            {/* List */}
             <div className="flex-1 overflow-y-auto px-6 pb-6">
               <div className="flex flex-col gap-2.5">
                 {filteredProperties.map((prop) => {
                   const configured = getConfiguredProperty(prop.id);
                   const isConnected = !!configured;
+                  const isUnbound = prop.source === "unbound";
 
                   return (
                     <div 
                       key={prop.id}
                       className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 flex items-center justify-between w-full"
                     >
-                      <div className="flex items-center gap-4 flex-1">
-                        <p className="font-['IBM_Plex_Mono',monospace] font-semibold text-[#1F2123] text-[14px] w-[160px] truncate">
-                          {prop.property}
-                        </p>
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="flex flex-col gap-1 min-w-0">
+                          <p className="font-['IBM_Plex_Mono',monospace] font-semibold text-[#1F2123] text-[14px] truncate">
+                            {prop.variable}
+                          </p>
+                          {isUnbound && (
+                            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 self-start">
+                              Unbound
+                            </span>
+                          )}
+                        </div>
                         
                         {isConnected ? (
-                          <div className="flex items-center gap-3">
-                            <div className="bg-[#F7F9FB] px-2 py-0.5 rounded text-[#626467] text-[13px]">
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <div className="bg-[#F7F9FB] px-2 py-0.5 rounded text-[#626467] text-[13px] shrink-0 capitalize">
                               {configured.type}
                             </div>
-                            <p className="font-medium text-[#1F2123] text-[14px]">
+                            <p className="font-medium text-[#1F2123] text-[14px] truncate">
                               {configured.label}
                             </p>
                           </div>
@@ -170,7 +193,7 @@ export function DetectElementsStep() {
                         )}
                       </div>
 
-                      <div className="flex items-center shrink-0">
+                      <div className="flex items-center shrink-0 ml-4">
                         {isConnected ? (
                           <div 
                             className="flex items-center gap-2 cursor-pointer hover:opacity-80"
@@ -201,17 +224,19 @@ export function DetectElementsStep() {
                   );
                 })}
 
-                {filteredProperties.length === 0 && (
-                  <div className="py-8 text-center text-[#626467] text-sm">
-                    No properties found.
-                  </div>
-                )}
+                <button
+                  onClick={addUnboundProperty}
+                  className="mt-2 flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-[#D7DADC] rounded-lg text-[#626467] hover:border-[#1F2123] hover:text-[#1F2123] transition-colors font-medium text-[14px]"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Manual Property
+                </button>
               </div>
             </div>
             
             <div className="p-6 shrink-0 border-t border-[#E9EAEB] flex items-center justify-between">
               <span className="font-semibold text-[14px] text-[#626467]">
-                {state.schema_definition?.length || 0} of {detectedProperties.length} connected
+                {state.schema_definition?.length || 0} connected
               </span>
             </div>
           </>
@@ -230,14 +255,21 @@ export function DetectElementsStep() {
                     <ArrowLeft className="w-5 h-5" />
                   </button>
                   <p className="font-semibold text-[#1F2123] text-[18px]">
-                    Connect Element
+                    Configure Element
                   </p>
                 </div>
                 
                 <div className="bg-[#1F2123] rounded-lg p-3 flex justify-between items-center">
-                  <p className="font-['IBM_Plex_Mono',monospace] text-white text-[14px] truncate">
-                    {editingPropertyRaw.property}: {editingPropertyRaw.value}
-                  </p>
+                  <div className="flex flex-col gap-1 min-w-0">
+                    <p className="font-['IBM_Plex_Mono',monospace] text-white text-[14px] truncate">
+                      {editingPropertyRaw.variable}
+                    </p>
+                    {editingPropertyRaw.source === "unbound" && (
+                      <span className="text-[11px] font-medium text-orange-400">
+                        Unbound property
+                      </span>
+                    )}
+                  </div>
                   <button 
                     onClick={() => {
                        toggleProperty(editingPropertyRaw);
@@ -248,15 +280,26 @@ export function DetectElementsStep() {
                     Disconnect
                   </button>
                 </div>
-
-                <div className="flex justify-center w-full py-1">
-                  <ArrowLeftRight className="w-6 h-6 text-[#C05D00]" strokeWidth={1.5} />
-                </div>
               </div>
 
               {/* Form Section */}
               <div className="flex flex-col gap-5 w-full">
-                {/* Field 1: Customization Type */}
+                
+                {editingPropertyRaw.source === "unbound" && (
+                  <div className="flex flex-col gap-2">
+                    <label className="font-semibold text-[#626467] text-[14px]">
+                      CSS Variable Name
+                    </label>
+                    <input 
+                      type="text" 
+                      value={editingPropertyConfigured.variable}
+                      onChange={(e) => updateEditingProperty({ variable: e.target.value, id: e.target.value })}
+                      className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] font-['IBM_Plex_Mono',monospace]"
+                      placeholder="--custom-var"
+                    />
+                  </div>
+                )}
+
                 <div className="flex flex-col gap-2 relative">
                   <label className="font-semibold text-[#626467] text-[14px]">
                     Customization Type
@@ -265,12 +308,13 @@ export function DetectElementsStep() {
                     <select
                       value={editingPropertyConfigured.type}
                       onChange={(e) => updateEditingProperty({ type: e.target.value })}
-                      className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 w-full outline-none text-[#1F2123] text-[14px] appearance-none cursor-pointer focus:border-[#1F2123] transition-colors"
+                      className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 w-full outline-none text-[#1F2123] text-[14px] appearance-none cursor-pointer"
                     >
-                      <option value="Color Picker">Color Picker</option>
-                      <option value="Slider">Slider</option>
-                      <option value="Text Input">Text Input</option>
-                      <option value="Select Dropdown">Select Dropdown</option>
+                      <option value="color">Color</option>
+                      <option value="number">Number</option>
+                      <option value="text">Text</option>
+                      <option value="select">Select</option>
+                      <option value="boolean">Boolean</option>
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
                       <ChevronDown className="w-4 h-4 text-[#1F2123]" />
@@ -278,7 +322,6 @@ export function DetectElementsStep() {
                   </div>
                 </div>
 
-                {/* Field 2: Display Label */}
                 <div className="flex flex-col gap-2">
                   <label className="font-semibold text-[#626467] text-[14px]">
                     Display Label
@@ -287,28 +330,54 @@ export function DetectElementsStep() {
                     type="text" 
                     value={editingPropertyConfigured.label}
                     onChange={(e) => updateEditingProperty({ label: e.target.value })}
-                    className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] focus:border-[#1F2123] transition-colors w-full"
-                    placeholder="e.g. Background Color"
+                    className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] w-full"
                   />
                 </div>
 
-                {/* Field 3: Default Value */}
+                <div className="flex flex-col gap-2">
+                  <label className="font-semibold text-[#626467] text-[14px]">
+                    Semantic CSS Mapping (Optional)
+                  </label>
+                  <input 
+                    type="text" 
+                    value={editingPropertyConfigured.property || ""}
+                    onChange={(e) => updateEditingProperty({ property: e.target.value })}
+                    className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] w-full font-['IBM_Plex_Mono',monospace]"
+                    placeholder="e.g. background-color"
+                  />
+                </div>
+
+                {editingPropertyConfigured.type === "select" && (
+                  <div className="flex flex-col gap-2">
+                    <label className="font-semibold text-[#626467] text-[14px]">
+                      Options (comma separated)
+                    </label>
+                    <input 
+                      type="text" 
+                      value={(editingPropertyConfigured.options || []).join(", ")}
+                      onChange={(e) => updateEditingProperty({ options: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) })}
+                      className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] w-full"
+                      placeholder="option1, option2, option3"
+                    />
+                  </div>
+                )}
+
                 <div className="flex flex-col gap-2">
                   <label className="font-semibold text-[#626467] text-[14px]">
                     Default Value
                   </label>
-                  <div className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 flex items-center gap-2 focus-within:border-[#1F2123] transition-colors">
-                    {editingPropertyConfigured.type === "Color Picker" && (
+                  <div className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 flex items-center gap-2">
+                    {editingPropertyConfigured.type === "color" && (
                       <div className="relative shrink-0 flex">
                         <input
                           type="color"
-                          value={editingPropertyConfigured.defaultValue.startsWith('#') ? editingPropertyConfigured.defaultValue.slice(0, 7) : '#000000'}
+                          value={editingPropertyConfigured.defaultValue?.startsWith('#') ? editingPropertyConfigured.defaultValue.slice(0, 7) : '#000000'}
                           onChange={(e) => updateEditingProperty({ defaultValue: e.target.value })}
                           className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
                         />
                         <div 
                           className="w-4 h-4 rounded-[2px] border border-[#D7DADC] pointer-events-none" 
-                          style={{ backgroundColor: editingPropertyConfigured.defaultValue.startsWith('#') ? editingPropertyConfigured.defaultValue : '#000000' }} 
+                          style={{ backgroundColor: editingPropertyConfigured.defaultValue?.startsWith('#') ? editingPropertyConfigured.defaultValue : '#000000' }} 
                         />
                       </div>
                     )}
@@ -317,18 +386,17 @@ export function DetectElementsStep() {
                       value={editingPropertyConfigured.defaultValue}
                       onChange={(e) => updateEditingProperty({ defaultValue: e.target.value })}
                       className="font-['IBM_Plex_Mono',monospace] text-[#1F2123] text-[14px] outline-none flex-1 min-w-0 bg-transparent"
-                      placeholder="e.g. #FFFFFF or 16px"
                     />
                   </div>
                 </div>
 
-                {/* Note */}
-                <p className="italic text-[#626467] text-[13px] mt-1">
-                  * Users will be able to change this via a {editingPropertyConfigured.type.toLowerCase()} in real-time
-                </p>
+                {editingPropertyRaw.source === "unbound" && (
+                  <p className="italic text-[#626467] text-[13px] mt-1 bg-[#F7F9FB] p-3 rounded-lg border border-[#E9EAEB]">
+                    * This is a manual property. Changing it will only affect the component if its source explicitly references <code className="font-semibold">{editingPropertyConfigured.variable}</code>. It will not silently rewrite the source code.
+                  </p>
+                )}
 
               </div>
-
             </div>
           </div>
         )}

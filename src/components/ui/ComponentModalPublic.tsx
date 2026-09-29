@@ -2,8 +2,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import { X, Check, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { componentRegistry } from "@/lib/registry/components";
-import { LivePreviewIframe } from "@/components/admin/preview/LivePreviewIframe";
-import { applyModifications } from "@/lib/admin/components/parser";
 
 export type ComponentItem = {
   id: string;
@@ -43,10 +41,22 @@ export function ComponentModalPublic({
     }));
   }, [component.schema_definition, overrides]);
 
-  const liveSnippets = useMemo(() => {
-    if (!component.snippets) return { html: "", css: "", react: "" };
-    return applyModifications(component.snippets, component.source_type || "react", liveSchema);
-  }, [component.snippets, component.source_type, liveSchema]);
+  // Extract just the CSS variable overrides
+  const activeOverrides = useMemo(() => {
+    const active: Record<string, string> = {};
+    (component.schema_definition || []).forEach((config: any) => {
+      const val = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
+      if (config.variable) {
+        active[config.variable] = val;
+      }
+    });
+    return active;
+  }, [component.schema_definition, overrides]);
+
+  const overrideStyleBlock = useMemo(() => {
+    if (Object.keys(activeOverrides).length === 0) return "";
+    return `\n\n<style>\n:root {\n${Object.entries(activeOverrides).map(([k,v]) => `  ${k}: ${v};`).join('\n')}\n}\n</style>`;
+  }, [activeOverrides]);
 
   const registryEntry = componentRegistry[component.registry_id];
   // Fallback to registry if DB doesn't have snippets
@@ -80,21 +90,18 @@ export function ComponentModalPublic({
             >
               {/* Left Side: Preview Area */}
               <div className="bg-[#FBFCFD] border border-[#B7BABD] rounded-[28px] w-full md:w-[572px] h-full shrink-0 relative flex items-center justify-center overflow-hidden">
-                <div className="w-full h-full transform">
-                  {component.snippets ? (
-                    <LivePreviewIframe 
-                      sourceType={(component.source_type as "react" | "html_css") || "react"} 
-                      snippets={liveSnippets} 
-                      className="w-full h-full border-none"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center scale-110">
-                      {(() => {
-                        const RegistryComponent = registryEntry?.component;
-                        return RegistryComponent ? <RegistryComponent /> : null;
-                      })()}
-                    </div>
-                  )}
+                <div className="w-full h-full transform flex items-center justify-center scale-110">
+                  {(() => {
+                    const RegistryComponent = registryEntry?.component;
+                    return RegistryComponent ? (
+                      <RegistryComponent />
+                    ) : (
+                      <div className="text-[#7D7F82] font-medium text-sm flex flex-col items-center gap-2">
+                        <span>Preview Unavailable</span>
+                        <span className="text-xs">This component requires a trusted registry renderer.</span>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
@@ -224,8 +231,8 @@ export function ComponentModalPublic({
                         Code
                       </h3>
 
-                      {(liveSnippets.react || snippets.react || snippets.nextjs) && (
-                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(liveSnippets.react || snippets.react || snippets.nextjs, "nextjs")}>
+                      {(snippets.react || snippets.nextjs) && (
+                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard((snippets.react || snippets.nextjs) + (overrideStyleBlock ? `\n\n/* Add these variables to your global CSS or inside the component */` + overrideStyleBlock : ""), "nextjs")}>
                           <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Next.js Code</span>
                           <div className="flex items-center gap-[10px]">
                             <span className="text-[#B0B0B0] text-[17.28px]">|</span>
@@ -234,8 +241,8 @@ export function ComponentModalPublic({
                         </div>
                       )}
 
-                      {(liveSnippets.html || snippets.html) && (
-                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard((liveSnippets.html || snippets.html) + "\n\n<style>\n" + (liveSnippets.css || snippets.css) + "\n</style>", "html")}>
+                      {(snippets.html) && (
+                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.html + "\n\n<style>\n" + (snippets.css || "") + "\n</style>" + overrideStyleBlock, "html")}>
                           <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">HTML-CSS Code</span>
                           <div className="flex items-center gap-[10px]">
                             <span className="text-[#B0B0B0] text-[17.28px]">|</span>

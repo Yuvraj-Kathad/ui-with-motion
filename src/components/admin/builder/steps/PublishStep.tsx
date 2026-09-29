@@ -6,7 +6,6 @@ import { updateComponent } from "@/lib/admin/components/mutations";
 import { useRouter } from "next/navigation";
 import { Rocket, Loader2, CheckCircle2 } from "lucide-react";
 import { LivePreviewIframe } from "../../preview/LivePreviewIframe";
-import { applyModifications } from "@/lib/admin/components/parser";
 
 export function PublishStep() {
   const { state } = useBuilder();
@@ -15,10 +14,16 @@ export function PublishStep() {
   const [error, setError] = useState<string | null>(null);
   const [published, setPublished] = useState(false);
 
-  // Generate the live snippet based on the current schema (using default values)
-  const liveSnippets = React.useMemo(() => {
-    return applyModifications(state.snippets, state.source_type, state.schema_definition || []);
-  }, [state.snippets, state.source_type, state.schema_definition]);
+  // Extract default values for the preview
+  const defaultOverrides = React.useMemo(() => {
+    const defaults: Record<string, string> = {};
+    (state.schema_definition || []).forEach((config: any) => {
+      if (config.variable) {
+        defaults[config.variable] = config.defaultValue;
+      }
+    });
+    return defaults;
+  }, [state.schema_definition]);
 
   const handlePublish = async () => {
     if (!state.id) {
@@ -51,9 +56,13 @@ export function PublishStep() {
       <div className="flex-1 flex flex-col items-center justify-center p-8">
         <div className="bg-white border border-[#D7DADC] rounded-2xl p-12 text-center max-w-md w-full shadow-sm flex flex-col items-center">
           <CheckCircle2 className="w-16 h-16 text-[#00963D] mb-6" />
-          <h2 className="text-2xl font-bold text-[#1F2123] mb-3">Published Successfully!</h2>
+          <h2 className="text-2xl font-bold text-[#1F2123] mb-3">
+            {state.status === "published" ? "Changes Saved!" : "Published Successfully!"}
+          </h2>
           <p className="text-[#626467] mb-8">
-            Your component "{state.title}" is now live and available on the public components page.
+            {state.status === "published" 
+              ? `Your updates to "${state.title}" are now live.`
+              : `Your component "${state.title}" is now live and available on the public components page.`}
           </p>
           <div className="flex items-center gap-2 text-[#626467]">
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -76,10 +85,14 @@ export function PublishStep() {
               <Rocket className="w-6 h-6 text-[#DB7100]" />
             </div>
             
-            <h2 className="text-2xl font-bold text-[#1F2123] mb-4">Ready to Publish</h2>
+            <h2 className="text-2xl font-bold text-[#1F2123] mb-4">
+              {state.status === "published" ? "Review Changes" : "Ready to Publish"}
+            </h2>
             
             <p className="text-[#626467] mb-8 leading-relaxed">
-              Your component is fully configured. Publishing will make it instantly available in the public components library for users to browse, customize, and copy.
+              {state.status === "published" 
+                ? "This component is already live. Saving these changes will immediately update the public components library."
+                : "Your component is fully configured. Publishing will make it instantly available in the public components library for users to browse, customize, and copy."}
             </p>
 
             <div className="space-y-4">
@@ -113,16 +126,18 @@ export function PublishStep() {
               {isPublishing ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Publishing...
+                  {state.status === "published" ? "Saving..." : "Publishing..."}
                 </>
               ) : (
                 <>
-                  Publish Component
+                  {state.status === "published" ? "Save Changes" : "Publish Component"}
                 </>
               )}
             </button>
             <p className="text-center text-[#626467] text-[13px] mt-4">
-              You can unpublish or edit this component later from the dashboard.
+              {state.status === "published" 
+                ? "You can unpublish or edit this component later from the dashboard."
+                : "You can unpublish or edit this component later from the dashboard."}
             </p>
           </div>
         </div>
@@ -135,7 +150,9 @@ export function PublishStep() {
         </div>
         <LivePreviewIframe 
           sourceType={state.source_type} 
-          snippets={liveSnippets} 
+          snippets={state.snippets}
+          overrides={defaultOverrides}
+          schemaDefinition={state.schema_definition}
           className="w-full h-full border-none"
         />
       </div>

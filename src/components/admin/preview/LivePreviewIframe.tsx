@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 interface LivePreviewIframeProps {
   sourceType: "react" | "html_css" | "both";
@@ -8,86 +8,103 @@ interface LivePreviewIframeProps {
     css?: string;
   };
   className?: string;
+  overrides?: Record<string, string>;
+  schemaDefinition?: any[];
 }
 
-export function LivePreviewIframe({ sourceType, snippets, className = "w-full h-full border-none" }: LivePreviewIframeProps) {
-  const buildPreviewDoc = (): string => {
-    if (sourceType === "react" || (sourceType === "both" && snippets.react)) {
-      const code = snippets.react || "";
-      const stripped = code
-        .replace(/^["']use client["'];?\s*/m, "")
-        .replace(/import\s+(?:React\s*,?\s*)?(?:\{([^}]+)\})?\s+from\s+['"]react['"];?/gm, (match, p1) => {
-          return p1 ? `const { ${p1} } = React;` : "";
-        })
-        .replace(/import\s+(?:\{([^}]+)\})\s+from\s+['"]framer-motion['"];?/gm, (match, p1) => {
-          return p1 ? `const { ${p1} } = window.Motion;` : "";
-        })
-        .replace(/import\s+(?:\{([^}]+)\})\s+from\s+['"]lucide-react['"];?/gm, (match, p1) => {
-          return p1 ? `const { ${p1} } = window.LucideProxy;` : "";
-        })
-        .replace(/^import\s+.*?from\s+['"].*?['"];?\s*/gm, "")
-        .replace(/^export\s+default\s+function\s+\w+/m, "function __PreviewComp__")
-        .replace(/^export\s+default\s+/m, "const __PreviewComp__ = ")
-        .replace(/^export\s+function\s+(\w+)/m, "function __PreviewComp__")
-        .replace(/^export\s+const\s+(\w+)/m, "const __PreviewComp__");
+export function LivePreviewIframe({ sourceType, snippets, className = "w-full h-full border-none", overrides = {}, schemaDefinition = [] }: LivePreviewIframeProps) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  useEffect(() => {
+    if (!iframeRef.current?.contentWindow) return;
+
+    const safeOverrides: Record<string, string> = {};
+    const varNameRegex = /^--[a-zA-Z0-9-_]+$/;
+
+    for (const [key, value] of Object.entries(overrides)) {
+      if (!varNameRegex.test(key)) continue;
+
+      const config = schemaDefinition.find(c => c.variable === key);
+      let isValid = true;
+      const strVal = String(value);
+
+      if (config) {
+        if (config.type === "color") {
+          const isHex = /^#([A-Fa-f0-9]{3,8})$/.test(strVal);
+          const isRgb = /^(rgb|hsl)a?\([\d\s%,.\/]+\)$/i.test(strVal);
+          const isNamed = /^[a-zA-Z]+$/.test(strVal);
+          if (!isHex && !isRgb && !isNamed) isValid = false;
+        } else if (config.type === "number") {
+          const isNumericWithUnit = /^-?\d*\.?\d+(px|rem|em|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)$/i.test(strVal) || /^-?\d*\.?\d+$/.test(strVal);
+          if (!isNumericWithUnit) isValid = false;
+        } else if (config.type === "boolean") {
+           // Should be 'true' or 'false', but CSS usually handles 0/1 or similar. We enforce the literal.
+           // Actually, CSS boolean can be represented as 1/0 or display: block/none.
+           // Let's just structurally allow basic values.
+           if (/[;{}]/.test(strVal)) isValid = false;
+        } else if (config.type === "select" || config.type === "text") {
+          // Basic structural defense for text
+          if (/[;{}]/.test(strVal)) isValid = false;
+        }
+      } else {
+        // Basic structural defense for unbound variables
+        if (/[;{}]/.test(strVal)) isValid = false;
+      }
+
+      if (isValid) {
+        safeOverrides[key] = strVal;
+      }
+    }
+
+    iframeRef.current.contentWindow.postMessage(
+      { type: "CSS_OVERRIDES", overrides: safeOverrides },
+      "*"
+    );
+  }, [overrides, schemaDefinition]);
+
+  const buildPreviewDoc = (): string => {
+    const receiverScript = `
+      <script>
+        window.addEventListener('message', function(event) {
+          try {
+            if (event.source !== window.parent) return;
+            const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+            if (data && data.type === 'CSS_OVERRIDES') {
+              const root = document.documentElement;
+              const overrides = data.overrides || {};
+              for (const key in overrides) {
+                if (/^--[a-zA-Z0-9-_]+$/.test(key)) {
+                  root.style.setProperty(key, overrides[key], 'important');
+                }
+              }
+            }
+          } catch(e) {}
+        });
+      </script>
+    `;
+
+    if (sourceType === "react" || (sourceType === "both" && snippets.react && !snippets.html)) {
       return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/framer-motion@10/dist/framer-motion.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { display: flex; align-items: center; justify-content: center;
            min-height: 100vh; background: transparent; font-family: sans-serif; overflow: hidden; }
-    #error { color: #c00; background: #fff0f0; padding: 8px; border-radius: 4px;
-             font-size: 10px; font-family: monospace; white-space: pre-wrap; max-width: 90%; }
+    .box { text-align: center; color: #626467; font-size: 14px; max-width: 80%; padding: 20px; border: 1px solid #E9EAEB; border-radius: 8px; background: #fff; }
+    .title { font-weight: bold; color: #111111; margin-bottom: 8px; }
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script>
-    window.LucideProxy = new Proxy({}, {
-      get: function(target, prop) {
-        return function(props) {
-          return React.createElement('svg', {
-            width: props.size || 24,
-            height: props.size || 24,
-            viewBox: "0 0 24 24",
-            fill: "none",
-            stroke: props.color || "currentColor",
-            strokeWidth: "2",
-            strokeLinecap: "round",
-            strokeLinejoin: "round",
-            ...props
-          }, React.createElement('rect', { x: 3, y: 3, width: 18, height: 18, rx: 2, ry: 2 }), React.createElement('text', { x: 12, y: 14, fontSize: 6, textAnchor: 'middle', fill: 'currentColor', stroke: 'none' }, prop.substring(0, 3)));
-        }
-      }
-    });
-  </script>
-  <script type="text/babel" data-type="module">
-    try {
-      ${stripped}
-
-      if (typeof __PreviewComp__ === 'function') {
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(React.createElement(__PreviewComp__));
-      } else {
-        document.getElementById('root').innerHTML = '<div id="error">Invalid Component</div>';
-      }
-    } catch(e) {
-      document.getElementById('root').innerHTML = '<div id="error">Error loading preview</div>';
-    }
-  </script>
+  <div class="box">
+    <div class="title">React Preview Unavailable</div>
+    <div>React components require a trusted registry renderer to preview safely.</div>
+  </div>
 </body>
 </html>`;
     }
 
-    // HTML/CSS preview
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -101,6 +118,7 @@ export function LivePreviewIframe({ sourceType, snippets, className = "w-full h-
 </head>
 <body>
   ${snippets.html || ""}
+  ${receiverScript}
 </body>
 </html>`;
   };
@@ -117,6 +135,7 @@ export function LivePreviewIframe({ sourceType, snippets, className = "w-full h-
 
   return (
     <iframe
+      ref={iframeRef}
       srcDoc={buildPreviewDoc()}
       className={className}
       sandbox="allow-scripts"

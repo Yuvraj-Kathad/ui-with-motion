@@ -3,24 +3,21 @@
 import React, { useState, useMemo } from "react";
 import { useBuilder } from "../BuilderContext";
 import { LivePreviewIframe } from "../../preview/LivePreviewIframe";
-import { applyModifications } from "@/lib/admin/components/parser";
 
 export function ReviewStep() {
   const { state } = useBuilder();
   const [overrides, setOverrides] = useState<Record<string, string>>({});
 
-  // Combine default schema values with any user overrides during review
-  const liveSchema = useMemo(() => {
-    return (state.schema_definition || []).map((config: any) => ({
-      ...config,
-      defaultValue: overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue
-    }));
+  const activeOverrides = useMemo(() => {
+    const active: Record<string, string> = {};
+    (state.schema_definition || []).forEach((config: any) => {
+      const val = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
+      if (config.variable) {
+        active[config.variable] = val;
+      }
+    });
+    return active;
   }, [state.schema_definition, overrides]);
-
-  // Apply real-time modifications so the preview reflects changes
-  const liveSnippets = useMemo(() => {
-    return applyModifications(state.snippets, state.source_type, liveSchema);
-  }, [state.snippets, state.source_type, liveSchema]);
 
   return (
     <div className="flex-1 flex items-start gap-6 p-8 min-h-0 overflow-hidden w-full">
@@ -42,14 +39,18 @@ export function ReviewStep() {
           ) : (
             (state.schema_definition || []).map((config: any) => (
               <div key={config.id} className="flex flex-col gap-2">
-                <label className="font-semibold text-[#1F2123] text-[14px]">
-                  {config.label}
+                <label className="font-semibold text-[#1F2123] text-[14px] flex items-center justify-between">
+                  <span>{config.label}</span>
+                  {config.source === "unbound" && (
+                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-700 uppercase tracking-wide">
+                      Unbound
+                    </span>
+                  )}
                 </label>
                 
-                {config.type === "Color Picker" ? (
+                {config.type === "color" ? (
                   (() => {
                     let rawVal = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
-                    // Strip brackets/prefixes so color picker works correctly even with stale state
                     let hexVal = rawVal;
                     if (hexVal.startsWith('[')) hexVal = hexVal.slice(1, -1);
                     if (hexVal.includes('#')) hexVal = '#' + hexVal.split('#')[1].replace(/\]/g, '');
@@ -78,7 +79,7 @@ export function ReviewStep() {
                       </div>
                     );
                   })()
-                ) : config.type === "Slider" ? (
+                ) : config.type === "number" ? (
                   (() => {
                     let rawVal = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
                     let numVal = parseInt(String(rawVal).replace(/[^0-9-]/g, '')) || 0;
@@ -92,12 +93,37 @@ export function ReviewStep() {
                           onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: `${e.target.value}px` }))}
                           className="flex-1 accent-[#1F2123]"
                         />
-                        <span className="font-['IBM_Plex_Mono',monospace] text-[#1F2123] text-[14px] w-12 text-right">
-                          {rawVal}
-                        </span>
+                        <input
+                          type="text"
+                          value={rawVal}
+                          onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                          className="font-['IBM_Plex_Mono',monospace] bg-white border border-[#D7DADC] rounded-lg px-2 py-1 text-[#1F2123] text-[14px] w-20 text-center outline-none"
+                        />
                       </div>
                     );
                   })()
+                ) : config.type === "select" ? (
+                  <select 
+                    value={overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue}
+                    onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                    className="bg-white border border-[#D7DADC] rounded-lg px-4 py-2 outline-none text-[#1F2123] text-[14px] focus:border-[#1F2123] transition-colors w-full"
+                  >
+                    {(config.options || [config.defaultValue]).map((opt: string) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : config.type === "boolean" ? (
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="checkbox"
+                      checked={String(overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue) === 'true'}
+                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: String(e.target.checked) }))}
+                      className="w-4 h-4 accent-[#1F2123] cursor-pointer"
+                    />
+                    <span className="text-[14px] text-[#1F2123]">
+                      {String(overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue) === 'true' ? 'True' : 'False'}
+                    </span>
+                  </div>
                 ) : (
                   <input 
                     type="text" 
@@ -116,7 +142,9 @@ export function ReviewStep() {
       <div className="flex-1 h-full bg-[#FAFAFA] border border-[#D7DADC] rounded-xl flex flex-col overflow-hidden relative">
         <LivePreviewIframe 
           sourceType={state.source_type} 
-          snippets={liveSnippets} 
+          snippets={state.snippets} 
+          overrides={activeOverrides}
+          schemaDefinition={state.schema_definition}
           className="w-full h-full border-none"
         />
       </div>

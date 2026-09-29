@@ -43,7 +43,7 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
           source_type: state.source_type,
           snippets: state.snippets,
           schema_definition: state.schema_definition,
-          status: "draft"
+          status: state.status
         });
         if (proceedToNext) nextStep();
       } else {
@@ -124,26 +124,34 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
             disabled={isSaving}
             className="px-6 py-2.5 rounded-lg border border-[#E9EAEB] text-[#1F2123] font-semibold text-sm hover:bg-gray-50 disabled:opacity-50 transition-colors flex items-center gap-2"
           >
-            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Draft"}
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : (state.status === "published" ? "Save Changes" : "Save Draft")}
           </button>
         </div>
         
-        {state.currentStep < 4 ? (
-          <button
-            onClick={() => handleSaveDraft(true)}
-            disabled={isSaving}
-            className="px-6 py-2.5 rounded-lg bg-[#1F2123] text-white font-semibold text-sm hover:bg-[#333537] disabled:opacity-50 transition-colors flex items-center gap-2"
-          >
-            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save & Continue"}
-          </button>
-        ) : (
-          <button
-            disabled
-            className="px-6 py-2.5 rounded-lg bg-[#EEF1F4] text-[#626467] font-semibold text-sm transition-colors flex items-center gap-2 cursor-not-allowed"
-          >
-            Almost done
-          </button>
-        )}
+        <div className="flex items-center gap-4">
+          {state.status === "published" && (
+            <div className="flex items-center gap-2 mr-2">
+              <span className="w-2 h-2 rounded-full bg-[#00963D] animate-pulse" />
+              <span className="text-[#00963D] font-semibold text-sm">Live</span>
+            </div>
+          )}
+          {state.currentStep < 4 ? (
+            <button
+              onClick={() => handleSaveDraft(true)}
+              disabled={isSaving}
+              className="px-6 py-2.5 rounded-lg bg-[#1F2123] text-white font-semibold text-sm hover:bg-[#333537] disabled:opacity-50 transition-colors flex items-center gap-2"
+            >
+              {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save & Continue"}
+            </button>
+          ) : (
+            <button
+              disabled
+              className="px-6 py-2.5 rounded-lg bg-[#EEF1F4] text-[#626467] font-semibold text-sm transition-colors flex items-center gap-2 cursor-not-allowed"
+            >
+              Almost done
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { componentRegistry } from "@/lib/registry/components";
 
 export async function createComponent(data: any) {
   await requireAdmin();
@@ -20,6 +21,10 @@ export async function createComponent(data: any) {
 
   if (existing) {
     throw new Error(`A component with registry ID "${data.registry_id}" already exists.`);
+  }
+
+  if (data.status === "published" && !componentRegistry[data.registry_id]) {
+    throw new Error(`Cannot publish component. Missing trusted registry renderer for ID: ${data.registry_id}`);
   }
   
   const { data: result, error } = await supabase
@@ -55,19 +60,46 @@ export async function updateComponent(id: string, data: any) {
   await requireAdmin();
   const supabase = await createClient();
   
+  const { data: existing, error: existingError } = await supabase
+    .from("components")
+    .select("status, registry_id")
+    .eq("id", id)
+    .single();
+
+  if (existingError || !existing) {
+    throw new Error("Component not found");
+  }
+
   const updatePayload: any = {
     title: data.title,
     description: data.description,
-    status: data.status,
     tags: data.tags,
     type: data.type,
     order: data.order
   };
+
+  // Prevent accidental demotion from published to draft
+  if (existing.status === "published" && data.status === "draft") {
+    updatePayload.status = "published";
+  } else if (data.status !== undefined) {
+    updatePayload.status = data.status;
+  }
+
   
   if (data.source_type !== undefined) updatePayload.source_type = data.source_type;
   if (data.snippets !== undefined) updatePayload.snippets = data.snippets;
   if (data.schema_definition !== undefined) updatePayload.schema_definition = data.schema_definition;
   if (data.registry_id !== undefined) updatePayload.registry_id = data.registry_id;
+
+  if (updatePayload.status === "published") {
+    let targetRegistryId = updatePayload.registry_id;
+    if (!targetRegistryId) {
+      targetRegistryId = existing.registry_id;
+    }
+    if (!targetRegistryId || !componentRegistry[targetRegistryId]) {
+      throw new Error(`Cannot publish component. Missing trusted registry renderer for ID: ${targetRegistryId}`);
+    }
+  }
 
   const { data: result, error } = await supabase
     .from("components")
