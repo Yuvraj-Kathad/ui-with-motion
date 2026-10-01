@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { X, Check, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { componentRegistry } from "@/lib/registry/components";
+import { LivePreviewIframe } from "@/components/admin/preview/LivePreviewIframe";
 
 export type ComponentItem = {
   id: string;
@@ -93,9 +94,26 @@ export function ComponentModalPublic({
                 <div className="w-full h-full transform flex items-center justify-center scale-110">
                   {(() => {
                     const RegistryComponent = registryEntry?.component;
-                    return RegistryComponent ? (
-                      <RegistryComponent />
-                    ) : (
+                    if (RegistryComponent) {
+                      return <RegistryComponent />;
+                    }
+
+                    const hasHtmlCss = snippets?.html || snippets?.css;
+                    if (hasHtmlCss && component.source_type !== "react") {
+                      return (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <LivePreviewIframe 
+                            sourceType={(component.source_type as "react" | "html_css" | "both") || "html_css"}
+                            snippets={snippets}
+                            schemaDefinition={component.schema_definition}
+                            overrides={activeOverrides}
+                            className="w-[120%] h-[120%] border-none scale-[0.85] origin-center"
+                          />
+                        </div>
+                      );
+                    }
+
+                    return (
                       <div className="text-[#7D7F82] font-medium text-sm flex flex-col items-center gap-2">
                         <span>Preview Unavailable</span>
                         <span className="text-xs">This component requires a trusted registry renderer.</span>

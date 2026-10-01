@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ComponentModalPublic, ComponentItem } from "@/components/ui/ComponentModalPublic";
 import { getPublishedComponents } from "@/lib/admin/components/queries";
 import { componentRegistry } from "@/lib/registry/components";
+import { LivePreviewIframe } from "@/components/admin/preview/LivePreviewIframe";
 
 const FigmaIcon = ({ size = 24, className = "" }) => (
   <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -219,9 +220,24 @@ function ComponentsContent() {
                     <div className="absolute inset-0 w-full h-full transform flex items-center justify-center scale-75">
                       {(() => {
                         const RegistryComponent = componentRegistry[comp.registry_id]?.component;
-                        return RegistryComponent ? (
-                          <RegistryComponent />
-                        ) : (
+                        if (RegistryComponent) {
+                          return <RegistryComponent />;
+                        }
+                        
+                        const hasHtmlCss = comp.snippets?.html || comp.snippets?.css;
+                        if (hasHtmlCss && comp.source_type !== "react") {
+                          return (
+                            <div className="w-[150%] h-[150%]">
+                              <LivePreviewIframe 
+                                sourceType={(comp.source_type as "react" | "html_css" | "both") || "html_css"}
+                                snippets={comp.snippets || {}}
+                                className="w-full h-full border-none scale-[0.9] origin-center"
+                              />
+                            </div>
+                          );
+                        }
+
+                        return (
                           <div className="text-[#7D7F82] font-medium text-sm flex flex-col items-center gap-1">
                             <span>Preview Unavailable</span>
                             <span className="text-[10px]">Missing trusted registry renderer</span>
