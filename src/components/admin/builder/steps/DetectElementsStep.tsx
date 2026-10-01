@@ -101,10 +101,10 @@ export function DetectElementsStep() {
     : (state.snippets.html || "") + "\n\n<style>\n" + (state.snippets.css || "") + "\n</style>";
 
   return (
-    <div className="flex-1 flex items-start gap-6 p-8 min-h-0 overflow-hidden w-full bg-[#F6F7F8]">
+    <div className="flex-1 flex flex-col lg:flex-row items-start gap-6 p-4 md:p-8 min-h-0 overflow-hidden w-full bg-[#F6F7F8]">
       
       {/* Left Panel: Code Viewer */}
-      <div className="flex-1 h-full bg-[#1e1e1e] border border-[#333] rounded-2xl flex flex-col overflow-hidden shadow-sm">
+      <div className="flex-1 w-full lg:max-w-none h-[400px] lg:h-full bg-[#1e1e1e] border border-[#333] rounded-2xl flex flex-col overflow-hidden shadow-sm">
         <div className="px-6 py-4 flex items-center justify-between shrink-0 bg-[#252526] border-b border-[#333]">
           <h3 className="font-semibold text-sm text-[#CCCCCC]">Source Code</h3>
           <span className="text-xs text-[#808080] bg-[#333] px-2 py-0.5 rounded-full font-mono">Read Only</span>
@@ -131,7 +131,7 @@ export function DetectElementsStep() {
       </div>
 
       {/* Right Panel: Detected Elements OR Connect Element */}
-      <div className="flex-1 h-full bg-white border border-[#E9EAEB] rounded-2xl flex flex-col overflow-hidden shadow-sm">
+      <div className="flex-1 w-full lg:max-w-[500px] xl:max-w-[600px] h-full bg-white border border-[#E9EAEB] rounded-2xl flex flex-col overflow-hidden shadow-sm">
         <AnimatePresence mode="wait">
           {!editingPropertyRaw || !editingPropertyConfigured ? (
             <motion.div 

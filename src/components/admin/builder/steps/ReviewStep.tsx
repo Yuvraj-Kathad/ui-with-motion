@@ -22,10 +22,10 @@ export function ReviewStep() {
   }, [state.schema_definition, overrides]);
 
   return (
-    <div className="flex-1 flex items-start gap-6 p-8 min-h-0 overflow-hidden w-full bg-[#F6F7F8]">
+    <div className="flex-1 flex flex-col lg:flex-row items-start gap-6 p-4 md:p-8 min-h-0 overflow-hidden w-full bg-[#F6F7F8]">
       
       {/* Left Panel: Configuration Fields */}
-      <div className="flex-1 max-w-[420px] h-full bg-white border border-[#E9EAEB] shadow-sm rounded-2xl flex flex-col overflow-hidden">
+      <div className="flex-1 w-full lg:max-w-[420px] xl:max-w-[480px] h-[500px] lg:h-full bg-white border border-[#E9EAEB] shadow-sm rounded-2xl flex flex-col overflow-hidden">
         <div className="p-6 pb-5 shrink-0 border-b border-[#E9EAEB] bg-white">
           <h2 className="font-bold text-[20px] text-[#111111] mb-1">Component Properties</h2>
           <p className="text-[14px] text-[#626467]">
@@ -158,7 +158,7 @@ export function ReviewStep() {
       </div>
 
       {/* Right Panel: Live Preview */}
-      <div className="flex-1 h-full bg-white border border-[#E9EAEB] shadow-sm rounded-2xl flex flex-col overflow-hidden relative">
+      <div className="flex-1 w-full h-[500px] min-h-[400px] lg:h-full bg-white border border-[#E9EAEB] shadow-sm rounded-2xl flex flex-col overflow-hidden relative">
         <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg border border-[#E9EAEB] shadow-sm flex items-center gap-2 pointer-events-none">
           <div className="w-2 h-2 rounded-full bg-[#00963D] animate-pulse" />
           <span className="text-xs font-semibold text-[#111111]">Live Preview</span>
