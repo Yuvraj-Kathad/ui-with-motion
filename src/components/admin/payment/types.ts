@@ -59,63 +59,58 @@ export const defaultPaymentContent: PaymentPageContent = {
     buttonText: "Get Started — Free",
     featuresTitle: "What's included:",
     features: [
-      "Free components",
-      "Next.js code",
+      "Access to Free components",
+      "Next.js & React source code",
       "HTML & CSS code",
-      "Component previews",
-      "Figma links for free components",
-      "Personal & commercial projects",
-      "Regular library updates"
+      "Live component previews",
+      "Interactive customization",
+      "Personal & commercial use"
     ]
   },
   premiumPlan: {
     name: "Premium",
-    badgeText: "Most Popular",
+    badgeText: "Early Access",
     description: "Unlock the complete component library and build faster.",
     monthlyPrice: "₹399",
     pricePeriod: "/month",
     yearlyPriceBig: "₹2,999",
     yearlyPrice: "or ₹2,999/year",
     savingsNote: "Save ₹1,789 with yearly billing",
-    buttonText: "Get Premium",
+    buttonText: "Get Premium (Coming Soon)",
     featuresTitle: "Everything included:",
     features: [
-      "All UI components",
-      "Next.js code",
+      "All Premium UI components",
+      "Framer Motion animations",
+      "Full source (Next.js & Tailwind)",
       "HTML & CSS code",
-      "Figma files",
-      "Advanced & animated components",
-      "All component variants",
-      "Design tokens & styles",
-      "Personal & commercial projects",
-      "New components & updates",
-      "Premium templates",
-      "Priority support"
+      "Figma design links",
+      "Priority feature requests (Coming Soon)",
+      "Premium templates (Coming Soon)",
+      "Unlimited commercial use"
     ]
   },
   comparison: {
     title: "Compare plans in detail",
     subtitle: "Discover why creators choose Premium to supercharge their workflows",
     rows: [
-      { feature: "Components", free: "Basic (40+)", premium: "Complete (300+)" },
+      { feature: "Components", free: "Free Tier Only", premium: "Complete Library" },
       { feature: "Animations", free: "CSS Transitions", premium: "Framer Motion & CSS" },
-      { feature: "Updates", free: "Monthly", premium: "Weekly / Real-time" },
-      { feature: "Support", free: "Community", premium: "24/7 Priority Discord" },
-      { feature: "License", free: "Personal projects only", premium: "Commercial (Unlimited)" },
-      { feature: "Documentation", free: "Standard guides", premium: "Interactive live playgrounds" },
-      { feature: "Source Files", free: "Compiled only", premium: "Full source (Next.js, Tailwind, Figma)" }
+      { feature: "Live Previews", free: "Yes", premium: "Yes" },
+      { feature: "Interactive Customization", free: "Yes", premium: "Yes" },
+      { feature: "Source Code", free: "HTML/CSS & React", premium: "Full Source & Figma Files" },
+      { feature: "Templates", free: "No", premium: "Yes (Coming Soon)" },
+      { feature: "License", free: "Standard Commercial", premium: "Unlimited Commercial" }
     ]
   },
   faq: {
     title: "Frequently Asked Questions",
     subtitle: "Have some questions? We've got answers.",
     items: [
-      { question: "What is included in the free plan?", answer: "The free plan gives you access to over 40 basic components, compiled HTML & CSS code, and public Figma community previews." },
-      { question: "Is the premium plan really lifetime?", answer: "Yes! Premium plan subscribers pay once and receive unlimited, lifetime access to all current and future components, updates, and templates." },
-      { question: "Can I use components in commercial projects?", answer: "Absolutely. Premium licenses authorize full personal and commercial use for client websites, SaaS applications, and digital platforms." },
-      { question: "How do I get updates?", answer: "New component variations and Figma templates are synced automatically to your account dashboard every single week." },
-      { question: "Can I get a refund?", answer: "We support a 14-day refund policy. If you find the premium resources do not fit your stack, contact our billing team." },
-      { question: "Do you offer team pricing?", answer: "Yes, team seats are available at discounted rates with pooled seats. You can configure multi-seat workspaces directly." }
+      { question: "What is included in the free plan?", answer: "The free plan gives you access to a curated selection of components, including their Next.js, HTML, and CSS code, along with live customizable previews." },
+      { question: "Is the premium plan really a subscription?", answer: "Yes, you can choose between monthly and yearly billing to get full access to all premium animated components and future updates." },
+      { question: "Can I use components in commercial projects?", answer: "Absolutely. Both free and premium components can be used in your personal and commercial projects like client websites or SaaS applications." },
+      { question: "How do I get updates?", answer: "New components are added to the library regularly. They will automatically appear in the components catalog." },
+      { question: "Are Figma files included?", answer: "Figma links are provided for Premium components, allowing you to easily integrate them into your design workflow." }
     ]
   },
   cta: {

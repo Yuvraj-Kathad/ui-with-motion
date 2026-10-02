@@ -95,7 +95,11 @@ export function ComponentModalPublic({
                   {(() => {
                     const RegistryComponent = registryEntry?.component;
                     if (RegistryComponent) {
-                      return <RegistryComponent />;
+                      return (
+                        <div style={activeOverrides as React.CSSProperties} className="w-full h-full flex items-center justify-center">
+                          <RegistryComponent />
+                        </div>
+                      );
                     }
 
                     const hasHtmlCss = snippets?.html || snippets?.css;
@@ -172,7 +176,12 @@ export function ComponentModalPublic({
                       </h3>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[24px] w-full mt-[16px]">
-                        {(component.schema_definition || []).map((config: any) => (
+                        {!component.schema_definition || component.schema_definition.filter((c: any) => !!c.variable).length === 0 ? (
+                          <div className="text-[#7D7F82] text-[14px] col-span-1 md:col-span-2 py-4">
+                            Live customization is not available for this component.
+                          </div>
+                        ) : 
+                          component.schema_definition.filter((c: any) => !!c.variable).map((config: any) => (
                           <div key={config.id} className="flex flex-col gap-[8px]">
                             <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
                               {config.label}
@@ -249,25 +258,53 @@ export function ComponentModalPublic({
                         Code
                       </h3>
 
-                      {(snippets.react || snippets.nextjs) && (
-                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard((snippets.react || snippets.nextjs) + (overrideStyleBlock ? `\n\n/* Add these variables to your global CSS or inside the component */` + overrideStyleBlock : ""), "nextjs")}>
-                          <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Next.js Code</span>
-                          <div className="flex items-center gap-[10px]">
-                            <span className="text-[#B0B0B0] text-[17.28px]">|</span>
-                            {copied === "nextjs" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
-                          </div>
-                        </div>
-                      )}
+                      {(() => {
+                        const hasReact = !!(snippets.react || snippets.nextjs);
+                        const hasHtml = !!snippets.html;
+                        const hasFigma = !!snippets.figma;
+                        const hasPrompt = !!snippets.prompt;
 
-                      {(snippets.html) && (
-                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.html + "\n\n<style>\n" + (snippets.css || "") + "\n</style>" + overrideStyleBlock, "html")}>
-                          <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">HTML-CSS Code</span>
-                          <div className="flex items-center gap-[10px]">
-                            <span className="text-[#B0B0B0] text-[17.28px]">|</span>
-                            {copied === "html" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
-                          </div>
-                        </div>
-                      )}
+                        if (!hasReact && !hasHtml && !hasFigma && !hasPrompt) {
+                          return (
+                            <div className="text-[#7D7F82] text-[14px] text-center py-8">
+                              No code snippets available for this component.
+                            </div>
+                          );
+                        }
+
+                        const cssContent = snippets.css ? snippets.css.trim() : "";
+                        const overridesContent = Object.keys(activeOverrides).length > 0
+                          ? `:root {\n${Object.entries(activeOverrides).map(([k,v]) => `  ${k}: ${v};`).join('\n')}\n}`
+                          : "";
+
+                        const combinedStyleContent = [cssContent, overridesContent].filter(Boolean).join("\n\n");
+                        const styleBlock = combinedStyleContent ? `\n\n<style>\n${combinedStyleContent}\n</style>` : "";
+                        const rawCssBlock = combinedStyleContent ? `\n\n/* Add to your global CSS */\n${combinedStyleContent}` : "";
+
+                        return (
+                          <>
+                            {hasReact && (
+                              <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard((snippets.react || snippets.nextjs) + rawCssBlock, "nextjs")}>
+                                <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Next.js Code</span>
+                                <div className="flex items-center gap-[10px]">
+                                  <span className="text-[#B0B0B0] text-[17.28px]">|</span>
+                                  {copied === "nextjs" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                                </div>
+                              </div>
+                            )}
+
+                            {hasHtml && (
+                              <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.html + styleBlock, "html")}>
+                                <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">HTML-CSS Code</span>
+                                <div className="flex items-center gap-[10px]">
+                                  <span className="text-[#B0B0B0] text-[17.28px]">|</span>
+                                  {copied === "html" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
                       
                       {snippets.figma && (
                         <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.figma, "figma")}>

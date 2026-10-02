@@ -140,6 +140,19 @@ export function LivePreviewIframe({ sourceType, snippets, className = "w-full h-
       className={className}
       sandbox="allow-scripts"
       title="Component Preview"
+      onLoad={() => {
+        if (!iframeRef.current?.contentWindow) return;
+        const safeOverrides: Record<string, string> = {};
+        const varNameRegex = /^--[a-zA-Z0-9-_]+$/;
+        for (const [key, value] of Object.entries(overrides)) {
+          if (!varNameRegex.test(key)) continue;
+          safeOverrides[key] = String(value);
+        }
+        iframeRef.current.contentWindow.postMessage(
+          { type: "CSS_OVERRIDES", overrides: safeOverrides },
+          "*"
+        );
+      }}
     />
   );
 }
