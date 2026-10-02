@@ -38,7 +38,8 @@ export async function getAdminComponent(id: string) {
 }
 
 export async function getPublishedComponents() {
-  const supabase = await createClient();
+  const { createServiceRoleClient } = await import("@/lib/supabase/service-role");
+  const supabase = createServiceRoleClient();
   const { getUserEntitlement } = await import("@/lib/auth/entitlement");
   
   const { isPremium } = await getUserEntitlement();
@@ -76,10 +77,14 @@ export async function getPublishedComponents() {
         ...comp,
         snippets: null, // Protected source code
         schema_definition: [], // Protected customization metadata
+        is_locked: true, // Explicit flag for the UI
       };
     }
 
-    return comp;
+    return {
+      ...comp,
+      is_locked: false,
+    };
   });
 
   return scrubbedData;

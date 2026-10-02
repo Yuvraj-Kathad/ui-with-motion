@@ -14,6 +14,7 @@ export type ComponentItem = {
   source_type?: string;
   schema_definition?: any[];
   access_tier?: "free" | "premium";
+  is_locked?: boolean;
 };
 
 export interface ComponentModalPublicProps {
@@ -36,34 +37,40 @@ export function ComponentModalPublic({
     setOverrides({});
   }, [component.id]);
 
+  const registryEntry = componentRegistry[component.registry_id];
+
+  const schemaDefToUse = useMemo(() => {
+    return (component.schema_definition && component.schema_definition.length > 0)
+      ? component.schema_definition
+      : (registryEntry?.schema_definition || []);
+  }, [component.schema_definition, registryEntry]);
+
   const liveSchema = useMemo(() => {
-    return (component.schema_definition || []).map((config: any) => ({
+    return schemaDefToUse.map((config: any) => ({
       ...config,
-      defaultValue: overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue
+      defaultValue: overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue
     }));
-  }, [component.schema_definition, overrides]);
+  }, [schemaDefToUse, overrides]);
 
   // Extract just the CSS variable overrides
   const activeOverrides = useMemo(() => {
     const active: Record<string, string> = {};
-    (component.schema_definition || []).forEach((config: any) => {
-      const val = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
+    schemaDefToUse.forEach((config: any) => {
+      const val = overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue;
       if (config.variable) {
         active[config.variable] = val;
       }
     });
     return active;
-  }, [component.schema_definition, overrides]);
+  }, [schemaDefToUse, overrides]);
 
   const overrideStyleBlock = useMemo(() => {
     if (Object.keys(activeOverrides).length === 0) return "";
     return `\n\n<style>\n:root {\n${Object.entries(activeOverrides).map(([k,v]) => `  ${k}: ${v};`).join('\n')}\n}\n</style>`;
   }, [activeOverrides]);
 
-  const registryEntry = componentRegistry[component.registry_id];
-  
-  // If the server explicitly scrubbed snippets (null), it means the user is not entitled
-  const isLockedPremium = component.access_tier === 'premium' && component.snippets === null;
+  // The server explicitly sets is_locked to true if the component was scrubbed
+  const isLockedPremium = !!component.is_locked;
   
   // Fallback to registry if DB doesn't have snippets and it hasn't been scrubbed
   const snippets = isLockedPremium 
@@ -208,12 +215,18 @@ export function ComponentModalPublic({
                       </h3>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[24px] w-full mt-[16px]">
-                        {!component.schema_definition || component.schema_definition.filter((c: any) => !!c.variable).length === 0 ? (
-                          <div className="text-[#7D7F82] text-[14px] col-span-1 md:col-span-2 py-4">
-                            Live customization is not available for this component.
-                          </div>
-                        ) : 
-                          component.schema_definition.filter((c: any) => !!c.variable).map((config: any) => (
+                        {(() => {
+                          const validConfigs = schemaDefToUse.filter((c: any) => !!c.variable);
+
+                          if (validConfigs.length === 0) {
+                            return (
+                              <div className="text-[#7D7F82] text-[14px] col-span-1 md:col-span-2 py-4">
+                                Live customization is not available for this component.
+                              </div>
+                            );
+                          }
+                          
+                          return validConfigs.map((config: any) => (
                           <div key={config.id} className="flex flex-col gap-[8px]">
                             <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
                               {config.label}
@@ -221,7 +234,7 @@ export function ComponentModalPublic({
                             
                             {config.type === "Color Picker" ? (
                               (() => {
-                                let rawVal = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
+                                let rawVal = overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue;
                                 let hexVal = rawVal;
                                 if (hexVal.startsWith('[')) hexVal = hexVal.slice(1, -1);
                                 if (hexVal.includes('#')) hexVal = '#' + hexVal.split('#')[1].replace(/\]/g, '');
@@ -233,7 +246,7 @@ export function ComponentModalPublic({
                                       <input
                                         type="color"
                                         value={hexVal.startsWith('#') ? hexVal : '#000000'}
-                                        onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                                        onChange={(e) => setOverrides(prev => ({ ...prev, [config.variable]: e.target.value }))}
                                         className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
                                       />
                                       <div 
@@ -244,7 +257,7 @@ export function ComponentModalPublic({
                                     <input 
                                       type="text"
                                       value={rawVal}
-                                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.variable]: e.target.value }))}
                                       className="font-sans text-[14px] text-[#1F2123] outline-none flex-1 min-w-0 bg-transparent"
                                     />
                                   </div>
@@ -252,7 +265,7 @@ export function ComponentModalPublic({
                               })()
                             ) : config.type === "Slider" ? (
                               (() => {
-                                let rawVal = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
+                                let rawVal = overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue;
                                 let numVal = parseInt(String(rawVal).replace(/[^0-9-]/g, '')) || 0;
                                 return (
                                   <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center gap-4 focus-within:border-[#1F2123] transition-colors">
@@ -261,7 +274,7 @@ export function ComponentModalPublic({
                                       min="0"
                                       max="100"
                                       value={numVal}
-                                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: `${e.target.value}px` }))}
+                                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.variable]: `${e.target.value}px` }))}
                                       className="flex-1 accent-[#1F2123]"
                                     />
                                     <span className="font-sans text-[14px] text-[#1F2123] w-[40px] text-right shrink-0">
@@ -274,14 +287,15 @@ export function ComponentModalPublic({
                               <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between focus-within:border-[#1F2123] transition-colors">
                                 <input 
                                   type="text"
-                                  value={overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue}
-                                  onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                                  value={overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue}
+                                  onChange={(e) => setOverrides(prev => ({ ...prev, [config.variable]: e.target.value }))}
                                   className="font-sans text-[14px] text-[#1F2123] outline-none flex-1 min-w-0 bg-transparent"
                                 />
                               </div>
                             )}
                           </div>
-                        ))}
+                        ));
+                        })()}
                       </div>
                     </div>
                   ) : (
@@ -291,50 +305,56 @@ export function ComponentModalPublic({
                       </h3>
 
                       {(() => {
-                        const hasReact = !!(snippets.react || snippets.nextjs);
-                        const hasHtml = !!snippets.html;
-                        const hasFigma = !!snippets.figma;
-                        const hasPrompt = !!snippets.prompt;
+                        const nextjsCode = snippets.nextjs || snippets.react;
 
-                        if (!hasReact && !hasHtml && !hasFigma && !hasPrompt) {
+                        if (!nextjsCode) {
                           return (
-                            <div className="text-[#7D7F82] text-[14px] text-center py-8">
-                              No code snippets available for this component.
+                            <div className="text-[#7D7F82] text-[14px] text-center py-8 bg-[#F7F9FB] rounded-[16px] border border-[#EEF1F4]">
+                              Next.js code is not available for this component.
                             </div>
                           );
                         }
 
-                        const cssContent = snippets.css ? snippets.css.trim() : "";
-                        const overridesContent = Object.keys(activeOverrides).length > 0
-                          ? `:root {\n${Object.entries(activeOverrides).map(([k,v]) => `  ${k}: ${v};`).join('\n')}\n}`
-                          : "";
-
-                        const combinedStyleContent = [cssContent, overridesContent].filter(Boolean).join("\n\n");
-                        const styleBlock = combinedStyleContent ? `\n\n<style>\n${combinedStyleContent}\n</style>` : "";
-                        const rawCssBlock = combinedStyleContent ? `\n\n/* Add to your global CSS */\n${combinedStyleContent}` : "";
+                        const hasCustomization = Object.keys(activeOverrides).length > 0;
+                        const codeToCopy = nextjsCode;
 
                         return (
-                          <>
-                            {hasReact && (
-                              <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard((snippets.react || snippets.nextjs) + rawCssBlock, "nextjs")}>
-                                <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Next.js Code</span>
-                                <div className="flex items-center gap-[10px]">
-                                  <span className="text-[#B0B0B0] text-[17.28px]">|</span>
-                                  {copied === "nextjs" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
-                                </div>
+                          <div className="flex flex-col gap-4">
+                            {hasCustomization && (
+                              <div className="bg-[#FDF8F0] border border-[#F3E2C6] rounded-[8px] p-4 flex items-start gap-3">
+                                <span className="text-[#C18824] shrink-0 text-lg">💡</span>
+                                <p className="text-[#A0701C] text-[13px] leading-relaxed">
+                                  <strong>Customization applied via CSS variables.</strong> The Next.js code below is the authoritative structural source. 
+                                  To use your customizations, apply the CSS variables to the component's container in your global CSS.
+                                </p>
                               </div>
                             )}
-
-                            {hasHtml && (
-                              <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.html + styleBlock, "html")}>
-                                <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">HTML-CSS Code</span>
-                                <div className="flex items-center gap-[10px]">
-                                  <span className="text-[#B0B0B0] text-[17.28px]">|</span>
-                                  {copied === "html" ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-[#3D3D3D]" />}
-                                </div>
+                            
+                            <div className="relative group">
+                              <div className="absolute top-4 right-4 flex items-center">
+                                <button
+                                  onClick={() => copyToClipboard(codeToCopy, "nextjs")}
+                                  className="flex items-center gap-2 bg-white/90 backdrop-blur border border-[#CBCED1] hover:bg-white text-[#3D3D3D] px-3 py-1.5 rounded-full shadow-sm transition-all"
+                                  title="Copy Next.js Code"
+                                >
+                                  {copied === "nextjs" ? (
+                                    <>
+                                      <Check size={14} className="text-green-500" />
+                                      <span className="text-[12px] font-medium text-green-600">Copied</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy size={14} />
+                                      <span className="text-[12px] font-medium">Copy</span>
+                                    </>
+                                  )}
+                                </button>
                               </div>
-                            )}
-                          </>
+                              <pre className="bg-[#F7F9FB] border border-[#CBCED1] rounded-[16px] p-[24px] overflow-x-auto text-[13px] font-mono leading-relaxed text-[#1F2123] whitespace-pre">
+                                <code>{codeToCopy}</code>
+                              </pre>
+                            </div>
+                          </div>
                         );
                       })()}
                       

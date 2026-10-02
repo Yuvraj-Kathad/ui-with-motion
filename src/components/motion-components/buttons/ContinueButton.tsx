@@ -30,10 +30,16 @@ export function ContinueButton() {
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
+      style={{
+        "--btn-bg": "var(--button-bg, #16A34A)",
+        "--btn-border": "var(--button-border, #00963d)",
+        "--btn-text": "var(--button-text, #ffffff)",
+        "--btn-text-hover": "var(--button-text-hover, #00963d)",
+      } as React.CSSProperties}
       className={`relative flex items-center justify-center rounded-[52px] h-[43px] w-[119px] transition-colors duration-300 font-work font-medium text-[16px] leading-[1.2] shadow-sm cursor-pointer select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#16A34A] ${
         isHovered 
-          ? "border border-[#00963d] bg-transparent text-[#00963d]" 
-          : "bg-[#16A34A] border border-transparent text-white overflow-hidden"
+          ? "border border-[var(--btn-border)] bg-transparent text-[var(--btn-text-hover)]" 
+          : "bg-[var(--btn-bg)] border border-transparent text-[var(--btn-text)] overflow-hidden"
       }`}
     >
       <span className="relative z-10">Continue</span>
@@ -41,7 +47,8 @@ export function ContinueButton() {
       {stars.map((star, idx) => (
         <motion.div
           key={idx}
-          className="absolute text-[#FFD700] pointer-events-none"
+          style={{ color: "var(--sparkle-color, #FFD700)" }}
+          className="absolute pointer-events-none"
           initial={false}
           animate={{
             left: isHovered ? star.hover.left : star.initial.left,
