@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { X, Check, Copy } from "lucide-react";
+import { X, Check, Copy, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { componentRegistry } from "@/lib/registry/components";
 import { LivePreviewIframe } from "@/components/admin/preview/LivePreviewIframe";
@@ -13,6 +13,7 @@ export type ComponentItem = {
   snippets?: any;
   source_type?: string;
   schema_definition?: any[];
+  access_tier?: "free" | "premium";
 };
 
 export interface ComponentModalPublicProps {
@@ -60,8 +61,14 @@ export function ComponentModalPublic({
   }, [activeOverrides]);
 
   const registryEntry = componentRegistry[component.registry_id];
-  // Fallback to registry if DB doesn't have snippets
-  const snippets = component.snippets || registryEntry?.snippets || { html: "", css: "", nextjs: "" };
+  
+  // If the server explicitly scrubbed snippets (null), it means the user is not entitled
+  const isLockedPremium = component.access_tier === 'premium' && component.snippets === null;
+  
+  // Fallback to registry if DB doesn't have snippets and it hasn't been scrubbed
+  const snippets = isLockedPremium 
+    ? { html: "", css: "", nextjs: "" } 
+    : (component.snippets || registryEntry?.snippets || { html: "", css: "", nextjs: "" });
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -131,9 +138,16 @@ export function ComponentModalPublic({
               <div className="flex-1 flex flex-col gap-[24px] p-0 md:p-[24px] overflow-y-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between w-full shrink-0">
-                  <h2 className="font-sans font-medium text-[24px] md:text-[31px] text-[#1F2123] leading-[1.2]">
-                    {component.title}
-                  </h2>
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-sans font-medium text-[24px] md:text-[31px] text-[#1F2123] leading-[1.2]">
+                      {component.title}
+                    </h2>
+                    {component.access_tier === 'premium' && (
+                      <div className="flex items-center justify-center bg-[#FDF8F0] border border-[#F3E2C6] rounded-full px-2 py-0.5 shrink-0" title="Premium Component">
+                        <span className="text-[#C18824] text-[10px] font-bold uppercase tracking-wider">Premium</span>
+                      </div>
+                    )}
+                  </div>
                   <button
                     onClick={onClose}
                     className="size-[32px] flex items-center justify-center text-[#7D7F82] hover:text-black transition-colors"
@@ -169,7 +183,25 @@ export function ComponentModalPublic({
 
                 {/* Tab Content */}
                 <div className="flex-1 overflow-y-auto w-full pr-2">
-                  {activeTab === "customisation" ? (
+                  {isLockedPremium ? (
+                    <div className="flex flex-col items-center justify-center h-full w-full max-w-[593px] text-center gap-4 py-12">
+                      <div className="w-16 h-16 rounded-full bg-[#FDF8F0] border border-[#F3E2C6] flex items-center justify-center mb-2">
+                        <Lock className="text-[#C18824] w-8 h-8" />
+                      </div>
+                      <h3 className="font-sans font-bold text-[20px] text-[#1F2123]">
+                        Premium Component
+                      </h3>
+                      <p className="text-[#7D7F82] text-[14px] max-w-[300px]">
+                        Sign in and Upgrade to Premium to unlock full source code and customization.
+                      </p>
+                      <button 
+                        onClick={() => window.location.href = '/pricing'}
+                        className="mt-4 bg-[#1F2123] text-white px-6 py-3 rounded-full font-sans font-medium text-[15px] hover:bg-black transition-colors"
+                      >
+                        Upgrade to Premium
+                      </button>
+                    </div>
+                  ) : activeTab === "customisation" ? (
                     <div className="flex flex-col gap-[24px] w-full max-w-[593px]">
                       <h3 className="font-sans font-bold text-[18px] text-[#1F2123]">
                         Customisation

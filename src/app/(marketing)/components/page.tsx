@@ -249,9 +249,16 @@ function ComponentsContent() {
                   
                   {/* Footer Area */}
                   <div className="flex items-center justify-between px-[20px] py-[12px] w-full shrink-0 relative z-10 bg-transparent h-[48px]">
-                    <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap truncate">
-                      {comp.title}
-                    </h3>
+                    <div className="flex items-center gap-2 max-w-[65%]">
+                      <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap truncate">
+                        {comp.title}
+                      </h3>
+                      {(comp as any).access_tier === 'premium' && (
+                        <div className="flex items-center justify-center bg-[#FDF8F0] border border-[#F3E2C6] rounded-full px-2 py-0.5 shrink-0" title="Premium Component">
+                          <span className="text-[#C18824] text-[10px] font-bold uppercase tracking-wider">Premium</span>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex gap-[4px] h-[24px] items-center">
                       {(comp.tags || []).map((tag: string, i: number) => (
                         <div key={i} className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] px-2 rounded-[4px] overflow-hidden">
