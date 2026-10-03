@@ -8,7 +8,7 @@ export async function getUserEntitlement() {
     return { isPremium: false, user: null };
   }
 
-  // Also check if they are admin (admins get all access)
+  // Check if they are admin (admins get all access)
   const { data: roleData } = await supabase
     .from("user_roles")
     .select("role")
@@ -17,9 +17,29 @@ export async function getUserEntitlement() {
 
   const isAdmin = roleData?.role === 'admin';
 
-  // In the next phase, this will check a Stripe/Razorpay subscription status
-  // For now, only admins get Premium access. To test Premium locally, assign the 'admin' role in Supabase.
-  const isPremium = isAdmin;
+  // Check subscription status
+  const { data: subData } = await supabase
+    .from("user_subscriptions")
+    .select("status, current_period_end")
+    .eq("user_id", user.id)
+    .in("status", ["active", "cancelled", "completed", "paused"])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  let isPremium = isAdmin;
+
+  if (subData) {
+    if (subData.status === "active") {
+      isPremium = true;
+    } else if (["cancelled", "completed", "paused"].includes(subData.status) && subData.current_period_end) {
+      // If cancelled, completed or paused but the paid period hasn't ended yet
+      const periodEnd = new Date(subData.current_period_end);
+      if (periodEnd > new Date()) {
+        isPremium = true;
+      }
+    }
+  }
 
   return { isPremium, user };
 }
