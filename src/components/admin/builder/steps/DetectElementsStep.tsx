@@ -2,9 +2,10 @@
 
 import React, { useState, useMemo } from "react";
 import { useBuilder } from "../BuilderContext";
-import { Search, BadgeCheck, ArrowLeftRight, ChevronDown, ArrowLeft, Plus } from "lucide-react";
+import { Search, BadgeCheck, ChevronDown, ArrowLeft, Plus, Settings2 } from "lucide-react";
 import { detectProperties, DetectedProperty } from "@/lib/admin/components/parser";
 import Editor from "@monaco-editor/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 function getDefaultCustomizationType(prop: DetectedProperty): string {
   if (prop.variable.includes("color") || prop.variable.includes("bg") || prop.variable.includes("background")) return "color";
@@ -100,306 +101,336 @@ export function DetectElementsStep() {
     : (state.snippets.html || "") + "\n\n<style>\n" + (state.snippets.css || "") + "\n</style>";
 
   return (
-    <div className="flex-1 flex items-start gap-6 p-8 min-h-0 overflow-hidden w-full">
+    <div className="flex-1 flex flex-col lg:flex-row items-start gap-6 p-4 md:p-8 min-h-0 overflow-hidden w-full bg-[#F6F7F8]">
       
       {/* Left Panel: Code Viewer */}
-      <div className="flex-1 h-full bg-white border border-[#D7DADC] rounded-xl flex flex-col overflow-hidden">
-        <div className="p-6 pb-4 shrink-0">
-          <h3 className="font-semibold text-[16px] text-[#626467]">code</h3>
+      <div className="flex-1 w-full lg:max-w-none h-[400px] lg:h-full bg-[#1e1e1e] border border-[#333] rounded-2xl flex flex-col overflow-hidden shadow-sm">
+        <div className="px-6 py-4 flex items-center justify-between shrink-0 bg-[#252526] border-b border-[#333]">
+          <h3 className="font-semibold text-sm text-[#CCCCCC]">Source Code</h3>
+          <span className="text-xs text-[#808080] bg-[#333] px-2 py-0.5 rounded-full font-mono">Read Only</span>
         </div>
-        <div className="flex-1 p-6 pt-0 min-h-0">
-          <div className="h-full rounded-lg overflow-hidden border border-[#E9EAEB]">
-            <Editor
-              height="100%"
-              language={state.source_type === "react" ? "typescript" : "html"}
-              theme="vs-dark"
-              value={displayCode || ""}
-              options={{
-                readOnly: true,
-                minimap: { enabled: false },
-                fontSize: 13,
-                fontFamily: "'IBM Plex Mono', monospace",
-                scrollBeyondLastLine: false,
-                padding: { top: 16, bottom: 16 },
-                wordWrap: "on",
-              }}
-            />
-          </div>
+        <div className="flex-1 min-h-0">
+          <Editor
+            height="100%"
+            language={state.source_type === "react" ? "typescript" : "html"}
+            theme="vs-dark"
+            value={displayCode || ""}
+            options={{
+              readOnly: true,
+              minimap: { enabled: false },
+              fontSize: 13,
+              fontFamily: "'IBM Plex Mono', monospace",
+              scrollBeyondLastLine: false,
+              padding: { top: 24, bottom: 24 },
+              wordWrap: "on",
+              lineNumbers: "on",
+              renderLineHighlight: "none",
+            }}
+          />
         </div>
       </div>
 
       {/* Right Panel: Detected Elements OR Connect Element */}
-      <div className="flex-1 h-full bg-white border border-[#D7DADC] rounded-xl flex flex-col overflow-hidden">
-        
-        {!editingPropertyRaw || !editingPropertyConfigured ? (
-          <>
-            <div className="p-6 shrink-0 flex flex-col gap-1">
-              <h2 className="font-semibold text-[18px] text-[#1F2123]">Configurable Elements</h2>
-              <p className="text-[14px] text-[#626467]">
-                Connect detected properties or add manual ones.
-              </p>
-            </div>
-
-            <div className="px-6 pb-4 shrink-0">
-              <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#D7DADC] rounded-lg">
-                <Search className="w-5 h-5 text-[#626467]" />
-                <input
-                  type="text"
-                  placeholder="Search elements..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 outline-none bg-transparent text-[14px] text-[#1F2123] placeholder-[#626467]"
-                />
+      <div className="flex-1 w-full lg:max-w-[500px] xl:max-w-[600px] h-full bg-white border border-[#E9EAEB] rounded-2xl flex flex-col overflow-hidden shadow-sm">
+        <AnimatePresence mode="wait">
+          {!editingPropertyRaw || !editingPropertyConfigured ? (
+            <motion.div 
+              key="list-view"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col h-full"
+            >
+              <div className="p-6 shrink-0 flex flex-col gap-1 border-b border-[#E9EAEB] bg-white">
+                <h2 className="font-bold text-[20px] text-[#111111]">Configurable Elements</h2>
+                <p className="text-[14px] text-[#626467]">
+                  Connect detected CSS variables or add your own.
+                </p>
               </div>
-            </div>
 
-            <div className="flex-1 overflow-y-auto px-6 pb-6">
-              <div className="flex flex-col gap-2.5">
-                {filteredProperties.map((prop) => {
-                  const configured = getConfiguredProperty(prop.id);
-                  const isConnected = !!configured;
-                  const isUnbound = prop.source === "unbound";
-
-                  return (
-                    <div 
-                      key={prop.id}
-                      className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 flex items-center justify-between w-full"
-                    >
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="flex flex-col gap-1 min-w-0">
-                          <p className="font-['IBM_Plex_Mono',monospace] font-semibold text-[#1F2123] text-[14px] truncate">
-                            {prop.variable}
-                          </p>
-                          {isUnbound && (
-                            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 self-start">
-                              Unbound
-                            </span>
-                          )}
-                        </div>
-                        
-                        {isConnected ? (
-                          <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <div className="bg-[#F7F9FB] px-2 py-0.5 rounded text-[#626467] text-[13px] shrink-0 capitalize">
-                              {configured.type}
-                            </div>
-                            <p className="font-medium text-[#1F2123] text-[14px] truncate">
-                              {configured.label}
-                            </p>
-                          </div>
-                        ) : (
-                          <p className="italic text-[#7D7F82] text-[14px]">
-                            Not configured
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex items-center shrink-0 ml-4">
-                        {isConnected ? (
-                          <div 
-                            className="flex items-center gap-2 cursor-pointer hover:opacity-80"
-                            onClick={() => setEditingPropertyId(prop.id)}
-                          >
-                            <BadgeCheck className="w-[24px] h-[24px] text-[#00963D]" strokeWidth={1.5} />
-                            <p className="font-medium text-[#00963D] text-[14px]">Connected</p>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1.5">
-                              <div className="w-1.5 h-1.5 bg-[#626467] rounded-full" />
-                              <p className="text-[#626467] text-[14px]">Not connected</p>
-                            </div>
-                            <button 
-                              onClick={() => {
-                                toggleProperty(prop);
-                                setEditingPropertyId(prop.id);
-                              }}
-                              className="bg-[#EEF1F4] px-3 py-1 rounded-md font-semibold text-[#1F2123] text-[13px] hover:bg-[#e2e6ea] transition-colors"
-                            >
-                              Connect
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-
-                <button
-                  onClick={addUnboundProperty}
-                  className="mt-2 flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-[#D7DADC] rounded-lg text-[#626467] hover:border-[#1F2123] hover:text-[#1F2123] transition-colors font-medium text-[14px]"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Manual Property
-                </button>
-              </div>
-            </div>
-            
-            <div className="p-6 shrink-0 border-t border-[#E9EAEB] flex items-center justify-between">
-              <span className="font-semibold text-[14px] text-[#626467]">
-                {state.schema_definition?.length || 0} connected
-              </span>
-            </div>
-          </>
-        ) : (
-          /* Connect Element Configuration View */
-          <div className="flex flex-col h-full overflow-y-auto">
-            <div className="p-8 flex flex-col gap-6">
-              
-              {/* Top Section */}
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <button 
-                    onClick={() => setEditingPropertyId(null)}
-                    className="p-1 hover:bg-[#F7F9FB] rounded-md transition-colors -ml-1 text-[#626467]"
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </button>
-                  <p className="font-semibold text-[#1F2123] text-[18px]">
-                    Configure Element
-                  </p>
+              <div className="p-5 pb-2 shrink-0 bg-[#FAFAFA]">
+                <div className="flex items-center gap-3 px-4 py-2.5 bg-white border border-[#E9EAEB] rounded-xl shadow-sm focus-within:border-[#111111] focus-within:ring-1 focus-within:ring-[#111111] transition-all">
+                  <Search className="w-4 h-4 text-[#888888]" />
+                  <input
+                    type="text"
+                    placeholder="Search variables..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex-1 outline-none bg-transparent text-[14px] text-[#111111] placeholder-[#A0A3A5]"
+                  />
                 </div>
-                
-                <div className="bg-[#1F2123] rounded-lg p-3 flex justify-between items-center">
-                  <div className="flex flex-col gap-1 min-w-0">
-                    <p className="font-['IBM_Plex_Mono',monospace] text-white text-[14px] truncate">
-                      {editingPropertyRaw.variable}
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-5 pb-6 bg-[#FAFAFA]">
+                <div className="flex flex-col gap-3 pt-2">
+                  <AnimatePresence>
+                    {filteredProperties.map((prop) => {
+                      const configured = getConfiguredProperty(prop.id);
+                      const isConnected = !!configured;
+                      const isUnbound = prop.source === "unbound";
+
+                      return (
+                        <motion.div 
+                          layout
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.98 }}
+                          transition={{ duration: 0.15 }}
+                          key={prop.id}
+                          className={`group rounded-xl border px-4 py-3.5 flex items-center justify-between w-full transition-all ${
+                            isConnected ? 'bg-white border-[#E9EAEB] shadow-sm hover:border-[#C4C7C8]' : 'bg-transparent border-[#E9EAEB] hover:bg-white hover:shadow-sm'
+                          }`}
+                        >
+                          <div className="flex items-center gap-4 flex-1 min-w-0">
+                            <div className="flex flex-col gap-1 min-w-0">
+                              <p className={`font-['IBM_Plex_Mono',monospace] font-semibold text-[13px] truncate ${isConnected ? 'text-[#111111]' : 'text-[#626467]'}`}>
+                                {prop.variable}
+                              </p>
+                              {isUnbound && (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFF0E0] text-[#D46B08] self-start border border-[#FFD591] uppercase tracking-wider">
+                                  Unbound
+                                </span>
+                              )}
+                            </div>
+                            
+                            {isConnected ? (
+                              <div className="flex items-center gap-3 min-w-0 flex-1 ml-2">
+                                <div className="bg-[#F6F7F8] border border-[#E9EAEB] px-2 py-0.5 rounded text-[#626467] text-[11px] font-semibold shrink-0 uppercase tracking-wide">
+                                  {configured.type}
+                                </div>
+                                <p className="font-medium text-[#111111] text-[14px] truncate">
+                                  {configured.label}
+                                </p>
+                              </div>
+                            ) : null}
+                          </div>
+
+                          <div className="flex items-center shrink-0 ml-4">
+                            {isConnected ? (
+                              <button 
+                                className="flex items-center gap-2 cursor-pointer bg-white border border-[#E9EAEB] shadow-sm hover:bg-[#F6F7F8] px-3 py-1.5 rounded-lg transition-colors"
+                                onClick={() => setEditingPropertyId(prop.id)}
+                              >
+                                <Settings2 className="w-4 h-4 text-[#111111]" />
+                                <span className="font-semibold text-[#111111] text-[13px]">Edit</span>
+                              </button>
+                            ) : (
+                              <button 
+                                onClick={() => {
+                                  toggleProperty(prop);
+                                  setEditingPropertyId(prop.id);
+                                }}
+                                className="bg-[#111111] text-white px-4 py-1.5 rounded-lg font-medium text-[13px] hover:bg-[#333333] transition-colors shadow-sm"
+                              >
+                                Connect
+                              </button>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+
+                  <motion.button
+                    layout
+                    onClick={addUnboundProperty}
+                    className="mt-3 flex items-center justify-center gap-2 w-full py-3.5 border-2 border-dashed border-[#D7DADC] rounded-xl bg-transparent text-[#626467] hover:bg-white hover:border-[#111111] hover:text-[#111111] hover:shadow-sm transition-all font-semibold text-[14px] group"
+                  >
+                    <Plus className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    Add Manual Property
+                  </motion.button>
+                </div>
+              </div>
+              
+              <div className="px-6 py-4 shrink-0 border-t border-[#E9EAEB] bg-white flex items-center justify-between">
+                <span className="font-medium text-[13px] text-[#888888]">
+                  <span className="text-[#111111] font-semibold">{state.schema_definition?.length || 0}</span> connected
+                </span>
+              </div>
+            </motion.div>
+          ) : (
+            /* Connect Element Configuration View */
+            <motion.div 
+              key="edit-view"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col h-full bg-white"
+            >
+              <div className="p-6 border-b border-[#E9EAEB] flex flex-col gap-5">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => setEditingPropertyId(null)}
+                      className="p-1.5 hover:bg-[#F6F7F8] rounded-lg transition-colors -ml-1 text-[#888888] hover:text-[#111111]"
+                    >
+                      <ArrowLeft className="w-5 h-5" />
+                    </button>
+                    <p className="font-bold text-[#111111] text-[18px]">
+                      Configure Property
                     </p>
-                    {editingPropertyRaw.source === "unbound" && (
-                      <span className="text-[11px] font-medium text-orange-400">
-                        Unbound property
-                      </span>
-                    )}
                   </div>
                   <button 
                     onClick={() => {
                        toggleProperty(editingPropertyRaw);
                        setEditingPropertyId(null);
                     }}
-                    className="text-[#F87171] hover:text-[#EF4444] text-[13px] font-medium shrink-0 ml-4 transition-colors"
+                    className="text-[#DC2626] hover:bg-[#FEF2F2] px-3 py-1.5 rounded-lg text-[13px] font-semibold transition-colors"
                   >
                     Disconnect
                   </button>
                 </div>
+                
+                <div className="bg-[#F6F7F8] rounded-xl p-4 flex flex-col gap-1.5 border border-[#E9EAEB]">
+                  <p className="text-[12px] font-semibold text-[#888888] uppercase tracking-wider">CSS Variable</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-['IBM_Plex_Mono',monospace] text-[#111111] text-[15px] font-semibold">
+                      {editingPropertyRaw.variable}
+                    </p>
+                    {editingPropertyRaw.source === "unbound" && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFF0E0] text-[#D46B08] border border-[#FFD591] uppercase tracking-wider">
+                        Unbound
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Form Section */}
-              <div className="flex flex-col gap-5 w-full">
-                
-                {editingPropertyRaw.source === "unbound" && (
+              <div className="flex-1 overflow-y-auto p-6 bg-[#FAFAFA]">
+                <div className="flex flex-col gap-6 max-w-[400px]">
+                  
+                  {editingPropertyRaw.source === "unbound" && (
+                    <div className="flex flex-col gap-2">
+                      <label className="font-semibold text-[#111111] text-[13px]">
+                        CSS Variable Name
+                      </label>
+                      <input 
+                        type="text" 
+                        value={editingPropertyConfigured.variable}
+                        onChange={(e) => updateEditingProperty({ variable: e.target.value, id: e.target.value })}
+                        className="bg-white border border-[#D7DADC] rounded-xl px-4 py-2.5 outline-none text-[#111111] text-[14px] font-['IBM_Plex_Mono',monospace] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all shadow-sm"
+                        placeholder="--custom-var"
+                      />
+                    </div>
+                  )}
+
                   <div className="flex flex-col gap-2">
-                    <label className="font-semibold text-[#626467] text-[14px]">
-                      CSS Variable Name
+                    <label className="font-semibold text-[#111111] text-[13px]">
+                      Display Label
                     </label>
                     <input 
                       type="text" 
-                      value={editingPropertyConfigured.variable}
-                      onChange={(e) => updateEditingProperty({ variable: e.target.value, id: e.target.value })}
-                      className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] font-['IBM_Plex_Mono',monospace]"
-                      placeholder="--custom-var"
+                      value={editingPropertyConfigured.label}
+                      onChange={(e) => updateEditingProperty({ label: e.target.value })}
+                      className="bg-white border border-[#D7DADC] rounded-xl px-4 py-2.5 outline-none text-[#111111] text-[14px] w-full focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all shadow-sm"
                     />
                   </div>
-                )}
 
-                <div className="flex flex-col gap-2 relative">
-                  <label className="font-semibold text-[#626467] text-[14px]">
-                    Customization Type
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={editingPropertyConfigured.type}
-                      onChange={(e) => updateEditingProperty({ type: e.target.value })}
-                      className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 w-full outline-none text-[#1F2123] text-[14px] appearance-none cursor-pointer"
-                    >
-                      <option value="color">Color</option>
-                      <option value="number">Number</option>
-                      <option value="text">Text</option>
-                      <option value="select">Select</option>
-                      <option value="boolean">Boolean</option>
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <ChevronDown className="w-4 h-4 text-[#1F2123]" />
+                  <div className="flex flex-col gap-2 relative">
+                    <label className="font-semibold text-[#111111] text-[13px]">
+                      Control Type
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={editingPropertyConfigured.type}
+                        onChange={(e) => updateEditingProperty({ type: e.target.value })}
+                        className="bg-white border border-[#D7DADC] rounded-xl px-4 py-2.5 w-full outline-none text-[#111111] text-[14px] appearance-none cursor-pointer focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all shadow-sm"
+                      >
+                        <option value="color">Color</option>
+                        <option value="number">Number</option>
+                        <option value="text">Text</option>
+                        <option value="select">Select</option>
+                        <option value="boolean">Boolean</option>
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <ChevronDown className="w-4 h-4 text-[#626467]" />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-[#626467] text-[14px]">
-                    Display Label
-                  </label>
-                  <input 
-                    type="text" 
-                    value={editingPropertyConfigured.label}
-                    onChange={(e) => updateEditingProperty({ label: e.target.value })}
-                    className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] w-full"
-                  />
-                </div>
+                  <AnimatePresence>
+                    {editingPropertyConfigured.type === "select" && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="flex flex-col gap-2 overflow-hidden"
+                      >
+                        <label className="font-semibold text-[#111111] text-[13px]">
+                          Options (comma separated)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={(editingPropertyConfigured.options || []).join(", ")}
+                          onChange={(e) => updateEditingProperty({ options: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) })}
+                          className="bg-white border border-[#D7DADC] rounded-xl px-4 py-2.5 outline-none text-[#111111] text-[14px] w-full focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all shadow-sm"
+                          placeholder="solid, outline, ghost"
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-[#626467] text-[14px]">
-                    Semantic CSS Mapping (Optional)
-                  </label>
-                  <input 
-                    type="text" 
-                    value={editingPropertyConfigured.property || ""}
-                    onChange={(e) => updateEditingProperty({ property: e.target.value })}
-                    className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] w-full font-['IBM_Plex_Mono',monospace]"
-                    placeholder="e.g. background-color"
-                  />
-                </div>
-
-                {editingPropertyConfigured.type === "select" && (
                   <div className="flex flex-col gap-2">
-                    <label className="font-semibold text-[#626467] text-[14px]">
-                      Options (comma separated)
+                    <label className="font-semibold text-[#111111] text-[13px]">
+                      Default Value
+                    </label>
+                    <div className="bg-white border border-[#D7DADC] rounded-xl px-3 py-2 flex items-center gap-3 focus-within:border-[#111111] focus-within:ring-1 focus-within:ring-[#111111] transition-all shadow-sm">
+                      {editingPropertyConfigured.type === "color" && (
+                        <div className="relative shrink-0 flex">
+                          <input
+                            type="color"
+                            value={editingPropertyConfigured.defaultValue?.startsWith('#') ? editingPropertyConfigured.defaultValue.slice(0, 7) : '#000000'}
+                            onChange={(e) => updateEditingProperty({ defaultValue: e.target.value })}
+                            className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
+                          />
+                          <div 
+                            className="w-7 h-7 rounded-lg border border-[#0000001A] pointer-events-none shadow-sm" 
+                            style={{ backgroundColor: editingPropertyConfigured.defaultValue?.startsWith('#') ? editingPropertyConfigured.defaultValue : '#000000' }} 
+                          />
+                        </div>
+                      )}
+                      <input
+                        type="text"
+                        value={editingPropertyConfigured.defaultValue}
+                        onChange={(e) => updateEditingProperty({ defaultValue: e.target.value })}
+                        className="font-['IBM_Plex_Mono',monospace] text-[#111111] text-[14px] outline-none flex-1 min-w-0 bg-transparent py-0.5"
+                        placeholder="e.g. 16px or #ffffff"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2">
+                    <label className="font-semibold text-[#111111] text-[13px]">
+                      Semantic Mapping <span className="text-[#888888] font-normal">(Optional)</span>
                     </label>
                     <input 
                       type="text" 
-                      value={(editingPropertyConfigured.options || []).join(", ")}
-                      onChange={(e) => updateEditingProperty({ options: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) })}
-                      className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 outline-none text-[#1F2123] text-[14px] w-full"
-                      placeholder="option1, option2, option3"
+                      value={editingPropertyConfigured.property || ""}
+                      onChange={(e) => updateEditingProperty({ property: e.target.value })}
+                      className="bg-white border border-[#D7DADC] rounded-xl px-4 py-2.5 outline-none text-[#111111] text-[14px] w-full font-['IBM_Plex_Mono',monospace] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all shadow-sm"
+                      placeholder="e.g. background-color"
                     />
                   </div>
-                )}
 
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-[#626467] text-[14px]">
-                    Default Value
-                  </label>
-                  <div className="bg-white border border-[#D7DADC] rounded-lg px-4 py-3 flex items-center gap-2">
-                    {editingPropertyConfigured.type === "color" && (
-                      <div className="relative shrink-0 flex">
-                        <input
-                          type="color"
-                          value={editingPropertyConfigured.defaultValue?.startsWith('#') ? editingPropertyConfigured.defaultValue.slice(0, 7) : '#000000'}
-                          onChange={(e) => updateEditingProperty({ defaultValue: e.target.value })}
-                          className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
-                        />
-                        <div 
-                          className="w-4 h-4 rounded-[2px] border border-[#D7DADC] pointer-events-none" 
-                          style={{ backgroundColor: editingPropertyConfigured.defaultValue?.startsWith('#') ? editingPropertyConfigured.defaultValue : '#000000' }} 
-                        />
+                  {editingPropertyRaw.source === "unbound" && (
+                    <div className="mt-2 bg-[#FFF0E0] border border-[#FFD591] p-4 rounded-xl flex gap-3">
+                      <div className="shrink-0 mt-0.5 text-[#D46B08]">
+                        <Settings2 className="w-4 h-4" />
                       </div>
-                    )}
-                    <input
-                      type="text"
-                      value={editingPropertyConfigured.defaultValue}
-                      onChange={(e) => updateEditingProperty({ defaultValue: e.target.value })}
-                      className="font-['IBM_Plex_Mono',monospace] text-[#1F2123] text-[14px] outline-none flex-1 min-w-0 bg-transparent"
-                    />
-                  </div>
+                      <p className="text-[#C45E00] text-[13px] leading-relaxed">
+                        This is a manual property. Changing it will only affect the component if its source explicitly references <code className="font-semibold px-1 bg-white/50 rounded">{editingPropertyConfigured.variable}</code>.
+                      </p>
+                    </div>
+                  )}
+
                 </div>
-
-                {editingPropertyRaw.source === "unbound" && (
-                  <p className="italic text-[#626467] text-[13px] mt-1 bg-[#F7F9FB] p-3 rounded-lg border border-[#E9EAEB]">
-                    * This is a manual property. Changing it will only affect the component if its source explicitly references <code className="font-semibold">{editingPropertyConfigured.variable}</code>. It will not silently rewrite the source code.
-                  </p>
-                )}
-
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
     </div>

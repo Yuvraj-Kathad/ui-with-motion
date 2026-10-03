@@ -24,6 +24,7 @@ export interface ComponentCardProps {
     playState: 'idle' | 'hover' | 'active' | 'loading';
     customStyles?: ComponentCustomStyles;
   }) => React.ReactNode);
+  accessTier?: "free" | "premium";
 }
 
 const DEFAULT_TAGS = [{ label: "Html & css" }, { label: "Next js" }, { label: "Figma" }];
@@ -155,7 +156,7 @@ function injectMappedColors(node: React.ReactNode, colorMapping: Record<string, 
   return React.cloneElement(element, props);
 }
 
-export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children }: ComponentCardProps) {
+export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, accessTier }: ComponentCardProps) {
   const [isSaved, setIsSaved] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playState, setPlayState] = useState<'idle' | 'hover' | 'active' | 'loading'>('idle');
@@ -303,9 +304,16 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children }: Comp
         
         {/* Footer Area */}
         <div className="flex items-center justify-between px-[20px] py-[12px] w-full shrink-0 relative z-10">
-          <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap">
-            {title}
-          </h3>
+          <div className="flex items-center gap-2 max-w-[65%]">
+            <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap truncate">
+              {title}
+            </h3>
+            {accessTier === 'premium' && (
+              <div className="flex items-center justify-center bg-[#FDF8F0] border border-[#F3E2C6] rounded-full px-2 py-0.5 shrink-0" title="Premium Component">
+                <span className="text-[#C18824] text-[10px] font-bold uppercase tracking-wider">Premium</span>
+              </div>
+            )}
+          </div>
           <div className="flex gap-[4px] h-[24px] items-center">
             {tags.map((tag, i) => (
               <div key={i} className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] rounded-[4px] overflow-hidden">

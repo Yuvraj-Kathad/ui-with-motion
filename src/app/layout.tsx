@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import NextTopLoader from 'nextjs-toploader';
 import "./globals.css";
+import { CustomizationProvider } from "@/components/providers/CustomizationProvider";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -46,16 +47,6 @@ export default function RootLayout({
       <body
         className={`${plusJakarta.variable} ${gcGudlak.variable} min-h-screen bg-[#FBFCFD] text-[#454545] font-sans`}
       >
-        <NextTopLoader
-          color="#1F2123"
-          initialPosition={0.08}
-          crawlSpeed={200}
-          height={3}
-          crawl={true}
-          showSpinner={false}
-          easing="ease"
-          speed={200}
-        />
         {children}
       </body>
     </html>

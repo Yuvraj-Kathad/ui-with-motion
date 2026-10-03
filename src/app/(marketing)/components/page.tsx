@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ComponentModalPublic, ComponentItem } from "@/components/ui/ComponentModalPublic";
 import { getPublishedComponents } from "@/lib/admin/components/queries";
 import { componentRegistry } from "@/lib/registry/components";
+import { LivePreviewIframe } from "@/components/admin/preview/LivePreviewIframe";
 
 const FigmaIcon = ({ size = 24, className = "" }) => (
   <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -89,6 +90,8 @@ function FilterDropdown({ label, options, selected, onChange }: FilterDropdownPr
   );
 }
 
+import { useCustomization } from "@/components/providers/CustomizationProvider";
+
 function ComponentsContent() {
   const searchParams = useSearchParams();
   const search = searchParams?.get("search")?.toLowerCase() || "";
@@ -104,6 +107,8 @@ function ComponentsContent() {
   const [activeModalComponent, setActiveModalComponent] = useState<ComponentItem | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [savedIds, setSavedIds] = useState<string[]>([]);
+  
+  const { getOverrides } = useCustomization();
 
   useEffect(() => {
     const loadComponents = async () => {
@@ -126,7 +131,6 @@ function ComponentsContent() {
       window.removeEventListener("saved_components_changed", loadComponents);
     }
   }, []);
-
 
   const filteredComponents = components.filter(comp => {
     if (!search) return true;
@@ -242,10 +246,44 @@ function ComponentsContent() {
                   <div className="h-[151px] w-full relative flex items-center justify-center shrink-0 overflow-hidden bg-transparent pointer-events-none">
                     <div className="absolute inset-0 w-full h-full transform flex items-center justify-center scale-75">
                       {(() => {
+                        const overrides = getOverrides(comp.id);
+                        const activeOverrides: Record<string, string> = {};
+                        const schemaDefToUse = (comp.schema_definition && comp.schema_definition.length > 0)
+                          ? comp.schema_definition
+                          : (componentRegistry[comp.registry_id]?.schema_definition || []);
+                          
+                        schemaDefToUse.forEach((config: any) => {
+                          const val = overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue;
+                          if (config.variable) {
+                            activeOverrides[config.variable] = val;
+                          }
+                        });
+
                         const RegistryComponent = componentRegistry[comp.registry_id]?.component;
-                        return RegistryComponent ? (
-                          <RegistryComponent />
-                        ) : (
+                        if (RegistryComponent) {
+                          return (
+                            <div style={activeOverrides as React.CSSProperties} className="w-full h-full flex items-center justify-center">
+                              <RegistryComponent />
+                            </div>
+                          );
+                        }
+                        
+                        const hasHtmlCss = comp.snippets?.html || comp.snippets?.css;
+                        if (hasHtmlCss && comp.source_type !== "react") {
+                          return (
+                            <div className="w-[150%] h-[150%]">
+                              <LivePreviewIframe 
+                                sourceType={(comp.source_type as "react" | "html_css" | "both") || "html_css"}
+                                snippets={comp.snippets || {}}
+                                schemaDefinition={comp.schema_definition}
+                                overrides={activeOverrides}
+                                className="w-full h-full border-none scale-[0.9] origin-center"
+                              />
+                            </div>
+                          );
+                        }
+
+                        return (
                           <div className="text-[#7D7F82] font-medium text-sm flex flex-col items-center gap-1">
                             <span>Preview Unavailable</span>
                             <span className="text-[10px]">Missing trusted registry renderer</span>
@@ -257,9 +295,16 @@ function ComponentsContent() {
                   
                   {/* Footer Area */}
                   <div className="flex items-center justify-between px-[20px] py-[12px] w-full shrink-0 relative z-10 bg-transparent h-[48px]">
-                    <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap truncate">
-                      {comp.title}
-                    </h3>
+                    <div className="flex items-center gap-2 max-w-[65%]">
+                      <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap truncate">
+                        {comp.title}
+                      </h3>
+                      {(comp as any).access_tier === 'premium' && (
+                        <div className="flex items-center justify-center bg-[#FDF8F0] border border-[#F3E2C6] rounded-full px-2 py-0.5 shrink-0" title="Premium Component">
+                          <span className="text-[#C18824] text-[10px] font-bold uppercase tracking-wider">Premium</span>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex gap-[4px] h-[24px] items-center">
                       {(comp.tags || []).map((tag: string, i: number) => (
                         <div key={i} className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] px-2 rounded-[4px] overflow-hidden">

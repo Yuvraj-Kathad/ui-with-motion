@@ -3,6 +3,8 @@
 import React, { useState, useMemo } from "react";
 import { useBuilder } from "../BuilderContext";
 import { LivePreviewIframe } from "../../preview/LivePreviewIframe";
+import { motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 export function ReviewStep() {
   const { state } = useBuilder();
@@ -20,29 +22,29 @@ export function ReviewStep() {
   }, [state.schema_definition, overrides]);
 
   return (
-    <div className="flex-1 flex items-start gap-6 p-8 min-h-0 overflow-hidden w-full">
+    <div className="flex-1 flex flex-col lg:flex-row items-start gap-6 p-4 md:p-8 min-h-0 overflow-hidden w-full bg-[#F6F7F8]">
       
       {/* Left Panel: Configuration Fields */}
-      <div className="flex-1 max-w-[400px] h-full bg-white border border-[#D7DADC] rounded-xl flex flex-col overflow-hidden">
-        <div className="p-6 pb-4 shrink-0 border-b border-[#E9EAEB]">
-          <h2 className="font-semibold text-[18px] text-[#1F2123]">Component Properties</h2>
+      <div className="flex-1 w-full lg:max-w-[420px] xl:max-w-[480px] h-[500px] lg:h-full bg-white border border-[#E9EAEB] shadow-sm rounded-2xl flex flex-col overflow-hidden">
+        <div className="p-6 pb-5 shrink-0 border-b border-[#E9EAEB] bg-white">
+          <h2 className="font-bold text-[20px] text-[#111111] mb-1">Component Properties</h2>
           <p className="text-[14px] text-[#626467]">
-            Test your configurable properties below
+            Test and tweak your configurable properties.
           </p>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-5">
+        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 bg-[#FAFAFA]">
           {(state.schema_definition || []).length === 0 ? (
-            <div className="text-center text-[#626467] text-[14px]">
+            <div className="text-center text-[#626467] text-[14px] p-8 border-2 border-dashed border-[#E9EAEB] rounded-xl bg-white">
               No properties configured. Go back to Step 2 to connect elements.
             </div>
           ) : (
             (state.schema_definition || []).map((config: any) => (
-              <div key={config.id} className="flex flex-col gap-2">
-                <label className="font-semibold text-[#1F2123] text-[14px] flex items-center justify-between">
+              <div key={config.id} className="flex flex-col gap-2.5">
+                <label className="font-semibold text-[#111111] text-[14px] flex items-center justify-between">
                   <span>{config.label}</span>
                   {config.source === "unbound" && (
-                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-700 uppercase tracking-wide">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFF0E0] text-[#D46B08] uppercase tracking-wider border border-[#FFD591]">
                       Unbound
                     </span>
                   )}
@@ -57,7 +59,7 @@ export function ReviewStep() {
                     hexVal = hexVal.slice(0, 7) || "#000000";
 
                     return (
-                      <div className="bg-white border border-[#D7DADC] rounded-lg px-4 py-2 flex items-center gap-2 focus-within:border-[#1F2123] transition-colors">
+                      <div className="bg-white border border-[#D7DADC] rounded-xl px-3 py-2 flex items-center gap-3 focus-within:border-[#111111] focus-within:ring-1 focus-within:ring-[#111111] transition-all shadow-sm">
                         <div className="relative shrink-0 flex">
                           <input
                             type="color"
@@ -66,7 +68,7 @@ export function ReviewStep() {
                             className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
                           />
                           <div 
-                            className="w-5 h-5 rounded-[4px] border border-[#D7DADC] pointer-events-none" 
+                            className="w-7 h-7 rounded-lg border border-[#0000001A] pointer-events-none shadow-sm" 
                             style={{ backgroundColor: hexVal.startsWith('#') ? hexVal : '#000000' }} 
                           />
                         </div>
@@ -74,7 +76,7 @@ export function ReviewStep() {
                           type="text"
                           value={rawVal}
                           onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
-                          className="font-['IBM_Plex_Mono',monospace] text-[#1F2123] text-[14px] outline-none flex-1 min-w-0 bg-transparent"
+                          className="font-['IBM_Plex_Mono',monospace] text-[#111111] text-[14px] outline-none flex-1 min-w-0 bg-transparent"
                         />
                       </div>
                     );
@@ -84,52 +86,69 @@ export function ReviewStep() {
                     let rawVal = overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue;
                     let numVal = parseInt(String(rawVal).replace(/[^0-9-]/g, '')) || 0;
                     return (
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4 bg-white p-3 rounded-xl border border-[#D7DADC] shadow-sm">
                         <input 
                           type="range"
                           min="0"
                           max="100"
                           value={numVal}
                           onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: `${e.target.value}px` }))}
-                          className="flex-1 accent-[#1F2123]"
+                          className="flex-1 accent-[#111111] h-1.5 bg-[#E9EAEB] rounded-full appearance-none outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-[#111111] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md transition-all"
                         />
-                        <input
-                          type="text"
-                          value={rawVal}
-                          onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
-                          className="font-['IBM_Plex_Mono',monospace] bg-white border border-[#D7DADC] rounded-lg px-2 py-1 text-[#1F2123] text-[14px] w-20 text-center outline-none"
-                        />
+                        <div className="relative w-[72px]">
+                          <input
+                            type="text"
+                            value={rawVal}
+                            onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                            className="font-['IBM_Plex_Mono',monospace] bg-[#F6F7F8] border border-[#E9EAEB] rounded-lg px-2 py-1.5 text-[#111111] text-[14px] w-full text-center outline-none focus:border-[#111111]"
+                          />
+                        </div>
                       </div>
                     );
                   })()
                 ) : config.type === "select" ? (
-                  <select 
-                    value={overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue}
-                    onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
-                    className="bg-white border border-[#D7DADC] rounded-lg px-4 py-2 outline-none text-[#1F2123] text-[14px] focus:border-[#1F2123] transition-colors w-full"
-                  >
-                    {(config.options || [config.defaultValue]).map((opt: string) => (
-                      <option key={opt} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                ) : config.type === "boolean" ? (
-                  <div className="flex items-center gap-2">
-                    <input 
-                      type="checkbox"
-                      checked={String(overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue) === 'true'}
-                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: String(e.target.checked) }))}
-                      className="w-4 h-4 accent-[#1F2123] cursor-pointer"
-                    />
-                    <span className="text-[14px] text-[#1F2123]">
-                      {String(overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue) === 'true' ? 'True' : 'False'}
-                    </span>
+                  <div className="relative">
+                    <select 
+                      value={overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue}
+                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
+                      className="bg-white border border-[#D7DADC] shadow-sm rounded-xl px-4 py-2.5 outline-none text-[#111111] text-[14px] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all w-full appearance-none cursor-pointer"
+                    >
+                      {(config.options || [config.defaultValue]).map((opt: string) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#888888]">
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
                   </div>
+                ) : config.type === "boolean" ? (
+                  (() => {
+                    const isChecked = String(overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue) === 'true';
+                    return (
+                      <div 
+                        className="flex items-center justify-between cursor-pointer bg-white border border-[#D7DADC] rounded-xl px-4 py-3 shadow-sm hover:border-[#C4C7C8] transition-colors"
+                        onClick={() => setOverrides(prev => ({ ...prev, [config.id]: String(!isChecked) }))}
+                      >
+                        <span className="text-[14px] text-[#111111] font-medium select-none">
+                          {isChecked ? 'Enabled' : 'Disabled'}
+                        </span>
+                        <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${isChecked ? 'bg-[#111111]' : 'bg-[#E9EAEB]'}`}>
+                          <motion.div 
+                            className="absolute top-1 left-1 bg-white w-4 h-4 rounded-full shadow-sm"
+                            layout
+                            animate={{ x: isChecked ? 20 : 0 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })()
                 ) : (
                   <input 
                     type="text" 
                     value={overrides[config.id] !== undefined ? overrides[config.id] : config.defaultValue}
                     onChange={(e) => setOverrides(prev => ({ ...prev, [config.id]: e.target.value }))}
-                    className="bg-white border border-[#D7DADC] rounded-lg px-4 py-2 outline-none text-[#1F2123] text-[14px] focus:border-[#1F2123] transition-colors w-full font-['IBM_Plex_Mono',monospace]"
+                    className="bg-white border border-[#D7DADC] shadow-sm rounded-xl px-4 py-2.5 outline-none text-[#111111] text-[14px] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all w-full font-['IBM_Plex_Mono',monospace]"
                   />
                 )}
               </div>
@@ -139,14 +158,20 @@ export function ReviewStep() {
       </div>
 
       {/* Right Panel: Live Preview */}
-      <div className="flex-1 h-full bg-[#FAFAFA] border border-[#D7DADC] rounded-xl flex flex-col overflow-hidden relative">
-        <LivePreviewIframe 
-          sourceType={state.source_type} 
-          snippets={state.snippets} 
-          overrides={activeOverrides}
-          schemaDefinition={state.schema_definition}
-          className="w-full h-full border-none"
-        />
+      <div className="flex-1 w-full h-[500px] min-h-[400px] lg:h-full bg-white border border-[#E9EAEB] shadow-sm rounded-2xl flex flex-col overflow-hidden relative">
+        <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg border border-[#E9EAEB] shadow-sm flex items-center gap-2 pointer-events-none">
+          <div className="w-2 h-2 rounded-full bg-[#00963D] animate-pulse" />
+          <span className="text-xs font-semibold text-[#111111]">Live Preview</span>
+        </div>
+        <div className="w-full h-full bg-[#F6F7F8]">
+          <LivePreviewIframe 
+            sourceType={state.source_type} 
+            snippets={state.snippets} 
+            overrides={activeOverrides}
+            schemaDefinition={state.schema_definition}
+            className="w-full h-full border-none"
+          />
+        </div>
       </div>
 
     </div>
