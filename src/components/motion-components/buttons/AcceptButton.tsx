@@ -19,7 +19,7 @@ export function AcceptButton() {
       {/* Shine Effect Container */}
       <motion.div
         className="absolute left-0 top-0 blur-[0.8px] h-[100px] w-[100px] mix-blend-lighten pointer-events-none"
-        initial={false}
+        initial={false} 
         animate={{ 
           x: isHovered ? -38.5 : 67.5, 
           y: isHovered ? 0.5 : -52.5 

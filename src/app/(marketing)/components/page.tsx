@@ -176,7 +176,31 @@ function ComponentsContent() {
           </div>
         )}
         
-        {isLoaded && filteredComponents.length === 0 ? (
+        {!isLoaded ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] justify-center lg:justify-start">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-[#FBFCFD] border border-[#B7BABD] flex flex-col gap-px items-start relative rounded-[12px] w-full overflow-clip h-[253px]">
+                {/* Top action bar skeleton */}
+                <div className="flex gap-[6px] items-center justify-end p-[8px] w-full shrink-0 relative z-10">
+                  <div className="size-[34px] bg-[#E5E7EB] rounded-[6px] animate-pulse" />
+                  <div className="size-[34px] bg-[#E5E7EB] rounded-[6px] animate-pulse" />
+                </div>
+                {/* Center display skeleton */}
+                <div className="h-[151px] w-full relative flex items-center justify-center shrink-0 overflow-hidden">
+                  <div className="w-[120px] h-[40px] bg-[#E5E7EB] rounded-[8px] animate-pulse" />
+                </div>
+                {/* Bottom info bar skeleton */}
+                <div className="flex justify-between items-center p-[16px] w-full shrink-0 mt-auto border-t border-[#D7DADC]">
+                  <div className="w-[120px] h-[20px] bg-[#E5E7EB] rounded-[4px] animate-pulse" />
+                  <div className="flex items-center gap-[6px]">
+                    <div className="size-[20px] bg-[#E5E7EB] rounded-full animate-pulse" />
+                    <div className="w-[40px] h-[20px] bg-[#E5E7EB] rounded-[4px] animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredComponents.length === 0 ? (
           <div className="w-full py-20 flex flex-col items-center justify-center text-center">
             <p className="text-[20px] text-[#7D7F82] font-medium">No published components found.</p>
           </div>

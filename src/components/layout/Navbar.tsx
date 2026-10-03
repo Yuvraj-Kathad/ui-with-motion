@@ -68,24 +68,22 @@ export function Navbar({
       <div className="hidden md:flex items-center justify-between w-full max-w-[1440px] mx-auto px-6 lg:px-[70px] py-[7px] min-h-[65px]">
         {/* Left: Brand Logo & Navigation Link */}
         <div className="flex items-center gap-[29px] shrink-0">
-          {variant === "logged-out" && (
-            <Link
-              href="/"
-              className="flex items-center hover:opacity-90 transition-opacity"
-              aria-label="UX With Motion Home"
-            >
-              <div className="relative w-[48.97px] h-[51px] shrink-0">
-                <Image
-                  src="/icons/logo.svg"
-                  alt="Component Logo"
-                  width={49}
-                  height={51}
-                  priority
-                  className="size-full object-contain"
-                />
-              </div>
-            </Link>
-          )}
+          <Link
+            href="/"
+            className="flex items-center hover:opacity-90 transition-opacity"
+            aria-label="UX With Motion Home"
+          >
+            <div className="relative w-[48.97px] h-[51px] shrink-0">
+              <Image
+                src="/icons/logo.svg"
+                alt="Component Logo"
+                width={49}
+                height={51}
+                priority
+                className="size-full object-contain"
+              />
+            </div>
+          </Link>
 
           <Link
             href="/components"
@@ -211,26 +209,22 @@ export function Navbar({
       {/* Mobile Navigation */}
       <div className="flex md:hidden items-center justify-between h-[72px] px-5 w-full">
         {/* Brand Logo */}
-        {variant === "logged-out" ? (
-          <Link
-            href="/"
-            className="flex items-center hover:opacity-90 transition-opacity"
-            aria-label="UX With Motion Home"
-          >
-            <div className="relative w-[48.97px] h-[51px] shrink-0">
-              <Image
-                src="/icons/logo.svg"
-                alt="UX With Motion Logo"
-                width={49}
-                height={51}
-                priority
-                className="size-full object-contain"
-              />
-            </div>
-          </Link>
-        ) : (
-          <div className="w-[49px]" />
-        )}
+        <Link
+          href="/"
+          className="flex items-center hover:opacity-90 transition-opacity"
+          aria-label="UX With Motion Home"
+        >
+          <div className="relative w-[48.97px] h-[51px] shrink-0">
+            <Image
+              src="/icons/logo.svg"
+              alt="UX With Motion Logo"
+              width={49}
+              height={51}
+              priority
+              className="size-full object-contain"
+            />
+          </div>
+        </Link>
 
         {/* Mobile Navigation Actions */}
         <div className="flex items-center gap-[8px]">
