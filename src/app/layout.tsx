@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { CustomizationProvider } from "@/components/providers/CustomizationProvider";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -45,7 +46,9 @@ export default function RootLayout({
       <body
         className={`${plusJakarta.variable} ${gcGudlak.variable} min-h-screen bg-[#FBFCFD] text-[#454545] font-sans`}
       >
-        {children}
+        <CustomizationProvider>
+          {children}
+        </CustomizationProvider>
       </body>
     </html>
   );

@@ -3,6 +3,7 @@ import { X, Check, Copy, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { componentRegistry } from "@/lib/registry/components";
 import { LivePreviewIframe } from "@/components/admin/preview/LivePreviewIframe";
+import { useCustomization } from "@/components/providers/CustomizationProvider";
 
 export type ComponentItem = {
   id: string;
@@ -28,14 +29,33 @@ export function ComponentModalPublic({
   isOpen,
   onClose,
 }: ComponentModalPublicProps) {
+  const { getOverrides, setOverrides: updateGlobalOverrides, saveOverrides } = useCustomization();
   const [activeTab, setActiveTab] = useState<"customisation" | "code">("customisation");
   const [copied, setCopied] = useState<string | false>(false);
   const [overrides, setOverrides] = useState<Record<string, string>>({});
   
   // Reset overrides when a new component is opened
   useEffect(() => {
+    if (isOpen) {
+      setOverrides(getOverrides(component.id));
+    }
+  }, [isOpen, component.id, getOverrides]);
+
+  const handleOverrideChange = (key: string, value: string) => {
+    const newOverrides = { ...overrides, [key]: value };
+    setOverrides(newOverrides);
+    updateGlobalOverrides(component.id, newOverrides);
+  };
+
+  const handleReset = () => {
     setOverrides({});
-  }, [component.id]);
+    updateGlobalOverrides(component.id, {});
+  };
+
+  const handleClose = () => {
+    saveOverrides(component.id, overrides);
+    onClose();
+  };
 
   const registryEntry = componentRegistry[component.registry_id];
 
@@ -91,7 +111,7 @@ export function ComponentModalPublic({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={handleClose}
             className="fixed inset-0 z-[100] bg-[#1F2123]/30 backdrop-blur-sm"
           />
 
@@ -156,7 +176,7 @@ export function ComponentModalPublic({
                     )}
                   </div>
                   <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="size-[32px] flex items-center justify-center text-[#7D7F82] hover:text-black transition-colors"
                     aria-label="Close modal"
                   >
@@ -210,9 +230,19 @@ export function ComponentModalPublic({
                     </div>
                   ) : activeTab === "customisation" ? (
                     <div className="flex flex-col gap-[24px] w-full max-w-[593px]">
-                      <h3 className="font-sans font-bold text-[18px] text-[#1F2123]">
-                        Customisation
-                      </h3>
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-sans font-bold text-[18px] text-[#1F2123]">
+                          Customisation
+                        </h3>
+                        {Object.keys(overrides).length > 0 && (
+                          <button
+                            onClick={handleReset}
+                            className="text-[13px] text-[#7D7F82] hover:text-[#1F2123] underline decoration-[#7D7F82]/30 hover:decoration-[#1F2123] transition-colors"
+                          >
+                            Reset
+                          </button>
+                        )}
+                      </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[24px] w-full mt-[16px]">
                         {(() => {
@@ -246,7 +276,7 @@ export function ComponentModalPublic({
                                       <input
                                         type="color"
                                         value={hexVal.startsWith('#') ? hexVal : '#000000'}
-                                        onChange={(e) => setOverrides(prev => ({ ...prev, [config.variable]: e.target.value }))}
+                                        onChange={(e) => handleOverrideChange(config.variable, e.target.value)}
                                         className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
                                       />
                                       <div 
@@ -257,7 +287,7 @@ export function ComponentModalPublic({
                                     <input 
                                       type="text"
                                       value={rawVal}
-                                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.variable]: e.target.value }))}
+                                      onChange={(e) => handleOverrideChange(config.variable, e.target.value)}
                                       className="font-sans text-[14px] text-[#1F2123] outline-none flex-1 min-w-0 bg-transparent"
                                     />
                                   </div>
@@ -274,7 +304,7 @@ export function ComponentModalPublic({
                                       min="0"
                                       max="100"
                                       value={numVal}
-                                      onChange={(e) => setOverrides(prev => ({ ...prev, [config.variable]: `${e.target.value}px` }))}
+                                      onChange={(e) => handleOverrideChange(config.variable, `${e.target.value}px`)}
                                       className="flex-1 accent-[#1F2123]"
                                     />
                                     <span className="font-sans text-[14px] text-[#1F2123] w-[40px] text-right shrink-0">
@@ -288,7 +318,7 @@ export function ComponentModalPublic({
                                 <input 
                                   type="text"
                                   value={overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue}
-                                  onChange={(e) => setOverrides(prev => ({ ...prev, [config.variable]: e.target.value }))}
+                                  onChange={(e) => handleOverrideChange(config.variable, e.target.value)}
                                   className="font-sans text-[14px] text-[#1F2123] outline-none flex-1 min-w-0 bg-transparent"
                                 />
                               </div>

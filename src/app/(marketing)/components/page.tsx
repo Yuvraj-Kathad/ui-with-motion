@@ -90,6 +90,8 @@ function FilterDropdown({ label, options, selected, onChange }: FilterDropdownPr
   );
 }
 
+import { useCustomization } from "@/components/providers/CustomizationProvider";
+
 function ComponentsContent() {
   const searchParams = useSearchParams();
   const search = searchParams?.get("search")?.toLowerCase() || "";
@@ -105,6 +107,8 @@ function ComponentsContent() {
   const [activeModalComponent, setActiveModalComponent] = useState<ComponentItem | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [savedIds, setSavedIds] = useState<string[]>([]);
+  
+  const { getOverrides } = useCustomization();
 
   useEffect(() => {
     const loadComponents = async () => {
@@ -127,7 +131,6 @@ function ComponentsContent() {
       window.removeEventListener("saved_components_changed", loadComponents);
     }
   }, []);
-
 
   const filteredComponents = components.filter(comp => {
     if (!search) return true;
@@ -219,9 +222,26 @@ function ComponentsContent() {
                   <div className="h-[151px] w-full relative flex items-center justify-center shrink-0 overflow-hidden bg-transparent pointer-events-none">
                     <div className="absolute inset-0 w-full h-full transform flex items-center justify-center scale-75">
                       {(() => {
+                        const overrides = getOverrides(comp.id);
+                        const activeOverrides: Record<string, string> = {};
+                        const schemaDefToUse = (comp.schema_definition && comp.schema_definition.length > 0)
+                          ? comp.schema_definition
+                          : (componentRegistry[comp.registry_id]?.schema_definition || []);
+                          
+                        schemaDefToUse.forEach((config: any) => {
+                          const val = overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue;
+                          if (config.variable) {
+                            activeOverrides[config.variable] = val;
+                          }
+                        });
+
                         const RegistryComponent = componentRegistry[comp.registry_id]?.component;
                         if (RegistryComponent) {
-                          return <RegistryComponent />;
+                          return (
+                            <div style={activeOverrides as React.CSSProperties} className="w-full h-full flex items-center justify-center">
+                              <RegistryComponent />
+                            </div>
+                          );
                         }
                         
                         const hasHtmlCss = comp.snippets?.html || comp.snippets?.css;
@@ -231,6 +251,8 @@ function ComponentsContent() {
                               <LivePreviewIframe 
                                 sourceType={(comp.source_type as "react" | "html_css" | "both") || "html_css"}
                                 snippets={comp.snippets || {}}
+                                schemaDefinition={comp.schema_definition}
+                                overrides={activeOverrides}
                                 className="w-full h-full border-none scale-[0.9] origin-center"
                               />
                             </div>
