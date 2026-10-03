@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { IconWrapper } from "@/components/ui/IconWrapper";
 
 import { useRouter } from "next/navigation";
 import { UserDropdown } from "@/components/layout/UserDropdown";
+
 
 export interface NavbarProps {
   variant?: "logged-out" | "logged-in";
@@ -30,6 +31,18 @@ export function Navbar({
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    if (latest > previous && latest > 80) {
+      setIsVisible(false);
+    } else if (latest < previous) {
+      setIsVisible(true);
+    }
+  });
 
   const handleSearchSubmit = (e?: React.SubmitEvent, query?: string) => {
     if (e) e.preventDefault();
@@ -50,7 +63,15 @@ export function Navbar({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md transition-all border-b border-[#E7E7E7]/60">
+    <motion.header
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: "-100%" },
+      }}
+      animate={(isVisible || mobileMenuOpen || mobileSearchOpen || isSearchFocused) ? "visible" : "hidden"}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+      className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E7E7E7]/60"
+    >
       {/* Search Overlay */}
       <AnimatePresence>
         {isSearchFocused && (
@@ -65,7 +86,7 @@ export function Navbar({
       </AnimatePresence>
 
       {/* Desktop & Tablet Navigation */}
-      <div className="hidden md:flex items-center justify-between w-full max-w-[1440px] mx-auto px-6 lg:px-[70px] py-[7px] min-h-[65px]">
+      <div className="hidden md:flex items-center justify-between w-full px-6 lg:px-[70px] py-[7px] min-h-[65px]">
         {/* Left: Brand Logo & Navigation Link */}
         <div className="flex items-center gap-[29px] shrink-0">
           <Link
@@ -422,6 +443,8 @@ export function Navbar({
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }
+
+

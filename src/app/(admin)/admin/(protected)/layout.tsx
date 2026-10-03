@@ -10,7 +10,7 @@ export default async function AdminProtectedLayout({
   await requireAdmin()
 
   return (
-    <div className="flex h-screen w-full bg-[#F6F7F8] overflow-hidden">
+    <div className="flex h-screen w-full bg-[#F7F9FB] overflow-hidden">
       <AdminSidebar />
       <main className="flex-1 flex flex-col h-full overflow-y-auto">
         {children}
@@ -18,3 +18,4 @@ export default async function AdminProtectedLayout({
     </div>
   )
 }
+

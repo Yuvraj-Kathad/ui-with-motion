@@ -10,7 +10,7 @@ export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
-    <section className="relative w-full overflow-hidden pt-8 pb-12 md:pt-16 md:pb-24 bg-white">
+    <section className="relative w-full overflow-hidden pt-8 pb-12 md:pt-16 md:pb-24 bg-[#FBFCFD]">
       <Container>
         <div className="flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-[60px] max-w-[1294px] mx-auto">
           
@@ -44,7 +44,7 @@ export function Hero() {
           {/* Right Content */}
           <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
             <div className="flex flex-col gap-[20px] md:gap-[28px] mb-[32px] md:mb-[40px] w-full max-w-[654px]">
-              <h1 className="font-title font-bold text-[40px] sm:text-[48px] md:text-[56px] leading-[1.1] text-black tracking-[-0.02em] text-balance">
+              <h1 className="font-title font-bold text-[40px] sm:text-[48px] md:text-[56px] leading-[1.1] text-[#454545] tracking-[-0.02em] text-balance">
                 Premium UI, starting here
               </h1>
               <p className="font-sans font-normal text-[18px] sm:text-[20px] md:text-[22px] leading-[1.6] text-[#7D7F82] max-w-[572px] text-balance">
@@ -67,3 +67,4 @@ export function Hero() {
     </section>
   );
 }
+

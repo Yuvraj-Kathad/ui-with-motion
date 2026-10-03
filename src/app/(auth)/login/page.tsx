@@ -31,7 +31,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto flex flex-col items-center justify-center text-center px-4 py-8">
+    <div className="w-full flex flex-col items-center justify-center text-center px-4 py-8">
       {/* Brand Artwork / Logo (Figma Node 1023:3350) */}
       <Link
         href="/"
@@ -51,7 +51,7 @@ export default function LoginPage() {
       </Link>
 
       {/* Heading (Figma Node 1023:3349) */}
-      <h1 className="mt-12 sm:mt-16 md:mt-[84px] font-title font-bold text-[32px] sm:text-[44px] md:text-[61px] leading-[1.2] text-black tracking-[-0.02em] text-balance">
+      <h1 className="mt-12 sm:mt-16 md:mt-[84px] font-title font-bold text-[32px] sm:text-[44px] md:text-[61px] leading-[1.2] text-[#454545] tracking-[-0.02em] text-balance">
         Welcome to UX With Motion
       </h1>
 
@@ -65,3 +65,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

@@ -208,41 +208,41 @@ export function UploadCodeStep() {
     <div className="flex-1 flex gap-6 p-6 overflow-hidden h-full">
 
       {/* ── LEFT: Config + Code Editor ── */}
-      <div className="flex-1 max-w-[520px] bg-white border border-[#E9EAEB] rounded-2xl overflow-y-auto flex flex-col gap-5 p-6">
+      <div className="flex-1 max-w-[520px] bg-[#FBFCFD] border border-[#DEE1E4] rounded-2xl overflow-y-auto flex flex-col gap-5 p-6">
 
 
         {/* Header */}
         <div>
-          <h2 className="text-xl font-bold text-[#111111] mb-1">Component Details</h2>
-          <p className="text-sm text-[#888888]">Define info and paste your source code.</p>
+          <h2 className="text-xl font-bold text-[#454545] mb-1">Component Details</h2>
+          <p className="text-sm text-[#7D7F82]">Define info and paste your source code.</p>
         </div>
 
         {/* Basic Info */}
         <div className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-medium text-[#111111] mb-1.5">Component Name *</label>
+            <label className="block text-sm font-medium text-[#454545] mb-1.5">Component Name *</label>
             <input
               type="text"
               value={state.title}
               onChange={handleTitleChange}
               placeholder="e.g., Delete Button"
-              className="w-full h-10 px-3 rounded-lg border border-[#E9EAEB] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] outline-none text-sm"
+              className="w-full h-10 px-3 rounded-lg border border-[#DEE1E4] focus:border-[#111111] focus:ring-1 focus:ring-[#111111] outline-none text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#111111] mb-1.5">Description</label>
+            <label className="block text-sm font-medium text-[#454545] mb-1.5">Description</label>
             <textarea
               value={state.description}
               onChange={(e) => updateState({ description: e.target.value })}
               placeholder="Briefly describe what this component does..."
-              className="w-full h-20 p-3 rounded-lg border border-[#E9EAEB] focus:border-[#111111] outline-none text-sm resize-none"
+              className="w-full h-20 p-3 rounded-lg border border-[#DEE1E4] focus:border-[#111111] outline-none text-sm resize-none"
             />
           </div>
         </div>
 
         {/* Source Type */}
-        <div className="pt-4 border-t border-[#E9EAEB]">
-          <label className="block text-sm font-medium text-[#111111] mb-3">Source Type</label>
+        <div className="pt-4 border-t border-[#DEE1E4]">
+          <label className="block text-sm font-medium text-[#454545] mb-3">Source Type</label>
           <div className="grid grid-cols-3 gap-3">
             {[
               { key: "react", label: "React / Next.js", icon: Box, tab: "react" },
@@ -253,11 +253,11 @@ export function UploadCodeStep() {
                 key={key}
                 onClick={() => { updateState({ source_type: key as any }); setActiveTab(tab as any); }}
                 className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
-                  state.source_type === key ? "border-[#111111] bg-[#fafafa]" : "border-[#E9EAEB] hover:border-[#d0d0d0]"
+                  state.source_type === key ? "border-[#111111] bg-[#fafafa]" : "border-[#DEE1E4] hover:border-[#d0d0d0]"
                 }`}
               >
-                <Icon className={`w-6 h-6 ${state.source_type === key ? "text-[#111111]" : "text-[#888888]"}`} />
-                <span className={`text-xs font-medium text-center ${state.source_type === key ? "text-[#111111]" : "text-[#888888]"}`}>{label}</span>
+                <Icon className={`w-6 h-6 ${state.source_type === key ? "text-[#454545]" : "text-[#7D7F82]"}`} />
+                <span className={`text-xs font-medium text-center ${state.source_type === key ? "text-[#454545]" : "text-[#7D7F82]"}`}>{label}</span>
               </button>
             ))}
           </div>
@@ -270,8 +270,8 @@ export function UploadCodeStep() {
         </div>
 
         {/* Code Editor — Monaco (VS Code) */}
-        <div className="pt-4 border-t border-[#E9EAEB] flex flex-col gap-2">
-          <label className="block text-sm font-medium text-[#111111]">Source Code</label>
+        <div className="pt-4 border-t border-[#DEE1E4] flex flex-col gap-2">
+          <label className="block text-sm font-medium text-[#454545]">Source Code</label>
 
           {/* Tab pills */}
           <div className="flex gap-1">
@@ -279,7 +279,7 @@ export function UploadCodeStep() {
               <button
                 onClick={() => setActiveTab("react")}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                  activeTab === "react" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"
+                  activeTab === "react" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#7D7F82] hover:bg-[#e4e4e7]"
                 }`}
               >
                 React
@@ -290,7 +290,7 @@ export function UploadCodeStep() {
                 <button
                   onClick={() => setActiveTab("html")}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                    activeTab === "html" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"
+                    activeTab === "html" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#7D7F82] hover:bg-[#e4e4e7]"
                   }`}
                 >
                   HTML
@@ -298,7 +298,7 @@ export function UploadCodeStep() {
                 <button
                   onClick={() => setActiveTab("css")}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                    activeTab === "css" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#888888] hover:bg-[#e4e4e7]"
+                    activeTab === "css" ? "bg-[#111111] text-white" : "bg-[#f4f4f5] text-[#7D7F82] hover:bg-[#e4e4e7]"
                   }`}
                 >
                   CSS
@@ -333,24 +333,24 @@ export function UploadCodeStep() {
         </div>
 
         {/* Advanced Settings */}
-        <div className="pt-4 border-t border-[#E9EAEB]">
+        <div className="pt-4 border-t border-[#DEE1E4]">
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center gap-2 text-sm font-medium text-[#888888] hover:text-[#111111] transition-colors"
+            className="flex items-center gap-2 text-sm font-medium text-[#7D7F82] hover:text-[#454545] transition-colors"
           >
             <ChevronDown className={`w-4 h-4 transition-transform ${showAdvanced ? "rotate-180" : ""}`} />
             Advanced Settings
           </button>
           {showAdvanced && (
-            <div className="mt-4 p-4 rounded-xl bg-[#F6F7F8] border border-[#E9EAEB]">
-              <label className="block text-sm font-medium text-[#111111] mb-1.5">Registry ID</label>
-              <p className="text-xs text-[#888888] mb-3">Unique technical ID used in the codebase registry.</p>
+            <div className="mt-4 p-4 rounded-xl bg-[#F7F9FB] border border-[#DEE1E4]">
+              <label className="block text-sm font-medium text-[#454545] mb-1.5">Registry ID</label>
+              <p className="text-xs text-[#7D7F82] mb-3">Unique technical ID used in the codebase registry.</p>
               <input
                 type="text"
                 value={state.registry_id}
                 onChange={handleRegistryIdChange}
                 placeholder="e.g., my-component"
-                className="w-full h-10 px-3 rounded-lg border border-[#E9EAEB] font-mono text-sm focus:border-[#111111] outline-none bg-white"
+                className="w-full h-10 px-3 rounded-lg border border-[#DEE1E4] font-mono text-sm focus:border-[#111111] outline-none bg-[#FBFCFD]"
               />
             </div>
           )}
@@ -358,13 +358,13 @@ export function UploadCodeStep() {
       </div>
 
       {/* ── RIGHT: Live Preview ── */}
-      <div className="flex-1 bg-white border border-[#E9EAEB] rounded-2xl p-6 flex flex-col">
+      <div className="flex-1 bg-[#FBFCFD] border border-[#DEE1E4] rounded-2xl p-6 flex flex-col">
         <div className="mb-4">
-          <h2 className="text-xl font-bold text-[#111111] mb-1">Live Preview</h2>
-          <p className="text-sm text-[#888888]">Updates as you paste code.</p>
+          <h2 className="text-xl font-bold text-[#454545] mb-1">Live Preview</h2>
+          <p className="text-sm text-[#7D7F82]">Updates as you paste code.</p>
         </div>
 
-        <div className="flex-1 bg-[#F9F9F9] rounded-xl border border-[#E9EAEB] overflow-hidden relative">
+        <div className="flex-1 bg-[#F9F9F9] rounded-xl border border-[#DEE1E4] overflow-hidden relative">
           {hasCode ? (
             <LivePreviewIframe 
               key={previewKey}
@@ -374,11 +374,11 @@ export function UploadCodeStep() {
             />
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-8">
-              <div className="w-12 h-12 bg-white border border-[#E9EAEB] rounded-xl flex items-center justify-center shadow-sm">
-                <Code className="w-5 h-5 text-[#888888]" />
+              <div className="w-12 h-12 bg-[#FBFCFD] border border-[#DEE1E4] rounded-xl flex items-center justify-center shadow-sm">
+                <Code className="w-5 h-5 text-[#7D7F82]" />
               </div>
-              <p className="text-sm font-medium text-[#111111]">No code yet</p>
-              <p className="text-xs text-[#888888] max-w-[200px]">
+              <p className="text-sm font-medium text-[#454545]">No code yet</p>
+              <p className="text-xs text-[#7D7F82] max-w-[200px]">
                 Paste your code in the editor on the left to see a live preview here.
               </p>
             </div>
@@ -389,3 +389,4 @@ export function UploadCodeStep() {
     </div>
   );
 }
+

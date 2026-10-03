@@ -22,11 +22,11 @@ const UPCOMING_ITEMS: FooterLinkItem[] = [
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#FBFCFD] pt-12">
+    <footer className="w-full bg-background pt-12">
       {/* Desktop & Tablet Footer */}
-      <div className="hidden md:flex flex-col w-full max-w-[1440px] mx-auto px-[70px]">
+      <div className="hidden md:flex flex-col w-full">
         {/* Figma Node 1023:3313 */}
-        <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-tl-[64px] rounded-tr-[64px] px-[70px] py-[40px] overflow-clip">
+        <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-tl-[64px] rounded-tr-[64px] py-[40px] px-6 lg:px-12 overflow-clip">
           <div className="flex flex-col items-end w-full max-w-[1290.52px] mx-auto">
             <div className="flex items-center justify-between w-full">
               {/* Brand Artwork Composition */}
@@ -42,10 +42,10 @@ export function Footer() {
 
               {/* Features Column */}
               <div className="flex flex-col gap-[32px] shrink-0 w-[100px]">
-                <h3 className="font-sans font-bold text-[20px] text-black leading-[1.2]">
+                <h3 className="font-sans font-bold text-[20px] text-[#454545] leading-[1.2]">
                   Features
                 </h3>
-                <ul className="flex flex-col gap-[32px] list-none p-0 m-0 font-sans font-medium text-[16px] text-black whitespace-nowrap">
+                <ul className="flex flex-col gap-[32px] list-none p-0 m-0 font-sans font-medium text-[16px] text-[#454545] whitespace-nowrap">
                   <li>
                     <Link href="/components" className="hover:text-[#7D7F82] transition-colors leading-[1.2]">
                       Components
@@ -59,11 +59,6 @@ export function Footer() {
                   <li>
                     <Link href="/contact" className="hover:text-[#7D7F82] transition-colors leading-[1.2]">
                       Contact us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/collection" className="hover:text-[#7D7F82] transition-colors leading-[1.2]">
-                      Collection
                     </Link>
                   </li>
                 </ul>
@@ -99,7 +94,7 @@ export function Footer() {
             href="https://instagram.com/uxwithmotion"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 group text-[#1F2123] hover:text-[#4FBE6B] transition-colors"
+            className="flex items-center gap-3 group text-[#454545] hover:text-[#4FBE6B] transition-colors"
             aria-label="Instagram @uxwithmotion"
           >
             <div className="relative size-[35px] shrink-0 transition-transform group-hover:scale-105">
@@ -119,7 +114,7 @@ export function Footer() {
       </div>
 
       {/* Mobile Footer (Figma Node 1023:3451) */}
-      <div className="block md:hidden w-full bg-[#F7F8F9] rounded-tl-[36px] rounded-tr-[36px] pt-[56px] overflow-hidden border-t border-[#DEE1E4]">
+      <div className="block md:hidden w-full bg-[#F7F9FB] rounded-tl-[36px] rounded-tr-[36px] pt-[56px] overflow-hidden border-t border-[#DEE1E4]">
         <div className="px-6 flex flex-col gap-[40px]">
           {/* Brand Artwork */}
           <div className="relative w-[357px] h-[296px] shrink-0">
@@ -185,14 +180,14 @@ export function Footer() {
                 className="size-full object-contain"
               />
             </div>
-            <span className="font-sans font-semibold text-[14px] text-black group-hover:text-[#4FBE6B] transition-colors">
+            <span className="font-sans font-semibold text-[14px] text-[#454545] group-hover:text-[#4FBE6B] transition-colors">
               @uxwithmotion
             </span>
           </a>
         </div>
 
         {/* Mobile Copyright Bar */}
-        <div className="bg-white border-t border-[#D9DDE1] px-6 py-6 flex flex-col gap-2 font-inter font-normal text-[11px] text-[#74777C]">
+        <div className="bg-[#FBFCFD] border-t border-[#DEE1E4] px-6 py-6 flex flex-col gap-2 font-inter font-normal text-[11px] text-[#7D7F82]">
           <p>© {new Date().getFullYear()} UX With Motion</p>
           <p className="underline">Privacy Policy • Terms & Conditions</p>
         </div>
@@ -200,3 +195,7 @@ export function Footer() {
     </footer>
   );
 }
+
+
+
+

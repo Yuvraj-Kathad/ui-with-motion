@@ -8,9 +8,9 @@ import { createClient } from "@/lib/supabase/browser";
 // Helper components for the UI Editor
 
 const CardContainer = ({ title, subtitle, children }: { title: string, subtitle: string, children: React.ReactNode }) => (
-  <div className="bg-white border border-[#D7DADC] rounded-[16px] p-[28px] flex flex-col gap-[24px]">
+  <div className="bg-[#FBFCFD] border border-[#DEE1E4] rounded-[16px] p-[28px] flex flex-col gap-[24px]">
     <div className="flex flex-col gap-2">
-      <h3 className="font-sans font-semibold text-[18px] text-[#1F2123]">{title}</h3>
+      <h3 className="font-sans font-semibold text-[18px] text-[#454545]">{title}</h3>
       <p className="font-sans font-normal text-[14px] text-[#7D7F82]">{subtitle}</p>
     </div>
     {children}
@@ -25,7 +25,7 @@ const InputField = ({ label, value, onChange, placeholder = "", type = "text", f
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="h-[42px] bg-white border border-[#D7DADC] rounded-[8px] px-[16px] font-sans text-[14px] text-[#1F2123] focus:outline-none focus:border-[#C05D00]"
+      className="h-[42px] bg-[#FBFCFD] border border-[#DEE1E4] rounded-[8px] px-[16px] font-sans text-[14px] text-[#454545] focus:outline-none focus:border-[#C05D00]"
     />
   </div>
 );
@@ -38,7 +38,7 @@ const TextAreaField = ({ label, value, onChange, placeholder = "", height = "80p
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
       style={{ height }}
-      className="bg-white border border-[#D7DADC] rounded-[8px] p-[12px] px-[16px] font-sans text-[14px] text-[#1F2123] resize-y focus:outline-none focus:border-[#C05D00]"
+      className="bg-[#FBFCFD] border border-[#DEE1E4] rounded-[8px] p-[12px] px-[16px] font-sans text-[14px] text-[#454545] resize-y focus:outline-none focus:border-[#C05D00]"
     />
   </div>
 );
@@ -49,9 +49,9 @@ const ListItem = ({ value, onChange, onRemove }: { value: string, onChange: (v: 
       type="text"
       value={value}
       onChange={e => onChange(e.target.value)}
-      className="flex-1 h-[42px] bg-white border border-[#D7DADC] rounded-[8px] px-[16px] font-sans text-[14px] text-[#1F2123] focus:outline-none focus:border-[#C05D00]"
+      className="flex-1 h-[42px] bg-[#FBFCFD] border border-[#DEE1E4] rounded-[8px] px-[16px] font-sans text-[14px] text-[#454545] focus:outline-none focus:border-[#C05D00]"
     />
-    <button onClick={onRemove} className="size-[40px] flex items-center justify-center shrink-0 border border-[#D7DADC] rounded-[8px] text-[#7D7F82] hover:text-red-500 hover:border-red-500 transition-colors">
+    <button onClick={onRemove} className="size-[40px] flex items-center justify-center shrink-0 border border-[#DEE1E4] rounded-[8px] text-[#7D7F82] hover:text-red-500 hover:border-red-500 transition-colors">
       <Trash2 size={18} />
     </button>
   </div>
@@ -129,8 +129,8 @@ export default function AdminPaymentPage() {
     <div className="w-full flex flex-col items-center">
       <div className="w-[1200px] flex flex-col">
         {/* Header Bar */}
-        <div className="w-full h-[79px] border-b border-[#EEF1F4] flex items-center justify-between px-[32px] shrink-0 bg-[#F6F7F8]">
-          <h1 className="font-sans font-bold text-[20px] text-[#1F2123]">Payment Page CMS</h1>
+        <div className="w-full h-[79px] border-b border-[#EEF1F4] flex items-center justify-between px-[32px] shrink-0 bg-[#F7F9FB]">
+          <h1 className="font-sans font-bold text-[20px] text-[#454545]">Payment Page CMS</h1>
           <button
             onClick={handleSave}
             disabled={saving}
@@ -169,7 +169,7 @@ export default function AdminPaymentPage() {
                 {content.freePlan.features.map((feat, i) => (
                   <ListItem key={i} value={feat} onChange={v => updateFeature('freePlan', i, v)} onRemove={() => removeFeature('freePlan', i)} />
                 ))}
-                <button onClick={() => addFeature('freePlan')} className="self-start mt-2 px-4 py-2 bg-[#EEF1F4] text-[#1F2123] rounded-full text-sm font-semibold hover:bg-[#D7DADC]">
+                <button onClick={() => addFeature('freePlan')} className="self-start mt-2 px-4 py-2 bg-[#EEF1F4] text-[#454545] rounded-full text-sm font-semibold hover:bg-[#D7DADC]">
                   + Add Feature
                 </button>
               </div>
@@ -198,7 +198,7 @@ export default function AdminPaymentPage() {
                 {content.premiumPlan.features.map((feat, i) => (
                   <ListItem key={i} value={feat} onChange={v => updateFeature('premiumPlan', i, v)} onRemove={() => removeFeature('premiumPlan', i)} />
                 ))}
-                <button onClick={() => addFeature('premiumPlan')} className="self-start mt-2 px-4 py-2 bg-[#EEF1F4] text-[#1F2123] rounded-full text-sm font-semibold hover:bg-[#D7DADC]">
+                <button onClick={() => addFeature('premiumPlan')} className="self-start mt-2 px-4 py-2 bg-[#EEF1F4] text-[#454545] rounded-full text-sm font-semibold hover:bg-[#D7DADC]">
                   + Add Feature
                 </button>
               </div>
@@ -209,8 +209,8 @@ export default function AdminPaymentPage() {
               <InputField label="Section Title" value={content.comparison.title} onChange={v => updateSection('comparison', 'title', v)} />
               <InputField label="Section Subtitle" value={content.comparison.subtitle} onChange={v => updateSection('comparison', 'subtitle', v)} />
               
-              <div className="flex flex-col w-full border border-[#D7DADC] rounded-[8px] overflow-hidden mt-4">
-                <div className="flex bg-[#EEF1F4] px-[16px] py-[12px] font-sans font-semibold text-[13px] text-[#7D7F82] border-b border-[#D7DADC]">
+              <div className="flex flex-col w-full border border-[#DEE1E4] rounded-[8px] overflow-hidden mt-4">
+                <div className="flex bg-[#EEF1F4] px-[16px] py-[12px] font-sans font-semibold text-[13px] text-[#7D7F82] border-b border-[#DEE1E4]">
                   <div className="w-[500px]">Feature name</div>
                   <div className="flex-1">Free Plan</div>
                   <div className="flex-1">Premium Plan</div>
@@ -222,25 +222,25 @@ export default function AdminPaymentPage() {
                         const newRows = [...content.comparison.rows];
                         newRows[i].feature = e.target.value;
                         updateSection('comparison', 'rows', newRows);
-                      }} className="w-full h-[42px] px-3 border border-[#D7DADC] rounded-[8px] focus:outline-none focus:border-[#C05D00]" />
+                      }} className="w-full h-[42px] px-3 border border-[#DEE1E4] rounded-[8px] focus:outline-none focus:border-[#C05D00]" />
                     </div>
                     <div className="flex-1">
                       <input type="text" value={row.free} onChange={(e) => {
                         const newRows = [...content.comparison.rows];
                         newRows[i].free = e.target.value;
                         updateSection('comparison', 'rows', newRows);
-                      }} className="w-full h-[42px] px-3 border border-[#D7DADC] rounded-[8px] focus:outline-none focus:border-[#C05D00]" />
+                      }} className="w-full h-[42px] px-3 border border-[#DEE1E4] rounded-[8px] focus:outline-none focus:border-[#C05D00]" />
                     </div>
                     <div className="flex-1 flex gap-2">
                       <input type="text" value={row.premium} onChange={(e) => {
                         const newRows = [...content.comparison.rows];
                         newRows[i].premium = e.target.value;
                         updateSection('comparison', 'rows', newRows);
-                      }} className="w-full h-[42px] px-3 border border-[#D7DADC] rounded-[8px] focus:outline-none focus:border-[#C05D00]" />
+                      }} className="w-full h-[42px] px-3 border border-[#DEE1E4] rounded-[8px] focus:outline-none focus:border-[#C05D00]" />
                       <button onClick={() => {
                         const newRows = content.comparison.rows.filter((_, idx) => idx !== i);
                         updateSection('comparison', 'rows', newRows);
-                      }} className="size-[42px] flex items-center justify-center shrink-0 border border-[#D7DADC] rounded-[8px] text-[#7D7F82] hover:text-red-500 transition-colors">
+                      }} className="size-[42px] flex items-center justify-center shrink-0 border border-[#DEE1E4] rounded-[8px] text-[#7D7F82] hover:text-red-500 transition-colors">
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -249,7 +249,7 @@ export default function AdminPaymentPage() {
               </div>
               <button onClick={() => {
                 updateSection('comparison', 'rows', [...content.comparison.rows, { feature: "New", free: "Basic", premium: "Pro" }]);
-              }} className="self-start mt-2 px-4 py-2 bg-[#EEF1F4] text-[#1F2123] rounded-full text-sm font-semibold hover:bg-[#D7DADC]">
+              }} className="self-start mt-2 px-4 py-2 bg-[#EEF1F4] text-[#454545] rounded-full text-sm font-semibold hover:bg-[#D7DADC]">
                 + Add Row
               </button>
             </CardContainer>
@@ -261,7 +261,7 @@ export default function AdminPaymentPage() {
               
               <div className="flex flex-col gap-[24px] mt-4">
                 {content.faq.items.map((item, i) => (
-                  <div key={i} className="flex flex-col gap-3 p-4 border border-[#D7DADC] rounded-[8px] relative">
+                  <div key={i} className="flex flex-col gap-3 p-4 border border-[#DEE1E4] rounded-[8px] relative">
                     <button onClick={() => {
                       const newFaqs = content.faq.items.filter((_, idx) => idx !== i);
                       updateSection('faq', 'items', newFaqs);
@@ -285,7 +285,7 @@ export default function AdminPaymentPage() {
               </div>
               <button onClick={() => {
                 updateSection('faq', 'items', [...content.faq.items, { question: "New Question", answer: "New Answer" }]);
-              }} className="self-start mt-4 px-4 py-2 bg-[#EEF1F4] text-[#1F2123] rounded-full text-sm font-semibold hover:bg-[#D7DADC] flex items-center gap-2">
+              }} className="self-start mt-4 px-4 py-2 bg-[#EEF1F4] text-[#454545] rounded-full text-sm font-semibold hover:bg-[#D7DADC] flex items-center gap-2">
                 <Plus size={16} /> Add FAQ Item
               </button>
             </CardContainer>
@@ -303,3 +303,4 @@ export default function AdminPaymentPage() {
     </div>
   );
 }
+

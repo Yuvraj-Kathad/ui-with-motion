@@ -31,7 +31,7 @@ export function TabsButton() {
             filter: hoveredTab === "Home" ? "url(#ink-bleed)" : "none",
           }}
           transition={{ duration: 0.3 }}
-          className="font-work font-medium leading-[1.2] shrink-0 text-[16px] text-black whitespace-nowrap"
+          className="font-work font-medium leading-[1.2] shrink-0 text-[16px] text-[#454545] whitespace-nowrap"
         >
           Home
         </motion.p>
@@ -49,7 +49,7 @@ export function TabsButton() {
             filter: hoveredTab === "Services" ? "blur(1.45px)" : "blur(0px)",
           }}
           transition={{ duration: 0.3 }}
-          className="font-work font-medium leading-[1.2] shrink-0 text-[16px] text-black whitespace-nowrap"
+          className="font-work font-medium leading-[1.2] shrink-0 text-[16px] text-[#454545] whitespace-nowrap"
         >
           Services
         </motion.p>
@@ -57,3 +57,4 @@ export function TabsButton() {
     </div>
   );
 }
+

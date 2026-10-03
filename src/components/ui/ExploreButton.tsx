@@ -21,7 +21,7 @@ export function ExploreButton({
     <div
       className={`group inline-flex items-center gap-2 bg-[#F5F9FF] hover:bg-[#EAF2FF] transition-all duration-200 pl-6 pr-0 py-0 rounded-[79px] cursor-pointer select-none border border-[#EAF2FF] shadow-xs active:scale-[0.98] ${className}`}
     >
-      <span className="font-sans font-medium text-[16px] text-black leading-[1.2] whitespace-nowrap">
+      <span className="font-sans font-medium text-[16px] text-[#454545] leading-[1.2] whitespace-nowrap">
         {label}
       </span>
       <div className="bg-[#1F2123] group-hover:bg-black rounded-full size-[56px] flex items-center justify-center p-[7px] shrink-0 transition-colors">
@@ -52,3 +52,4 @@ export function ExploreButton({
     </button>
   );
 }
+

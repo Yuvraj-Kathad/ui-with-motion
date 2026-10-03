@@ -64,7 +64,7 @@ export function DownloadButton() {
         initial={false}
         animate={shouldReduceMotion ? {} : { y: isActive ? 40 : 0 }}
         transition={{ type: "tween", ease: "backInOut", duration: 0.4 }}
-        className="absolute top-[12px] left-[24px] font-work font-medium text-[16px] leading-[1.2] whitespace-nowrap text-black"
+        className="absolute top-[12px] left-[24px] font-work font-medium text-[16px] leading-[1.2] whitespace-nowrap text-[#454545]"
       >
         Download
       </motion.span>
@@ -81,7 +81,7 @@ export function DownloadButton() {
               }
         }
         transition={{ type: "tween", ease: "backInOut", duration: 0.4 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black size-[24px] flex items-center justify-center"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#454545] size-[24px] flex items-center justify-center"
       >
         <DownloadIcon className="w-[19.5px] h-[19.5px]" />
       </motion.div>
@@ -147,3 +147,4 @@ export function DownloadButton() {
     </motion.button>
   );
 }
+

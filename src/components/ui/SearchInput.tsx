@@ -28,7 +28,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         <button
           type="button"
           onClick={onSearchClick}
-          className={`bg-[#EEF1F4] border border-[#E7E7E7] flex items-center gap-3 px-4 py-3 rounded-[32px] text-left cursor-pointer hover:border-[#CBCED1] transition-all select-none ${className}`}
+          className={`bg-[#EEF1F4] border border-[#DEE1E4] flex items-center gap-3 px-4 py-3 rounded-[32px] text-left cursor-pointer hover:border-[#DEE1E4] transition-all select-none ${className}`}
         >
           <div className="relative shrink-0 size-[20px] sm:size-[24px]">
             <Image
@@ -50,7 +50,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <div
-        className={`border border-[#E7E7E7] focus-within:border-[#B0B0B0] flex items-center gap-3 px-4 py-3 rounded-[32px] transition-all ${className} ${hasValue ? 'bg-[#F1F4F6]' : 'bg-[#EEF1F4]'}`}
+        className={`border border-[#DEE1E4] focus-within:border-[#B0B0B0] flex items-center gap-3 px-4 py-3 rounded-[32px] transition-all ${className} ${hasValue ? 'bg-[#F1F4F6]' : 'bg-[#EEF1F4]'}`}
       >
         <div className="relative shrink-0 size-[20px] sm:size-[24px] pointer-events-none">
           <Image
@@ -65,7 +65,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           ref={ref}
           type="search"
           placeholder={placeholder}
-          className="w-full bg-transparent border-none outline-none font-sans font-medium text-[15px] sm:text-[16px] leading-[1.2] text-[#1F2123] placeholder-[#B0B0B0] [&::-webkit-search-cancel-button]:appearance-none"
+          className="w-full bg-transparent border-none outline-none font-sans font-medium text-[15px] sm:text-[16px] leading-[1.2] text-[#454545] placeholder-[#B0B0B0] [&::-webkit-search-cancel-button]:appearance-none"
           {...props}
         />
         {hasValue && (
@@ -90,3 +90,4 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 );
 
 SearchInput.displayName = "SearchInput";
+

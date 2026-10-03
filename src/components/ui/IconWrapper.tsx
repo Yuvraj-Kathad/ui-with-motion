@@ -21,7 +21,7 @@ export function IconWrapper({
     lg: "size-[46px]",
   };
 
-  const baseClasses = `bg-[#F7F9FB] hover:bg-[#EEF1F4] active:bg-[#E6E9EC] transition-colors rounded-full flex items-center justify-center shrink-0 text-[#1F2123] ${sizeClasses[size]} ${className}`;
+  const baseClasses = `bg-[#F7F9FB] hover:bg-[#EEF1F4] active:bg-[#E6E9EC] transition-colors rounded-full flex items-center justify-center shrink-0 text-[#454545] ${sizeClasses[size]} ${className}`;
 
   if (as === "div") {
     return <div className={baseClasses}>{children}</div>;
@@ -33,3 +33,4 @@ export function IconWrapper({
     </button>
   );
 }
+

@@ -52,12 +52,12 @@ export default function UpdatePasswordPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-white items-center justify-center p-8">
+    <div className="flex flex-col min-h-screen w-full bg-[#FBFCFD] items-center justify-center p-8">
       <div className="w-full max-w-[400px]">
-        <h1 className="font-title font-bold text-[32px] sm:text-[44px] leading-[1.2] text-black tracking-[-0.02em] mb-4">
+        <h1 className="font-title font-bold text-[32px] sm:text-[44px] leading-[1.2] text-[#454545] tracking-[-0.02em] mb-4">
           Update Password
         </h1>
-        <p className="text-[#888888] text-base mb-8">
+        <p className="text-[#7D7F82] text-base mb-8">
           Enter your new admin password.
         </p>
 
@@ -68,7 +68,7 @@ export default function UpdatePasswordPage() {
         ) : (
           <form onSubmit={handleUpdate} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
-              <label htmlFor="password" className="text-base text-[#111111] font-medium">
+              <label htmlFor="password" className="text-base text-[#454545] font-medium">
                 New Password
               </label>
               <input
@@ -81,12 +81,12 @@ export default function UpdatePasswordPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full h-[52px] px-5 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5]"
+                className="w-full h-[52px] px-5 rounded-[44px] border border-[#DEE1E4] bg-[#F7F9FB] text-[#454545] placeholder:text-[#7D7F82] focus:outline-none focus:ring-2 focus:ring-[#1566E5]"
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label htmlFor="confirmPassword" className="text-base text-[#111111] font-medium">
+              <label htmlFor="confirmPassword" className="text-base text-[#454545] font-medium">
                 Confirm Password
               </label>
               <input
@@ -99,7 +99,7 @@ export default function UpdatePasswordPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full h-[52px] px-5 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5]"
+                className="w-full h-[52px] px-5 rounded-[44px] border border-[#DEE1E4] bg-[#F7F9FB] text-[#454545] placeholder:text-[#7D7F82] focus:outline-none focus:ring-2 focus:ring-[#1566E5]"
               />
             </div>
 
@@ -122,3 +122,4 @@ export default function UpdatePasswordPage() {
     </div>
   );
 }
+

@@ -25,8 +25,8 @@ export function GoogleSignInButton({
       className={`
         relative flex items-center justify-center
         w-full max-w-[388px] h-[56px] px-6
-        bg-white hover:bg-[#F6F6F6] active:bg-[#EEF1F4]
-        border border-[#DEE1E4] hover:border-[#CBCED1] active:border-[#B7BABD]
+        bg-[#FBFCFD] hover:bg-[#F6F6F6] active:bg-[#EEF1F4]
+        border border-[#DEE1E4] hover:border-[#DEE1E4] active:border-[#DEE1E4]
         rounded-[16px]
         shadow-[0_1px_2px_rgba(0,0,0,0.04)]
         transition-all duration-150 ease-in-out
@@ -76,3 +76,4 @@ export function GoogleSignInButton({
     </button>
   );
 }
+

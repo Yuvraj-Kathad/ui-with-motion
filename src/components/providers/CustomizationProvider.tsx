@@ -99,3 +99,4 @@ export function CustomizationProvider({ children }: { children: React.ReactNode 
 export function useCustomization() {
   return useContext(CustomizationContext);
 }
+

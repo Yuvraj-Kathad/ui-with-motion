@@ -46,3 +46,4 @@ export default function NextjsEditor({ code, setCode }: NextjsEditorProps) {
     </div>
   );
 }
+

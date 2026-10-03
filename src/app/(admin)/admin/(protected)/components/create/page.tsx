@@ -20,19 +20,19 @@ export default function CreateComponentPage() {
       .catch(console.error);
   }, []);
 
-  if (!isLoaded) return <div className="flex-1 bg-[#F6F7F8]" />;
+  if (!isLoaded) return <div className="flex-1 bg-[#F7F9FB]" />;
 
   return (
-    <div className="flex flex-col h-full bg-[#F6F7F8]">
+    <div className="flex flex-col h-full bg-[#F7F9FB]">
       {/* Header */}
-      <header className="h-[63px] bg-white border-b border-[#E9EAEB] px-8 flex items-center shrink-0">
+      <header className="h-[63px] bg-[#FBFCFD] border-b border-[#DEE1E4] px-8 flex items-center shrink-0">
         <Link
           href="/admin/components"
-          className="mr-4 text-[#888888] hover:text-[#111111] transition-colors"
+          className="mr-4 text-[#7D7F82] hover:text-[#454545] transition-colors"
         >
           <ChevronLeft className="w-6 h-6" />
         </Link>
-        <h1 className="text-[16px] font-bold text-[#111111]">Create new component</h1>
+        <h1 className="text-[16px] font-bold text-[#454545]">Create new component</h1>
       </header>
 
       {/* Main Content Area */}
@@ -44,3 +44,4 @@ export default function CreateComponentPage() {
     </div>
   );
 }
+

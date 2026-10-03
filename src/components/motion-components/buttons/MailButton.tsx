@@ -49,7 +49,7 @@ export function MailButton() {
             transition={{ duration: 0.1, delay: isHovered ? 0.05 : 0 }}
             className="ml-[14px] whitespace-nowrap shrink-0"
           >
-            <span className="font-work font-medium text-[16px] text-black">
+            <span className="font-work font-medium text-[16px] text-[#454545]">
               gfxwithsahil@gmail.com
             </span>
           </motion.div>
@@ -58,3 +58,4 @@ export function MailButton() {
     </motion.button>
   );
 }
+

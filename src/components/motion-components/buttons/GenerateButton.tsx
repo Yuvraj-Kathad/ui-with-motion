@@ -15,10 +15,11 @@ export function GenerateButton() {
       <motion.div
         whileTap={shouldReduceMotion ? {} : { y: 3 }}
         transition={{ duration: 0.1, ease: "easeInOut" }}
-        className="relative bg-white border border-[#E7E7E7] rounded-[79px] w-[120px] h-[43px] flex items-center justify-center font-work font-medium text-[16px] text-[#1F2123] leading-[1.2] shadow-xs"
+        className="relative bg-[#FBFCFD] border border-[#DEE1E4] rounded-[79px] w-[120px] h-[43px] flex items-center justify-center font-work font-medium text-[16px] text-[#454545] leading-[1.2] shadow-xs"
       >
         Generate
       </motion.div>
     </div>
   );
 }
+

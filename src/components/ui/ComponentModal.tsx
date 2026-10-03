@@ -97,10 +97,10 @@ export default function ${title.replace(/\s+/g, "")}() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-white w-full max-w-[1301px] h-full max-h-[692px] rounded-[40px] p-[32px] flex flex-col md:flex-row gap-[24px] pointer-events-auto shadow-2xl overflow-hidden"
+              className="bg-[#FBFCFD] w-full max-w-[1301px] h-full max-h-[692px] rounded-[40px] p-[32px] flex flex-col md:flex-row gap-[24px] pointer-events-auto shadow-2xl overflow-hidden"
             >
               {/* Left Side: Preview Area */}
-              <div className="bg-[#FBFCFD] border border-[#B7BABD] rounded-[28px] w-full md:w-[572px] h-full shrink-0 relative flex items-center justify-center overflow-hidden">
+              <div className="bg-[#FBFCFD] border border-[#DEE1E4] rounded-[28px] w-full md:w-[572px] h-full shrink-0 relative flex items-center justify-center overflow-hidden">
                 {/* Embedded component */}
                 <div className="scale-150 transform transition-transform">
                   {children}
@@ -111,7 +111,7 @@ export default function ${title.replace(/\s+/g, "")}() {
               <div className="flex-1 flex flex-col gap-[24px] p-0 md:p-[24px] overflow-y-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between w-full shrink-0">
-                  <h2 className="font-sans font-medium text-[24px] md:text-[31px] text-[#1F2123] leading-[1.2]">
+                  <h2 className="font-sans font-medium text-[24px] md:text-[31px] text-[#454545] leading-[1.2]">
                     {title}
                   </h2>
                   <button
@@ -151,7 +151,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                 <div className="flex-1 overflow-y-auto w-full">
                   {activeTab === "customisation" ? (
                     <div className="flex flex-col gap-[24px]">
-                      <h3 className="font-sans font-bold text-[18px] text-[#1F2123]">
+                      <h3 className="font-sans font-bold text-[18px] text-[#454545]">
                         Customisation
                       </h3>
 
@@ -166,12 +166,12 @@ export default function ${title.replace(/\s+/g, "")}() {
                             <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
                               Corner Radius
                             </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
+                            <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
                               <input 
                                 type="number" 
                                 value={currentStyles.cornerRadius}
                                 onChange={(e) => updateStyle('cornerRadius', Number(e.target.value))}
-                                className="bg-transparent font-sans text-[14px] text-[#1F2123] w-full outline-none"
+                                className="bg-transparent font-sans text-[14px] text-[#454545] w-full outline-none"
                               />
                             </div>
                           </div>
@@ -187,7 +187,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                                     const key = `${c.category}_${c.hex}`;
                                     return (
                                       <div key={key} className="flex flex-col gap-[8px]">
-                                        <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between relative overflow-hidden">
+                                        <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between relative overflow-hidden">
                                           <div className="flex items-center gap-2 w-full">
                                             <input 
                                               type="color" 
@@ -196,7 +196,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                                               className="absolute opacity-0 inset-0 w-full h-full cursor-pointer"
                                             />
                                             <div className="size-4 rounded-full shadow-sm border border-black/10 shrink-0" style={{ backgroundColor: currentStyles.colors[key] || c.hex }} />
-                                            <span className="font-sans text-[14px] text-[#1F2123] uppercase pointer-events-none">
+                                            <span className="font-sans text-[14px] text-[#454545] uppercase pointer-events-none">
                                               {currentStyles.colors[key] || c.hex}
                                             </span>
                                           </div>
@@ -217,7 +217,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                                     const key = `${c.category}_${c.hex}`;
                                     return (
                                       <div key={key} className="flex flex-col gap-[8px]">
-                                        <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between relative overflow-hidden">
+                                        <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between relative overflow-hidden">
                                           <div className="flex items-center gap-2 w-full">
                                             <input 
                                               type="color" 
@@ -226,7 +226,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                                               className="absolute opacity-0 inset-0 w-full h-full cursor-pointer"
                                             />
                                             <div className="size-4 rounded-full shadow-sm border border-black/10 shrink-0" style={{ backgroundColor: currentStyles.colors[key] || c.hex }} />
-                                            <span className="font-sans text-[14px] text-[#1F2123] uppercase pointer-events-none">
+                                            <span className="font-sans text-[14px] text-[#454545] uppercase pointer-events-none">
                                               {currentStyles.colors[key] || c.hex}
                                             </span>
                                           </div>
@@ -247,7 +247,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                                     const key = `${c.category}_${c.hex}`;
                                     return (
                                       <div key={key} className="flex flex-col gap-[8px]">
-                                        <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between relative overflow-hidden">
+                                        <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between relative overflow-hidden">
                                           <div className="flex items-center gap-2 w-full">
                                             <input 
                                               type="color" 
@@ -256,7 +256,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                                               className="absolute opacity-0 inset-0 w-full h-full cursor-pointer"
                                             />
                                             <div className="size-4 rounded-full shadow-sm border border-black/10 shrink-0" style={{ backgroundColor: currentStyles.colors[key] || c.hex }} />
-                                            <span className="font-sans text-[14px] text-[#1F2123] uppercase pointer-events-none">
+                                            <span className="font-sans text-[14px] text-[#454545] uppercase pointer-events-none">
                                               {currentStyles.colors[key] || c.hex}
                                             </span>
                                           </div>
@@ -281,12 +281,12 @@ export default function ${title.replace(/\s+/g, "")}() {
                             <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
                               Font Size
                             </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
+                            <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between">
                               <input 
                                 type="number" 
                                 value={currentStyles.fontSize}
                                 onChange={(e) => updateStyle('fontSize', Number(e.target.value))}
-                                className="bg-transparent font-sans text-[14px] text-[#1F2123] w-full outline-none"
+                                className="bg-transparent font-sans text-[14px] text-[#454545] w-full outline-none"
                               />
                             </div>
                           </div>
@@ -295,11 +295,11 @@ export default function ${title.replace(/\s+/g, "")}() {
                             <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
                               Font Weight
                             </span>
-                            <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between pr-2">
+                            <div className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between pr-2">
                               <select 
                                 value={currentStyles.fontWeight}
                                 onChange={(e) => updateStyle('fontWeight', e.target.value)}
-                                className="bg-transparent font-sans text-[14px] text-[#1F2123] w-full outline-none appearance-none cursor-pointer"
+                                className="bg-transparent font-sans text-[14px] text-[#454545] w-full outline-none appearance-none cursor-pointer"
                               >
                                 <option value="400">Regular</option>
                                 <option value="500">Medium</option>
@@ -313,7 +313,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                     </div>
                   ) : (
                     <div className="flex flex-col gap-[16px]">
-                      <h3 className="font-sans font-bold text-[18px] text-[#1F2123] mb-2">
+                      <h3 className="font-sans font-bold text-[18px] text-[#454545] mb-2">
                         Code
                       </h3>
 
@@ -324,7 +324,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                           setCopied('nextjs');
                           setTimeout(() => setCopied(false), 2000);
                         }}
-                        className="border border-[#CBCED1] flex items-center justify-between px-[24px] py-[20px] rounded-[53px] w-full hover:bg-[#F7F9FB] transition-colors group"
+                        className="border border-[#DEE1E4] flex items-center justify-between px-[24px] py-[20px] rounded-[53px] w-full hover:bg-[#F7F9FB] transition-colors group"
                       >
                         <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">
                           Next.js Code
@@ -333,7 +333,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                           <span className="font-sans font-medium text-[17.28px] text-[#B0B0B0]">
                             |
                           </span>
-                          <div className="size-[18px] text-[#1F2123] group-hover:text-[#1566E5] transition-colors flex items-center justify-center">
+                          <div className="size-[18px] text-[#454545] group-hover:text-[#1566E5] transition-colors flex items-center justify-center">
                             {copied === 'nextjs' ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
                           </div>
                         </div>
@@ -347,7 +347,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                           setCopied('htmlcss');
                           setTimeout(() => setCopied(false), 2000);
                         }}
-                        className="border border-[#CBCED1] flex items-center justify-between px-[24px] py-[20px] rounded-[53px] w-full hover:bg-[#F7F9FB] transition-colors group"
+                        className="border border-[#DEE1E4] flex items-center justify-between px-[24px] py-[20px] rounded-[53px] w-full hover:bg-[#F7F9FB] transition-colors group"
                       >
                         <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">
                           HTML-CSS Code
@@ -356,7 +356,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                           <span className="font-sans font-medium text-[17.28px] text-[#B0B0B0]">
                             |
                           </span>
-                          <div className="size-[18px] text-[#1F2123] group-hover:text-[#1566E5] transition-colors flex items-center justify-center">
+                          <div className="size-[18px] text-[#454545] group-hover:text-[#1566E5] transition-colors flex items-center justify-center">
                             {copied === 'htmlcss' ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
                           </div>
                         </div>
@@ -369,7 +369,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                           setCopied('figma');
                           setTimeout(() => setCopied(false), 2000);
                         }}
-                        className="border border-[#CBCED1] flex items-center justify-between px-[24px] py-[20px] rounded-[53px] w-full hover:bg-[#F7F9FB] transition-colors group"
+                        className="border border-[#DEE1E4] flex items-center justify-between px-[24px] py-[20px] rounded-[53px] w-full hover:bg-[#F7F9FB] transition-colors group"
                       >
                         <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">
                           Figma Link
@@ -378,7 +378,7 @@ export default function ${title.replace(/\s+/g, "")}() {
                           <span className="font-sans font-medium text-[17.28px] text-[#B0B0B0]">
                             |
                           </span>
-                          <div className="size-[18px] text-[#1F2123] group-hover:text-[#1566E5] transition-colors flex items-center justify-center">
+                          <div className="size-[18px] text-[#454545] group-hover:text-[#1566E5] transition-colors flex items-center justify-center">
                             {copied === 'figma' ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
                           </div>
                         </div>
@@ -394,4 +394,5 @@ export default function ${title.replace(/\s+/g, "")}() {
     </AnimatePresence>
   );
 }
+
 

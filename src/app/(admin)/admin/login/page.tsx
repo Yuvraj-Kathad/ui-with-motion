@@ -41,9 +41,9 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen w-full bg-white">
+    <div className="flex flex-col md:flex-row min-h-screen w-full bg-[#FBFCFD]">
       {/* Left Pane - Branding */}
-      <div className="hidden md:flex flex-1 items-center justify-center bg-[#F6F7F8]">
+      <div className="hidden md:flex flex-1 items-center justify-center bg-[#F7F9FB]">
         <div className="relative w-[357px] h-[360px]">
           <Image
             src="/images/branding-logo.png"
@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
       {/* Right Pane - Login Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-[400px]">
-          <h1 className="font-title font-bold text-[32px] sm:text-[44px] leading-[1.2] text-black tracking-[-0.02em] mb-12">
+          <h1 className="font-title font-bold text-[32px] sm:text-[44px] leading-[1.2] text-[#454545] tracking-[-0.02em] mb-12">
             Welcome to Admin
           </h1>
 
@@ -67,7 +67,7 @@ export default function AdminLoginPage() {
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="email"
-                className="text-base text-[#111111] font-medium"
+                className="text-base text-[#454545] font-medium"
               >
                 Email Id
               </label>
@@ -80,14 +80,14 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full h-[52px] px-5 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
+                className="w-full h-[52px] px-5 rounded-[44px] border border-[#DEE1E4] bg-[#F7F9FB] text-[#454545] placeholder:text-[#7D7F82] focus:outline-none focus:ring-2 focus:ring-[#1566E5] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
               />
             </div>
 
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="password"
-                className="text-base text-[#111111] font-medium"
+                className="text-base text-[#454545] font-medium"
               >
                 Password
               </label>
@@ -101,12 +101,12 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full h-[52px] pl-5 pr-12 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
+                  className="w-full h-[52px] pl-5 pr-12 rounded-[44px] border border-[#DEE1E4] bg-[#F7F9FB] text-[#454545] placeholder:text-[#7D7F82] focus:outline-none focus:ring-2 focus:ring-[#1566E5] transition-colors [&:not(:placeholder-shown)]:bg-[#F1F4F6]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#111111] transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7D7F82] hover:text-[#454545] transition-colors"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -121,7 +121,7 @@ export default function AdminLoginPage() {
             <div className="flex justify-end mt-[-12px]">
               <Link
                 href="/admin/forgot-password"
-                className="text-sm text-[#888888] hover:text-[#111111] transition-colors"
+                className="text-sm text-[#7D7F82] hover:text-[#454545] transition-colors"
               >
                 Forgot password?
               </Link>
@@ -146,3 +146,4 @@ export default function AdminLoginPage() {
     </div>
   );
 }
+

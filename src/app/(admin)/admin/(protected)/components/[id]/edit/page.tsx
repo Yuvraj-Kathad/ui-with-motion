@@ -49,22 +49,22 @@ export default function EditComponentPage() {
   }, [componentId]);
 
   if (error) {
-    return <div className="p-8 text-red-500 bg-[#F6F7F8] h-full">{error}</div>;
+    return <div className="p-8 text-red-500 bg-[#F7F9FB] h-full">{error}</div>;
   }
 
-  if (!initialState) return <div className="flex-1 bg-[#F6F7F8]" />;
+  if (!initialState) return <div className="flex-1 bg-[#F7F9FB]" />;
 
   return (
-    <div className="flex flex-col h-full bg-[#F6F7F8]">
+    <div className="flex flex-col h-full bg-[#F7F9FB]">
       {/* Header */}
-      <header className="h-[63px] bg-white border-b border-[#E9EAEB] px-8 flex items-center shrink-0">
+      <header className="h-[63px] bg-[#FBFCFD] border-b border-[#DEE1E4] px-8 flex items-center shrink-0">
         <Link
           href="/admin/components"
-          className="mr-4 text-[#888888] hover:text-[#111111] transition-colors"
+          className="mr-4 text-[#7D7F82] hover:text-[#454545] transition-colors"
         >
           <ChevronLeft className="w-6 h-6" />
         </Link>
-        <h1 className="text-[16px] font-bold text-[#111111]">Update {initialState.title || "Component"}</h1>
+        <h1 className="text-[16px] font-bold text-[#454545]">Update {initialState.title || "Component"}</h1>
       </header>
 
       {/* Main Content Area */}

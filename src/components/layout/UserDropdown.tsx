@@ -60,7 +60,7 @@ export function UserDropdown({ userName, userEmail }: UserDropdownProps) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center size-[43px] rounded-full overflow-hidden border border-[#E7E7E7] shrink-0 bg-[#EEF1F4] hover:bg-[#E2E6EB] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1566E5]"
+        className="flex items-center justify-center size-[43px] rounded-full overflow-hidden border border-[#DEE1E4] shrink-0 bg-[#EEF1F4] hover:bg-[#E2E6EB] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1566E5]"
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label="User menu"
@@ -70,12 +70,12 @@ export function UserDropdown({ userName, userEmail }: UserDropdownProps) {
 
       {isOpen && (
         <div 
-          className="absolute right-0 top-[calc(100%+8px)] w-[240px] bg-white border border-[#E7E7E7] rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] py-2 z-50 flex flex-col"
+          className="absolute right-0 top-[calc(100%+8px)] w-[240px] bg-[#FBFCFD] border border-[#DEE1E4] rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] py-2 z-50 flex flex-col"
           role="menu"
         >
           {/* User Info */}
           <div className="px-4 py-3 flex flex-col gap-0.5 border-b border-[#F6F6F6]">
-            <span className="font-sans font-medium text-[14px] text-black truncate">
+            <span className="font-sans font-medium text-[14px] text-[#454545] truncate">
               {userName}
             </span>
             <span className="font-sans text-[12px] text-[#7D7F82] truncate">
@@ -113,3 +113,4 @@ export function UserDropdown({ userName, userEmail }: UserDropdownProps) {
     </div>
   );
 }
+

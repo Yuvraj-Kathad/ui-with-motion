@@ -51,10 +51,10 @@ function FilterDropdown({ label, options, selected, onChange }: FilterDropdownPr
     <div ref={ref} className={`relative ${isOpen ? 'z-50' : 'z-20'}`} onKeyDown={handleKeyDown}>
       <button 
         onClick={() => setIsOpen(!isOpen)} 
-        className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[12px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors"
+        className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[36px] pl-[16px] pr-[12px] py-[12px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors"
       >
-        <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">{label}</span>
-        <ChevronDown size={24} className={`text-[#1F2123] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="font-sans font-medium text-[16px] leading-[1.2] text-[#454545] whitespace-nowrap">{label}</span>
+        <ChevronDown size={24} className={`text-[#454545] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence>
@@ -64,7 +64,7 @@ function FilterDropdown({ label, options, selected, onChange }: FilterDropdownPr
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-[calc(100%+8px)] left-0 w-[201px] bg-[#F7F9FB] border border-[#B7BABD] rounded-[16px] flex flex-col items-start overflow-clip shadow-lg"
+            className="absolute top-[calc(100%+8px)] left-0 w-[201px] bg-[#F7F9FB] border border-[#DEE1E4] rounded-[16px] flex flex-col items-start overflow-clip shadow-lg"
           >
             {options.map((option) => {
               const isChecked = selected.includes(option);
@@ -76,8 +76,8 @@ function FilterDropdown({ label, options, selected, onChange }: FilterDropdownPr
                   }} 
                   className="w-full flex items-center justify-between p-[12px] cursor-pointer hover:bg-[#EEF1F4] transition-colors group"
                 >
-                  <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">{option}</span>
-                  <div className={`size-[20px] rounded-[4px] border flex items-center justify-center transition-colors ${isChecked ? 'bg-black border-black' : 'border-[#B7BABD] group-hover:border-[#7D7F82] bg-white'}`}>
+                  <span className="font-sans font-medium text-[16px] leading-[1.2] text-[#454545] whitespace-nowrap">{option}</span>
+                  <div className={`size-[20px] rounded-[4px] border flex items-center justify-center transition-colors ${isChecked ? 'bg-black border-black' : 'border-[#DEE1E4] group-hover:border-[#7D7F82] bg-[#FBFCFD]'}`}>
                     {isChecked && <Check size={14} className="text-white" strokeWidth={3} />}
                   </div>
                 </div>
@@ -148,58 +148,57 @@ function ComponentsContent() {
 
   return (
     <div className="w-full min-h-screen bg-[#FBFCFD] pb-32">
-      <div className="w-full max-w-[1440px] mx-auto px-[20px] lg:px-[70px] py-[40px] flex flex-col gap-[20px]">
+      <div className="w-full px-[20px] lg:px-[70px] py-[40px] flex flex-col gap-[20px]">
         <div className="flex flex-wrap items-center gap-[18px]">
           <FilterDropdown label="States" options={["Default", "Hover", "Loading", "Pressed"]} selected={selectedStates} onChange={setSelectedStates} />
           <FilterDropdown label="Licence" options={["Free", "Premium"]} selected={selectedLicence} onChange={setSelectedLicence} />
           <FilterDropdown label="Code" options={["HTML & CSS", "Next Js"]} selected={selectedCode} onChange={setSelectedCode} />
           
-          <button 
+          {/* <button 
             onClick={() => setIsFigmaActive(!isFigmaActive)}
-            className="bg-[#F7F9FB] border border-[#B7BABD] rounded-[36px] pl-[16px] pr-[12px] py-[8px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors"
+            className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[36px] pl-[16px] pr-[12px] py-[8px] flex items-center gap-[8px] overflow-clip hover:bg-[#EEF1F4] transition-colors"
           >
             <div className="size-[32px] flex items-center justify-center shrink-0">
-              <FigmaIcon size={24} className="text-black" />
+              <FigmaIcon size={24} className="text-[#454545]" />
             </div>
-            <span className="font-sans font-medium text-[16px] leading-[1.2] text-black whitespace-nowrap">Figma</span>
+            <span className="font-sans font-medium text-[16px] leading-[1.2] text-[#454545] whitespace-nowrap">Figma</span>
             {isFigmaActive && (
               <div className="size-[28px] bg-[#EEF1F4] rounded-full flex items-center justify-center shrink-0 ml-[4px]">
-                <X size={16} className="text-[#1F2123]" />
+                <X size={16} className="text-[#454545]" />
               </div>
             )}
-          </button>
+          </button> */}
         </div>
       </div>
 
-      <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-[70px]">
+      <div className="w-full px-6 lg:px-[70px]">
         {search && (
           <div className="mb-6">
-            <h2 className="font-sans text-[20px] text-black">
+            <h2 className="font-sans text-[20px] text-[#454545]">
               Search results for: <span className="font-bold">&quot;{search}&quot;</span>
             </h2>
           </div>
         )}
         
         {!isLoaded ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] justify-center lg:justify-start">
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-[24px] w-full">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-[#FBFCFD] border border-[#B7BABD] flex flex-col gap-px items-start relative rounded-[12px] w-full overflow-clip h-[253px]">
+              <div key={i} className="bg-[#FBFCFD] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[32px] w-full overflow-clip h-[253px] break-inside-avoid mb-[24px]">
                 {/* Top action bar skeleton */}
-                <div className="flex gap-[6px] items-center justify-end p-[8px] w-full shrink-0 relative z-10">
-                  <div className="size-[34px] bg-[#E5E7EB] rounded-[6px] animate-pulse" />
-                  <div className="size-[34px] bg-[#E5E7EB] rounded-[6px] animate-pulse" />
+                <div className="flex items-center justify-between p-[8px] w-full shrink-0 relative z-10 min-h-[50px]">
+                  <div className="w-[50px] h-[20px] bg-[#E5E7EB] rounded-full animate-pulse ml-1" />
+                  <div className="flex gap-[6px] items-center">
+                    <div className="size-[34px] bg-[#E5E7EB] rounded-[6px] animate-pulse" />
+                    <div className="size-[34px] bg-[#E5E7EB] rounded-[6px] animate-pulse" />
+                  </div>
                 </div>
                 {/* Center display skeleton */}
                 <div className="h-[151px] w-full relative flex items-center justify-center shrink-0 overflow-hidden">
                   <div className="w-[120px] h-[40px] bg-[#E5E7EB] rounded-[8px] animate-pulse" />
                 </div>
                 {/* Bottom info bar skeleton */}
-                <div className="flex justify-between items-center p-[16px] w-full shrink-0 mt-auto border-t border-[#D7DADC]">
+                <div className="flex items-center p-[16px] w-full shrink-0 mt-auto border-t border-[#DEE1E4]">
                   <div className="w-[120px] h-[20px] bg-[#E5E7EB] rounded-[4px] animate-pulse" />
-                  <div className="flex items-center gap-[6px]">
-                    <div className="size-[20px] bg-[#E5E7EB] rounded-full animate-pulse" />
-                    <div className="w-[40px] h-[20px] bg-[#E5E7EB] rounded-[4px] animate-pulse" />
-                  </div>
                 </div>
               </div>
             ))}
@@ -209,7 +208,7 @@ function ComponentsContent() {
             <p className="text-[20px] text-[#7D7F82] font-medium">No published components found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px] justify-center lg:justify-start">
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-[24px] w-full">
             {filteredComponents.map((comp) => {
               const isSaved = savedIds.includes(comp.id);
               const isPlaying = playingId === comp.id;
@@ -218,33 +217,42 @@ function ComponentsContent() {
                 <div 
                   key={comp.id}
                   onClick={() => setActiveModalComponent(comp)}
-                  className="bg-[#FBFCFD] border border-[#B7BABD] flex flex-col gap-px items-start relative rounded-[12px] w-full overflow-clip hover:shadow-md transition-shadow group cursor-pointer h-[253px]"
+                  className="bg-[#FBFCFD] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[32px] w-full overflow-clip group cursor-pointer h-[253px] break-inside-avoid mb-[24px]"
                 >
                   {/* Top action bar */}
-                  <div className="flex gap-[6px] items-center justify-end p-[8px] w-full shrink-0 relative z-10 bg-transparent">
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); setPlayingId(isPlaying ? null : comp.id); }}
-                      className={`flex items-center justify-center size-[34px] transition-colors ${isPlaying ? 'text-[#1566E5]' : 'text-[#B0B0B0] hover:text-black'}`} 
-                      aria-label={isPlaying ? "Stop" : "Play"}
-                    >
-                      {isPlaying ? (
-                        <Square size={20} className="fill-current stroke-current" />
-                      ) : (
-                        <Play size={20} className="fill-transparent stroke-current stroke-2" />
+                  <div className="flex items-center justify-between p-[8px] w-full shrink-0 relative z-10 bg-transparent min-h-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="flex items-center">
+                      {(comp as any).access_tier === 'premium' && (
+                        <div className="flex items-center justify-center bg-[#FDF8F0] border border-[#F3E2C6] rounded-full px-2 py-0.5 shrink-0 ml-1" title="Premium Component">
+                          <span className="text-[#C18824] text-[10px] font-bold uppercase tracking-wider">Premium</span>
+                        </div>
                       )}
-                    </button>
-                    <button 
-                      onClick={(e) => toggleSave(e, comp.id)}
-                      className={`flex items-center justify-center size-[34px] transition-colors ${isSaved ? 'text-black' : 'text-[#B0B0B0] hover:text-black'}`}
-                      aria-label={isSaved ? "Saved" : "Bookmark"}
-                    >
-                      <Bookmark size={20} className={isSaved ? "fill-current stroke-current" : "fill-transparent stroke-current stroke-2"} />
-                    </button>
+                    </div>
+                    <div className="flex gap-[6px] items-center">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setPlayingId(isPlaying ? null : comp.id); }}
+                        className={`flex items-center justify-center size-[34px] transition-colors ${isPlaying ? 'text-[#1566E5]' : 'text-[#B0B0B0] hover:text-black'}`} 
+                        aria-label={isPlaying ? "Stop" : "Play"}
+                      >
+                        {isPlaying ? (
+                          <Square size={20} className="fill-current stroke-current" />
+                        ) : (
+                          <Play size={20} className="fill-transparent stroke-current stroke-2" />
+                        )}
+                      </button>
+                      <button 
+                        onClick={(e) => toggleSave(e, comp.id)}
+                        className={`flex items-center justify-center size-[34px] transition-colors ${isSaved ? 'text-[#454545]' : 'text-[#B0B0B0] hover:text-black'}`}
+                        aria-label={isSaved ? "Saved" : "Bookmark"}
+                      >
+                        <Bookmark size={20} className={isSaved ? "fill-current stroke-current" : "fill-transparent stroke-current stroke-2"} />
+                      </button>
+                    </div>
                   </div>
                   
                   {/* Component Display Area */}
-                  <div className="h-[151px] w-full relative flex items-center justify-center shrink-0 overflow-hidden bg-transparent pointer-events-none">
-                    <div className="absolute inset-0 w-full h-full transform flex items-center justify-center scale-75">
+                  <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-transparent pointer-events-auto z-0">
+                    <div className="w-full h-full transform flex items-center justify-center scale-[0.9]">
                       {(() => {
                         const overrides = getOverrides(comp.id);
                         const activeOverrides: Record<string, string> = {};
@@ -262,7 +270,7 @@ function ComponentsContent() {
                         const RegistryComponent = componentRegistry[comp.registry_id]?.component;
                         if (RegistryComponent) {
                           return (
-                            <div style={activeOverrides as React.CSSProperties} className="w-full h-full flex items-center justify-center">
+                            <div onClick={(e) => e.stopPropagation()} style={activeOverrides as React.CSSProperties} className="w-full h-full flex items-center justify-center">
                               <RegistryComponent />
                             </div>
                           );
@@ -294,25 +302,11 @@ function ComponentsContent() {
                   </div>
                   
                   {/* Footer Area */}
-                  <div className="flex items-center justify-between px-[20px] py-[12px] w-full shrink-0 relative z-10 bg-transparent h-[48px]">
-                    <div className="flex items-center gap-2 max-w-[65%]">
-                      <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap truncate">
+                  <div className="flex items-center justify-between px-[20px] py-[12px] w-full shrink-0 relative z-10 bg-transparent h-[48px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-auto">
+                    <div className="flex items-center gap-2 max-w-[100%]">
+                      <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-[#454545] whitespace-nowrap truncate">
                         {comp.title}
                       </h3>
-                      {(comp as any).access_tier === 'premium' && (
-                        <div className="flex items-center justify-center bg-[#FDF8F0] border border-[#F3E2C6] rounded-full px-2 py-0.5 shrink-0" title="Premium Component">
-                          <span className="text-[#C18824] text-[10px] font-bold uppercase tracking-wider">Premium</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex gap-[4px] h-[24px] items-center">
-                      {(comp.tags || []).map((tag: string, i: number) => (
-                        <div key={i} className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] px-2 rounded-[4px] overflow-hidden">
-                          <span className="font-sans font-normal text-[13px] leading-[1.2] text-[#7D7F82] whitespace-nowrap">
-                            {tag}
-                          </span>
-                        </div>
-                      ))}
                     </div>
                   </div>
                 </div>
@@ -340,3 +334,5 @@ export default function ComponentsPage() {
     </Suspense>
   );
 }
+
+

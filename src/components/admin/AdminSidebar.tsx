@@ -46,7 +46,7 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <div className="bg-white border-[#d7dadc] border-r border-solid flex flex-col justify-between items-start relative w-[240px] h-screen shrink-0">
+    <div className="bg-[#FBFCFD] border-[#DEE1E4] border-r border-solid flex flex-col justify-between items-start relative w-[240px] h-screen shrink-0">
       <div className="flex flex-col gap-[28px] items-start relative shrink-0 w-full">
         {/* Logo Section */}
         <div className="flex flex-col gap-[12px] items-start pt-[24px] px-[24px] relative shrink-0 w-full">
@@ -75,14 +75,14 @@ export default function AdminSidebar() {
                 key={item.href}
                 href={item.href}
                 className={`flex items-center gap-[12px] px-[24px] py-[12px] w-full transition-colors ${
-                  isActive ? "bg-[#ffcea2]" : "bg-white hover:bg-[#ffcea2]/30"
+                  isActive ? "bg-[#ffcea2]" : "bg-[#FBFCFD] hover:bg-[#ffcea2]/30"
                 }`}
               >
-                <div className={`flex items-center justify-center shrink-0 ${isActive ? 'text-[#c05d00]' : 'text-[#1f2123]'}`}>
+                <div className={`flex items-center justify-center shrink-0 ${isActive ? 'text-[#c05d00]' : 'text-[#454545]'}`}>
                   {item.icon}
                 </div>
                 <p className={`font-sans font-medium text-[16px] leading-[1.2] whitespace-nowrap ${
-                  isActive ? "text-[#c05d00]" : "text-[#1f2123]"
+                  isActive ? "text-[#c05d00]" : "text-[#454545]"
                 }`}>
                   {item.label}
                 </p>
@@ -97,7 +97,7 @@ export default function AdminSidebar() {
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="bg-white flex flex-col items-start justify-center overflow-clip py-[12px] relative shrink-0 w-full hover:opacity-70 transition-opacity"
+          className="bg-[#FBFCFD] flex flex-col items-start justify-center overflow-clip py-[12px] relative shrink-0 w-full hover:opacity-70 transition-opacity"
         >
           <div className="flex gap-[12px] items-center justify-center relative shrink-0">
             <div className="overflow-clip relative shrink-0 size-[24px]">
@@ -107,7 +107,7 @@ export default function AdminSidebar() {
                 </div>
               </div>
             </div>
-            <p className="[word-break:break-word] font-sans font-medium leading-[1.2] relative shrink-0 text-[#1f2123] text-[16px] text-center whitespace-nowrap">
+            <p className="[word-break:break-word] font-sans font-medium leading-[1.2] relative shrink-0 text-[#454545] text-[16px] text-center whitespace-nowrap">
               Logout
             </p>
           </div>
@@ -126,10 +126,10 @@ export default function AdminSidebar() {
             <img alt="avatar" className="absolute block inset-0 max-w-none size-full object-cover" src="/icons/admin-avatar.png" />
           </div>
           <div className="[word-break:break-word] flex flex-[1_0_0] flex-col items-start leading-[1.2] min-w-px relative whitespace-nowrap">
-            <p className="font-sans font-medium relative shrink-0 text-[#1f2123] text-[16px] truncate w-full" title={adminName}>
+            <p className="font-sans font-medium relative shrink-0 text-[#454545] text-[16px] truncate w-full" title={adminName}>
               {adminName}
             </p>
-            <p className="font-work font-normal relative shrink-0 text-[#7d7f82] text-[13px] truncate w-full" title={adminEmail}>
+            <p className="font-work font-normal relative shrink-0 text-[#7D7F82] text-[13px] truncate w-full" title={adminEmail}>
               {adminEmail}
             </p>
           </div>
@@ -138,3 +138,4 @@ export default function AdminSidebar() {
     </div>
   );
 }
+

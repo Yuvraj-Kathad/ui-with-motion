@@ -16,5 +16,17 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  return <ProfileClient user={user} />;
+  const { data: subscription } = await supabase
+    .from("user_subscriptions")
+    .select("*")
+    .eq("user_id", user.id)
+    .in("status", ["active", "trialing"])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  const isPremium = !!subscription;
+
+  return <ProfileClient user={user} isPremium={isPremium} subscription={subscription} />;
 }
+

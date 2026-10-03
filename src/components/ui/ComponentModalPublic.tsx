@@ -30,7 +30,7 @@ export function ComponentModalPublic({
   onClose,
 }: ComponentModalPublicProps) {
   const { getOverrides, setOverrides: updateGlobalOverrides, saveOverrides } = useCustomization();
-  const [activeTab, setActiveTab] = useState<"customisation" | "code">("customisation");
+
   const [copied, setCopied] = useState<string | false>(false);
   const [overrides, setOverrides] = useState<Record<string, string>>({});
   
@@ -121,10 +121,10 @@ export function ComponentModalPublic({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-white w-full max-w-[1301px] h-full max-h-[692px] rounded-[40px] p-[32px] flex flex-col md:flex-row gap-[24px] pointer-events-auto shadow-2xl overflow-hidden"
+              className="bg-[#FBFCFD] w-full max-w-[1301px] h-full max-h-[692px] rounded-[40px] p-[32px] flex flex-col md:flex-row gap-[24px] pointer-events-auto shadow-2xl overflow-hidden"
             >
               {/* Left Side: Preview Area */}
-              <div className="bg-[#FBFCFD] border border-[#B7BABD] rounded-[28px] w-full md:w-[572px] h-full shrink-0 relative flex items-center justify-center overflow-hidden">
+              <div className="bg-[#FBFCFD] border border-[#DEE1E4] rounded-[28px] w-full md:w-[572px] h-full shrink-0 relative flex items-center justify-center overflow-hidden">
                 <div className="w-full h-full transform flex items-center justify-center scale-110">
                   {(() => {
                     const RegistryComponent = registryEntry?.component;
@@ -166,7 +166,7 @@ export function ComponentModalPublic({
                 {/* Header */}
                 <div className="flex items-center justify-between w-full shrink-0">
                   <div className="flex items-center gap-3">
-                    <h2 className="font-sans font-medium text-[24px] md:text-[31px] text-[#1F2123] leading-[1.2]">
+                    <h2 className="font-sans font-medium text-[24px] md:text-[31px] text-[#454545] leading-[1.2]">
                       {component.title}
                     </h2>
                     {component.access_tier === 'premium' && (
@@ -184,29 +184,7 @@ export function ComponentModalPublic({
                   </button>
                 </div>
 
-                {/* Tabs */}
-                <div className="flex gap-[8px] items-start shrink-0">
-                  <button
-                    onClick={() => setActiveTab("customisation")}
-                    className={`px-[24px] py-[12px] rounded-[40px] transition-colors font-sans font-medium text-[14px] md:text-[16px] ${
-                      activeTab === "customisation"
-                        ? "bg-[#1F2123] text-white"
-                        : "bg-[#EEF1F4] text-[#7D7F82] hover:text-black hover:bg-[#DEE1E4]"
-                    }`}
-                  >
-                    Customisation
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("code")}
-                    className={`px-[40px] py-[12px] rounded-[20px] transition-colors font-sans font-semibold text-[14px] md:text-[14px] ${
-                      activeTab === "code"
-                        ? "bg-[#1F2123] text-white"
-                        : "bg-[#EEF1F4] text-[#7D7F82] hover:text-black hover:bg-[#DEE1E4]"
-                    }`}
-                  >
-                    Code
-                  </button>
-                </div>
+
 
                 {/* Tab Content */}
                 <div className="flex-1 overflow-y-auto w-full pr-2">
@@ -215,7 +193,7 @@ export function ComponentModalPublic({
                       <div className="w-16 h-16 rounded-full bg-[#FDF8F0] border border-[#F3E2C6] flex items-center justify-center mb-2">
                         <Lock className="text-[#C18824] w-8 h-8" />
                       </div>
-                      <h3 className="font-sans font-bold text-[20px] text-[#1F2123]">
+                      <h3 className="font-sans font-bold text-[20px] text-[#454545]">
                         Premium Component
                       </h3>
                       <p className="text-[#7D7F82] text-[14px] max-w-[300px]">
@@ -228,109 +206,9 @@ export function ComponentModalPublic({
                         Upgrade to Premium
                       </button>
                     </div>
-                  ) : activeTab === "customisation" ? (
-                    <div className="flex flex-col gap-[24px] w-full max-w-[593px]">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-sans font-bold text-[18px] text-[#1F2123]">
-                          Customisation
-                        </h3>
-                        {Object.keys(overrides).length > 0 && (
-                          <button
-                            onClick={handleReset}
-                            className="text-[13px] text-[#7D7F82] hover:text-[#1F2123] underline decoration-[#7D7F82]/30 hover:decoration-[#1F2123] transition-colors"
-                          >
-                            Reset
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[16px] gap-y-[24px] w-full mt-[16px]">
-                        {(() => {
-                          const validConfigs = schemaDefToUse.filter((c: any) => !!c.variable);
-
-                          if (validConfigs.length === 0) {
-                            return (
-                              <div className="text-[#7D7F82] text-[14px] col-span-1 md:col-span-2 py-4">
-                                Live customization is not available for this component.
-                              </div>
-                            );
-                          }
-                          
-                          return validConfigs.map((config: any) => (
-                          <div key={config.id} className="flex flex-col gap-[8px]">
-                            <span className="font-sans font-normal text-[12px] text-[#7D7F82]">
-                              {config.label}
-                            </span>
-                            
-                            {config.type === "Color Picker" ? (
-                              (() => {
-                                let rawVal = overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue;
-                                let hexVal = rawVal;
-                                if (hexVal.startsWith('[')) hexVal = hexVal.slice(1, -1);
-                                if (hexVal.includes('#')) hexVal = '#' + hexVal.split('#')[1].replace(/\]/g, '');
-                                hexVal = hexVal.slice(0, 7) || "#000000";
-
-                                return (
-                                  <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center gap-3 focus-within:border-[#1F2123] transition-colors relative">
-                                    <div className="relative shrink-0 flex items-center">
-                                      <input
-                                        type="color"
-                                        value={hexVal.startsWith('#') ? hexVal : '#000000'}
-                                        onChange={(e) => handleOverrideChange(config.variable, e.target.value)}
-                                        className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
-                                      />
-                                      <div 
-                                        className="w-[20px] h-[20px] rounded-full border border-[#D7DADC] pointer-events-none" 
-                                        style={{ backgroundColor: hexVal.startsWith('#') ? hexVal : '#000000' }} 
-                                      />
-                                    </div>
-                                    <input 
-                                      type="text"
-                                      value={rawVal}
-                                      onChange={(e) => handleOverrideChange(config.variable, e.target.value)}
-                                      className="font-sans text-[14px] text-[#1F2123] outline-none flex-1 min-w-0 bg-transparent"
-                                    />
-                                  </div>
-                                );
-                              })()
-                            ) : config.type === "Slider" ? (
-                              (() => {
-                                let rawVal = overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue;
-                                let numVal = parseInt(String(rawVal).replace(/[^0-9-]/g, '')) || 0;
-                                return (
-                                  <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center gap-4 focus-within:border-[#1F2123] transition-colors">
-                                    <input 
-                                      type="range"
-                                      min="0"
-                                      max="100"
-                                      value={numVal}
-                                      onChange={(e) => handleOverrideChange(config.variable, `${e.target.value}px`)}
-                                      className="flex-1 accent-[#1F2123]"
-                                    />
-                                    <span className="font-sans text-[14px] text-[#1F2123] w-[40px] text-right shrink-0">
-                                      {rawVal}
-                                    </span>
-                                  </div>
-                                );
-                              })()
-                            ) : (
-                              <div className="bg-[#F7F9FB] border border-[#D7DADC] rounded-[58px] px-[16px] py-[12px] w-full flex items-center justify-between focus-within:border-[#1F2123] transition-colors">
-                                <input 
-                                  type="text"
-                                  value={overrides[config.variable] !== undefined ? overrides[config.variable] : config.defaultValue}
-                                  onChange={(e) => handleOverrideChange(config.variable, e.target.value)}
-                                  className="font-sans text-[14px] text-[#1F2123] outline-none flex-1 min-w-0 bg-transparent"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ));
-                        })()}
-                      </div>
-                    </div>
                   ) : (
                     <div className="flex flex-col gap-[16px] w-full max-w-[593px]">
-                      <h3 className="font-sans font-bold text-[18px] text-[#1F2123]">
+                      <h3 className="font-sans font-bold text-[18px] text-[#454545]">
                         Code
                       </h3>
 
@@ -364,7 +242,7 @@ export function ComponentModalPublic({
                               <div className="absolute top-4 right-4 flex items-center">
                                 <button
                                   onClick={() => copyToClipboard(codeToCopy, "nextjs")}
-                                  className="flex items-center gap-2 bg-white/90 backdrop-blur border border-[#CBCED1] hover:bg-white text-[#3D3D3D] px-3 py-1.5 rounded-full shadow-sm transition-all"
+                                  className="flex items-center gap-2 bg-white/90 backdrop-blur border border-[#DEE1E4] hover:bg-white text-[#3D3D3D] px-3 py-1.5 rounded-full shadow-sm transition-all"
                                   title="Copy Next.js Code"
                                 >
                                   {copied === "nextjs" ? (
@@ -380,7 +258,7 @@ export function ComponentModalPublic({
                                   )}
                                 </button>
                               </div>
-                              <pre className="bg-[#F7F9FB] border border-[#CBCED1] rounded-[16px] p-[24px] overflow-x-auto text-[13px] font-mono leading-relaxed text-[#1F2123] whitespace-pre">
+                              <pre className="bg-[#F7F9FB] border border-[#DEE1E4] rounded-[16px] p-[24px] overflow-x-auto text-[13px] font-mono leading-relaxed text-[#454545] whitespace-pre">
                                 <code>{codeToCopy}</code>
                               </pre>
                             </div>
@@ -389,7 +267,7 @@ export function ComponentModalPublic({
                       })()}
                       
                       {snippets.figma && (
-                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.figma, "figma")}>
+                        <div className="border border-[#DEE1E4] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-[#FBFCFD] hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.figma, "figma")}>
                           <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Figma Link</span>
                           <div className="flex items-center gap-[10px]">
                             <span className="text-[#B0B0B0] text-[17.28px]">|</span>
@@ -399,7 +277,7 @@ export function ComponentModalPublic({
                       )}
 
                       {snippets.prompt && (
-                        <div className="border border-[#CBCED1] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-white hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.prompt, "prompt")}>
+                        <div className="border border-[#DEE1E4] rounded-[53px] px-[24px] py-[16px] w-full flex items-center justify-between bg-[#FBFCFD] hover:bg-[#F7F9FB] transition-colors cursor-pointer" onClick={() => copyToClipboard(snippets.prompt, "prompt")}>
                           <span className="font-sans font-medium text-[17.28px] text-[#3D3D3D]">Prompt</span>
                           <div className="flex items-center gap-[10px]">
                             <span className="text-[#B0B0B0] text-[17.28px]">|</span>
@@ -419,3 +297,4 @@ export function ComponentModalPublic({
     </AnimatePresence>
   );
 }
+

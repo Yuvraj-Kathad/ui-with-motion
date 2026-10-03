@@ -69,10 +69,10 @@ export function ComponentPickerSection() {
   return (
     <section
       id="component-picker"
-      className="w-full bg-white py-[80px] px-[70px] flex flex-col items-center gap-[80px]"
+      className="w-full bg-[#FBFCFD] py-[80px] px-[70px] flex flex-col items-center gap-[80px]"
     >
       {/* Section Heading */}
-      <h2 className="font-title font-bold text-[61px] leading-[1.2] text-black whitespace-nowrap text-center">
+      <h2 className="font-title font-bold text-[61px] leading-[1.2] text-[#454545] whitespace-nowrap text-center">
         Pick a component. Make it yours.
       </h2>
 
@@ -84,7 +84,7 @@ export function ComponentPickerSection() {
             className="flex flex-col gap-[23px] items-start flex-1 min-w-0"
           >
             {/* Preview Frame */}
-            <div className="bg-[#FBFCFD] border border-[#B7BABD] rounded-[48px] h-[294px] w-full overflow-hidden relative">
+            <div className="bg-[#FBFCFD] border border-[#DEE1E4] rounded-[48px] h-[294px] w-full overflow-hidden relative">
               <div style={step.containerStyle} className="overflow-hidden pointer-events-none">
                 <img
                   src={step.image}
@@ -96,7 +96,7 @@ export function ComponentPickerSection() {
 
             {/* Text */}
             <div className="flex flex-col gap-[12px] items-start w-[380px] max-w-full">
-              <h3 className="font-sans font-bold text-[20px] leading-[1.2] text-black">
+              <h3 className="font-sans font-bold text-[20px] leading-[1.2] text-[#454545]">
                 {step.title}
               </h3>
               <p className="font-sans font-medium text-[16px] leading-[1.2] text-[#7D7F82]">
@@ -109,3 +109,4 @@ export function ComponentPickerSection() {
     </section>
   );
 }
+

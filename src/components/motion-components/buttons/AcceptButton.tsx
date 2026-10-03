@@ -14,7 +14,7 @@ export function AcceptButton() {
       onHoverEnd={() => setIsHovered(false)}
       whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
       transition={{ duration: 0.12, ease: "easeOut" }}
-      className="relative bg-[#F6CC44] rounded-[32px] px-[24px] py-[12px] flex items-center justify-center font-work font-medium text-[16px] text-[#1F2123] leading-[1.2] shadow-sm select-none cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6CC44] overflow-hidden"
+      className="relative bg-[#F6CC44] rounded-[32px] px-[24px] py-[12px] flex items-center justify-center font-work font-medium text-[16px] text-[#454545] leading-[1.2] shadow-sm select-none cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6CC44] overflow-hidden"
     >
       {/* Shine Effect Container */}
       <motion.div
@@ -45,3 +45,4 @@ export function AcceptButton() {
     </motion.button>
   );
 }
+

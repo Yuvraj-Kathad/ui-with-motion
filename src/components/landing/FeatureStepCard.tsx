@@ -15,14 +15,14 @@ export function FeatureStepCard({ step, className = "" }: FeatureStepCardProps) 
       className={`flex flex-col gap-[23px] items-start w-full ${className}`}
       data-node-id={`step-card-${step.stepNumber}`}
     >
-      {/* Visual Preview Frame (Figma: h-[294px], bg-[#FBFCFD], border-[#B7BABD], rounded-[48px]) */}
-      <div className="bg-[#FBFCFD] border border-[#B7BABD] rounded-[48px] h-[294px] w-full flex items-center justify-center relative overflow-hidden transition-colors duration-200 hover:border-[#7D7F82]">
+      {/* Visual Preview Frame (Figma: h-[294px], bg-[#FBFCFD], border-[#DEE1E4], rounded-[48px]) */}
+      <div className="bg-[#FBFCFD] border border-[#DEE1E4] rounded-[48px] h-[294px] w-full flex items-center justify-center relative overflow-hidden transition-colors duration-200 hover:border-[#7D7F82]">
         <ShowcaseButtonRenderer componentKey={step.componentKey} />
       </div>
 
       {/* Text Copy Frame (Figma: 12px gap, 20px Bold Title, 16px Medium Description) */}
       <div className="flex flex-col gap-[12px] items-start text-left w-full max-w-[380px]">
-        <h3 className="font-title font-bold text-[20px] text-black leading-[1.2]">
+        <h3 className="font-title font-bold text-[20px] text-[#454545] leading-[1.2]">
           {step.title}
         </h3>
         <p className="font-sans font-medium text-[16px] text-[#7D7F82] leading-[1.2]">
@@ -32,3 +32,4 @@ export function FeatureStepCard({ step, className = "" }: FeatureStepCardProps) 
     </div>
   );
 }
+

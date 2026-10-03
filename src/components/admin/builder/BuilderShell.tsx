@@ -86,12 +86,12 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
       case 5:
         return (
           <div className="flex-1 flex items-center justify-center p-8 overflow-hidden h-full">
-            <div className="text-center p-8 bg-white border border-[#E9EAEB] rounded-2xl">
-              <h2 className="text-xl font-bold text-[#111111] mb-2">Step {state.currentStep} (Coming Soon)</h2>
-              <p className="text-[#888888] mb-6">This step is not yet implemented.</p>
+            <div className="text-center p-8 bg-[#FBFCFD] border border-[#DEE1E4] rounded-2xl">
+              <h2 className="text-xl font-bold text-[#454545] mb-2">Step {state.currentStep} (Coming Soon)</h2>
+              <p className="text-[#7D7F82] mb-6">This step is not yet implemented.</p>
               <button 
                 onClick={() => updateState({ currentStep: 1 })}
-                className="px-6 py-2.5 bg-white border border-[#E9EAEB] rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                className="px-6 py-2.5 bg-[#FBFCFD] border border-[#DEE1E4] rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
               >
                 Back to Step 1
               </button>
@@ -104,7 +104,7 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#F6F7F8]">
+    <div className="flex flex-col h-full bg-[#F7F9FB]">
       <StepIndicator />
       
       {error && (
@@ -117,12 +117,12 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
       {renderStep()}
 
       {/* Footer Controls */}
-      <div className="h-[72px] bg-white border-t border-[#E9EAEB] px-8 flex items-center justify-between shrink-0">
+      <div className="h-[72px] bg-[#FBFCFD] border-t border-[#DEE1E4] px-8 flex items-center justify-between shrink-0">
         <div className="flex gap-3">
           <button
             onClick={() => handleSaveDraft(false)}
             disabled={isSaving}
-            className="px-6 py-2.5 rounded-lg border border-[#E9EAEB] text-[#1F2123] font-semibold text-sm hover:bg-gray-50 disabled:opacity-50 transition-colors flex items-center gap-2"
+            className="px-6 py-2.5 rounded-lg border border-[#DEE1E4] text-[#454545] font-semibold text-sm hover:bg-gray-50 disabled:opacity-50 transition-colors flex items-center gap-2"
           >
             {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : (state.status === "published" ? "Save Changes" : "Save Draft")}
           </button>
@@ -146,7 +146,7 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
           ) : (
             <button
               disabled
-              className="px-6 py-2.5 rounded-lg bg-[#EEF1F4] text-[#626467] font-semibold text-sm transition-colors flex items-center gap-2 cursor-not-allowed"
+              className="px-6 py-2.5 rounded-lg bg-[#EEF1F4] text-[#7D7F82] font-semibold text-sm transition-colors flex items-center gap-2 cursor-not-allowed"
             >
               Almost done
             </button>
@@ -156,3 +156,4 @@ export function BuilderShell({ existingIds }: { existingIds: Set<string> }) {
     </div>
   );
 }
+

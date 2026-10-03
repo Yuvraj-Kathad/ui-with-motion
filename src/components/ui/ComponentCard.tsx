@@ -271,7 +271,7 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
     <>
       <div 
         onClick={() => setIsModalOpen(true)}
-        className="bg-[#FBFCFD] border border-[#B7BABD] flex flex-col gap-px items-start relative rounded-[12px] w-full max-w-[420px] overflow-clip transition-shadow hover:shadow-md cursor-pointer group"
+        className="bg-[#FBFCFD] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[12px] w-full max-w-[420px] overflow-clip cursor-pointer group"
       >
         {/* Top action bar */}
         <div className="flex gap-[6px] items-center justify-end p-[8px] w-full shrink-0 relative z-10">
@@ -288,7 +288,7 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
         </button>
         <button 
             onClick={toggleSave}
-            className={`flex items-center justify-center size-[34px] transition-colors ${isSaved ? 'text-black' : 'text-[#B0B0B0] hover:text-black'}`}
+            className={`flex items-center justify-center size-[34px] transition-colors ${isSaved ? 'text-[#454545]' : 'text-[#B0B0B0] hover:text-black'}`}
             aria-label={isSaved ? "Saved" : "Bookmark"}
           >
             <Bookmark size={20} className={isSaved ? "fill-current stroke-current" : "fill-transparent stroke-current stroke-2"} />
@@ -305,7 +305,7 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
         {/* Footer Area */}
         <div className="flex items-center justify-between px-[20px] py-[12px] w-full shrink-0 relative z-10">
           <div className="flex items-center gap-2 max-w-[65%]">
-            <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-black whitespace-nowrap truncate">
+            <h3 className="font-sans font-medium text-[20px] leading-[1.2] text-[#454545] whitespace-nowrap truncate">
               {title}
             </h3>
             {accessTier === 'premium' && (
@@ -316,7 +316,7 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
           </div>
           <div className="flex gap-[4px] h-[24px] items-center">
             {tags.map((tag, i) => (
-              <div key={i} className="bg-white border border-[#EEF1F4] flex h-full items-center p-[4px] rounded-[4px] overflow-hidden">
+              <div key={i} className="bg-[#FBFCFD] border border-[#EEF1F4] flex h-full items-center p-[4px] rounded-[4px] overflow-hidden">
                 <span className="font-sans font-normal text-[13px] leading-[1.2] text-[#7D7F82] whitespace-nowrap">
                   {tag.label}
                 </span>
@@ -339,4 +339,5 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
     </>
   );
 }
+
 

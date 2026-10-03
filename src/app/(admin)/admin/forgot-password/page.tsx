@@ -24,12 +24,12 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-white items-center justify-center p-8">
+    <div className="flex flex-col min-h-screen w-full bg-[#FBFCFD] items-center justify-center p-8">
       <div className="w-full max-w-[400px]">
-        <h1 className="font-title font-bold text-[32px] sm:text-[44px] leading-[1.2] text-black tracking-[-0.02em] mb-4">
+        <h1 className="font-title font-bold text-[32px] sm:text-[44px] leading-[1.2] text-[#454545] tracking-[-0.02em] mb-4">
           Reset Password
         </h1>
-        <p className="text-[#888888] text-base mb-8">
+        <p className="text-[#7D7F82] text-base mb-8">
           If this account is eligible for Admin access, you will receive a password-reset email.
         </p>
 
@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleReset} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
-              <label htmlFor="email" className="text-base text-[#111111] font-medium">
+              <label htmlFor="email" className="text-base text-[#454545] font-medium">
                 Email Id
               </label>
               <input
@@ -52,7 +52,7 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full h-[52px] px-5 rounded-[44px] border border-[#E9EAEB] bg-[#F6F7F8] text-[#111111] placeholder:text-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1566E5]"
+                className="w-full h-[52px] px-5 rounded-[44px] border border-[#DEE1E4] bg-[#F7F9FB] text-[#454545] placeholder:text-[#7D7F82] focus:outline-none focus:ring-2 focus:ring-[#1566E5]"
               />
             </div>
 
@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
             <div className="flex justify-center mt-4">
               <Link
                 href="/admin/login"
-                className="text-sm text-[#111111] font-medium hover:underline"
+                className="text-sm text-[#454545] font-medium hover:underline"
               >
                 Back to Login
               </Link>
@@ -84,3 +84,4 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
+
