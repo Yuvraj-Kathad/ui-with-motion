@@ -63,14 +63,13 @@ export async function POST(req: Request) {
       const status = subscription.status;
       const currentEnd = subscription.current_end ? new Date(subscription.current_end * 1000).toISOString() : null;
       const currentStart = subscription.current_start ? new Date(subscription.current_start * 1000).toISOString() : null;
-      const cancelAtPeriodEnd = subscription.cancel_at_period_end === 1 || subscription.cancel_at_period_end === true;
       const eventTime = new Date(event.created_at * 1000).toISOString();
 
       // Only update if the incoming event is newer than or equal to our last recorded state
       // We use last_provider_event_created_at to track the Razorpay event time for the subscription
       const { data: existingSub } = await serviceRoleClient
         .from("user_subscriptions")
-        .select("last_provider_event_created_at")
+        .select("last_provider_event_created_at, cancel_at_period_end")
         .eq("provider_subscription_id", subId)
         .single();
         
@@ -79,13 +78,19 @@ export async function POST(req: Request) {
         return NextResponse.json({ received: true, note: "Older event skipped" });
       }
 
+      // If Razorpay payload has a cancel_at_cycle_end or cancel_at_period_end property, use it.
+      // Otherwise, preserve our local state.
+      const payloadCancelAtPeriodEnd = subscription.cancel_at_period_end !== undefined ? (subscription.cancel_at_period_end === 1 || subscription.cancel_at_period_end === true) :
+                                       subscription.cancel_at_cycle_end !== undefined ? (subscription.cancel_at_cycle_end === 1 || subscription.cancel_at_cycle_end === true) :
+                                       existingSub?.cancel_at_period_end || false;
+
       await serviceRoleClient
         .from("user_subscriptions")
         .update({
           status: status,
           current_period_start: currentStart,
           current_period_end: currentEnd,
-          cancel_at_period_end: cancelAtPeriodEnd,
+          cancel_at_period_end: payloadCancelAtPeriodEnd,
           last_provider_event_created_at: eventTime,
           updated_at: new Date().toISOString()
         })

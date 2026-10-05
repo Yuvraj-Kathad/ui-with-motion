@@ -47,7 +47,10 @@ export default function RootLayout({
       <body
         className={`${plusJakarta.variable} ${gcGudlak.variable} min-h-screen bg-[#FBFCFD] text-[#454545] font-sans`}
       >
-        {children}
+        <NextTopLoader showSpinner={false} color="#000000" />
+        <CustomizationProvider>
+          {children}
+        </CustomizationProvider>
       </body>
     </html>
   );

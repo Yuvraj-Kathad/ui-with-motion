@@ -45,22 +45,18 @@ export function ProfileClient({ user, isPremium, subscription }: { user: any; is
 
   const handleCancelSubscription = async () => {
     if (!subscription?.id) return;
-    if (!confirm("Are you sure you want to cancel your premium subscription?")) return;
+    if (!confirm("Are you sure you want to cancel your premium subscription?\n\nYour Premium access will remain active until the end of your current billing period. You won't be charged again.")) return;
     
     setIsCanceling(true);
     try {
-      // Typically you'd call an API route here. For now, we'll optimistically update the DB status
-      // to 'canceled' for immediate feedback, though normally this would be a webhook response.
-      const { error } = await supabase
-        .from('user_subscriptions')
-        .update({ status: 'canceled' })
-        .eq('id', subscription.id);
-        
-      if (!error) {
-        alert("Your subscription has been canceled.");
+      const res = await fetch("/api/subscriptions/cancel", { method: "POST" });
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Cancellation scheduled. Premium remains active until the end of your billing cycle.");
         router.refresh();
       } else {
-        alert("Failed to cancel subscription.");
+        alert(data.error || "Failed to cancel subscription.");
       }
     } catch (e) {
       console.error(e);
@@ -255,19 +251,25 @@ export function ProfileClient({ user, isPremium, subscription }: { user: any; is
                   <div className="absolute top-[24px] right-[24px] bg-[#1F2123] text-white font-sans font-medium text-[10px] uppercase tracking-wider px-[12px] py-[6px] rounded-[100px]">
                     RECOMMENDED
                   </div>
-                  <h4 className="font-sans font-bold text-[20px] text-[#454545] mb-2">Premium Plan</h4>
+                  <h4 className="font-sans font-bold text-[20px] text-[#454545] mb-2">Premium Plan {subscription?.plan_key === 'yearly' ? '(Yearly)' : '(Monthly)'}</h4>
                   <div className="font-sans font-bold text-[32px] text-[#454545] mb-[24px]">
-                    ₹399<span className="text-[16px] text-[#7D7F82] font-medium">/month</span>
+                    {subscription?.plan_key === 'yearly' ? '₹2,999' : '₹399'}<span className="text-[16px] text-[#7D7F82] font-medium">/{subscription?.plan_key === 'yearly' ? 'year' : 'month'}</span>
                   </div>
                   
                   {isPremium ? (
-                    <button 
-                      onClick={handleCancelSubscription}
-                      disabled={isCanceling}
-                      className="w-full h-[48px] border border-[#FF3B30] text-[#FF3B30] rounded-[40px] font-sans font-medium text-[16px] mb-[32px] hover:bg-[#FF3B30]/10 transition-colors"
-                    >
-                      {isCanceling ? 'Canceling...' : 'Cancel Subscription'}
-                    </button>
+                    subscription?.cancel_at_period_end ? (
+                      <div className="w-full h-[48px] border border-[#DEE1E4] rounded-[40px] flex items-center justify-center font-sans font-medium text-[16px] text-[#7D7F82] mb-[32px] bg-[#F7F9FB]">
+                        Cancellation Scheduled
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleCancelSubscription}
+                        disabled={isCanceling}
+                        className="w-full h-[48px] border border-[#FF3B30] text-[#FF3B30] rounded-[40px] font-sans font-medium text-[16px] mb-[32px] hover:bg-[#FF3B30]/10 transition-colors"
+                      >
+                        {isCanceling ? 'Canceling...' : 'Cancel Subscription'}
+                      </button>
+                    )
                   ) : (
                     <button 
                       onClick={() => router.push('/pricing')}
@@ -301,7 +303,13 @@ export function ProfileClient({ user, isPremium, subscription }: { user: any; is
               </div>
               
               <p className="font-inter text-[14px] text-[#7D7F82] mt-[-8px]">
-                {isPremium ? "Your premium plan will automatically renew." : "Your free plan will automatically renew."}
+                {isPremium ? (
+                  subscription?.cancel_at_period_end
+                    ? `Premium remains active until ${subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'the end of your billing cycle'}.`
+                    : "Your premium plan will automatically renew."
+                ) : (
+                  "Your free plan is active."
+                )}
               </p>
             </div>
 
