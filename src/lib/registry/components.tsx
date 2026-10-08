@@ -5,6 +5,7 @@ import { AcceptButton } from "@/components/motion-components/buttons/AcceptButto
 import { GetAccessButton } from "@/components/motion-components/buttons/GetAccessButton";
 import { MailButton } from "@/components/motion-components/buttons/MailButton";
 import { TechnologyButton } from "@/components/motion-components/buttons/TechnologyButton";
+import ImageGeneration from "@/components/motion-components/ImageGeneration";
 import { DownloadButton } from "@/components/motion-components/buttons/DownloadButton";
 import { TabsButton } from "@/components/motion-components/buttons/TabsButton";
 import { ServicesIndicatorButton } from "@/components/motion-components/buttons/ServicesIndicatorButton";
@@ -23,6 +24,19 @@ export type ComponentRegistryEntry = {
 };
 
 export const componentRegistry: Record<string, ComponentRegistryEntry> = {
+    "image-generation-preview": {
+      registryId: "image-generation-preview",
+      name: "Image Generation Process",
+      category: "Complex",
+      component: ImageGeneration,
+      schema_definition: [],
+      snippets: {
+        html: "",
+        css: "",
+        nextjs: ""
+      }
+    },
+
   "continue-button": {
     registryId: "continue-button",
     name: "Continue Button",
@@ -130,3 +144,5 @@ export const componentRegistry: Record<string, ComponentRegistryEntry> = {
     }
   }
 };
+
+
