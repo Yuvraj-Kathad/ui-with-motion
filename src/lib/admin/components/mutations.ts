@@ -126,3 +126,27 @@ export async function publishComponent(id: string) {
 export async function archiveComponent(id: string) {
   return updateComponent(id, { status: "archived" });
 }
+
+export async function deleteComponent(id: string) {
+  await requireAdmin();
+  const supabase = await createClient();
+  const { error } = await supabase.from("components").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/components");
+  revalidatePath("/admin/components");
+  return { success: true };
+}
+
+export async function updateComponentsOrder(updates: {id: string, order: number}[]) {
+  await requireAdmin();
+  const supabase = await createClient();
+  
+  for (const update of updates) {
+    const { error } = await supabase.from("components").update({ order: update.order }).eq("id", update.id);
+    if (error) throw new Error(error.message);
+  }
+  
+  revalidatePath("/components");
+  revalidatePath("/admin/components");
+  return { success: true };
+}

@@ -5,6 +5,7 @@ import { useBuilder } from "../BuilderContext";
 import { Code, LayoutTemplate, Box, ChevronDown, ChevronRight, Info } from "lucide-react";
 import Editor from "@monaco-editor/react";
 import { LivePreviewIframe } from "../../preview/LivePreviewIframe";
+import { componentRegistry } from "@/lib/registry/components";
 
 // ─── Code Format Suggestion Panels ──────────────────────────────────────────
 
@@ -365,24 +366,37 @@ export function UploadCodeStep() {
         </div>
 
         <div className="flex-1 bg-[#F9F9F9] rounded-xl border border-[#DEE1E4] overflow-hidden relative">
-          {hasCode ? (
-            <LivePreviewIframe 
-              key={previewKey}
-              sourceType={state.source_type}
-              snippets={state.snippets}
-              className="w-full h-full border-none"
-            />
-          ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-8">
-              <div className="w-12 h-12 bg-[#FBFCFD] border border-[#DEE1E4] rounded-xl flex items-center justify-center shadow-sm">
-                <Code className="w-5 h-5 text-[#7D7F82]" />
+          {(() => {
+            const RegistryComponent = componentRegistry[state.registry_id]?.component;
+            
+            if (RegistryComponent && (state.source_type === "react" || state.source_type === "both")) {
+              return (
+                <div className="w-full h-full flex items-center justify-center p-8 bg-[#FBFCFD] relative">
+                  <div className="absolute top-3 right-3 bg-[#F7F9FB] border border-[#DEE1E4] text-[#7D7F82] text-[10px] px-2 py-1 rounded-md font-mono uppercase tracking-widest shadow-sm">Registry Render</div>
+                  <RegistryComponent />
+                </div>
+              );
+            }
+
+            return hasCode ? (
+              <LivePreviewIframe 
+                key={previewKey}
+                sourceType={state.source_type}
+                snippets={state.snippets}
+                className="w-full h-full border-none"
+              />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-8">
+                <div className="w-12 h-12 bg-[#FBFCFD] border border-[#DEE1E4] rounded-xl flex items-center justify-center shadow-sm">
+                  <Code className="w-5 h-5 text-[#7D7F82]" />
+                </div>
+                <p className="text-sm font-medium text-[#454545]">No code yet</p>
+                <p className="text-xs text-[#7D7F82] max-w-[200px]">
+                  Paste your code in the editor on the left to see a live preview here.
+                </p>
               </div>
-              <p className="text-sm font-medium text-[#454545]">No code yet</p>
-              <p className="text-xs text-[#7D7F82] max-w-[200px]">
-                Paste your code in the editor on the left to see a live preview here.
-              </p>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </div>
 

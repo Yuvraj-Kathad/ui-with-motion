@@ -8,6 +8,7 @@ import { useCustomization } from "@/components/providers/CustomizationProvider";
 export type ComponentItem = {
   id: string;
   title: string;
+  description?: string;
   status: string;
   registry_id: string;
   tags?: string[];

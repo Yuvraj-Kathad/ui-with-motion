@@ -132,9 +132,22 @@ function ComponentsContent() {
     }
   }, []);
 
+  const normalizedSearch = search ? search.toLowerCase().trim().replace(/\s+/g, " ") : "";
+  const searchTerms = normalizedSearch.split(" ").map(word => {
+    const synonyms: Record<string, string> = { buttons: "button", animations: "animation", cards: "card", icons: "icon", inputs: "input" };
+    return synonyms[word] || word;
+  }).filter(Boolean);
+
   const filteredComponents = components.filter(comp => {
-    if (!search) return true;
-    return comp.title.toLowerCase().includes(search);
+    if (searchTerms.length === 0) return true;
+    
+    const searchableText = [
+      comp.title,
+      comp.description || "",
+      ...(comp.tags || [])
+    ].join(" ").toLowerCase();
+
+    return searchTerms.every(term => searchableText.includes(term));
   });
 
   const toggleSave = (e: React.MouseEvent, id: string) => {
@@ -150,9 +163,9 @@ function ComponentsContent() {
     <div className="w-full min-h-screen bg-[#FBFCFD] pb-32">
       <div className="w-full px-[20px] lg:px-[70px] py-[40px] flex flex-col gap-[20px]">
         <div className="flex flex-wrap items-center gap-[18px]">
-          <FilterDropdown label="States" options={["Default", "Hover", "Loading", "Pressed"]} selected={selectedStates} onChange={setSelectedStates} />
-          <FilterDropdown label="Licence" options={["Free", "Premium"]} selected={selectedLicence} onChange={setSelectedLicence} />
-          <FilterDropdown label="Code" options={["HTML & CSS", "Next Js"]} selected={selectedCode} onChange={setSelectedCode} />
+          
+          
+          
           
           {/* <button 
             onClick={() => setIsFigmaActive(!isFigmaActive)}

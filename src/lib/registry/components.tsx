@@ -1,13 +1,22 @@
 import React from "react";
 import { ContinueButton } from "@/components/motion-components/buttons/ContinueButton";
+import { BubbleArrowButton } from "@/components/motion-components/buttons/BubbleArrowButton";
+import { BookmarkButton } from "@/components/motion-components/buttons/BookmarkButton";
+import { SendButton } from "@/components/motion-components/buttons/SendButton";
+import { RunButton } from "@/components/motion-components/buttons/RunButton";
+import { TextSwipeButton } from "@/components/motion-components/buttons/TextSwipeButton";
+import { StepperButton } from "@/components/motion-components/buttons/StepperButton";
+import { SearchSuggestions } from "@/components/motion-components/SearchSuggestions";
 import { GenerateButton } from "@/components/motion-components/buttons/GenerateButton";
 import { AcceptButton } from "@/components/motion-components/buttons/AcceptButton";
 import { GetAccessButton } from "@/components/motion-components/buttons/GetAccessButton";
 import { MailButton } from "@/components/motion-components/buttons/MailButton";
 import { TechnologyButton } from "@/components/motion-components/buttons/TechnologyButton";
 import ImageGeneration from "@/components/motion-components/ImageGeneration";
+import InteractiveFace from "@/components/motion-components/InteractiveFace";
 import { DownloadButton } from "@/components/motion-components/buttons/DownloadButton";
 import { TabsButton } from "@/components/motion-components/buttons/TabsButton";
+import { FourItemTabs } from "@/components/motion-components/buttons/FourItemTabs";
 import { ServicesIndicatorButton } from "@/components/motion-components/buttons/ServicesIndicatorButton";
 
 export type ComponentRegistryEntry = {
@@ -24,6 +33,113 @@ export type ComponentRegistryEntry = {
 };
 
 export const componentRegistry: Record<string, ComponentRegistryEntry> = {
+  "four-item-tabs": {
+    registryId: "four-item-tabs",
+    name: "Four Item Tabs",
+    category: "Buttons",
+    component: FourItemTabs,
+    snippets: {
+      html: `<div class="four-tabs"></div>`,
+      css: `.four-tabs { /* styles */ }`,
+      react: `// React code for FourItemTabs`
+    }
+  },
+  "search-suggestions": {
+    registryId: "search-suggestions",
+    name: "Search Suggestions",
+    category: "Sections",
+    component: SearchSuggestions,
+    schema_definition: [],
+    snippets: {
+      html: "",
+      css: "",
+      nextjs: ""
+    }
+  },
+  "stepper-button": {
+    registryId: "stepper-button",
+    name: "Stepper Button",
+    category: "Buttons",
+    component: StepperButton,
+    schema_definition: [],
+    snippets: {
+      html: "",
+      css: "",
+      nextjs: ""
+    }
+  },
+  "text-swipe-button": {
+    registryId: "text-swipe-button",
+    name: "Text Swipe Button",
+    category: "Buttons",
+    component: TextSwipeButton,
+    schema_definition: [],
+    snippets: {
+      html: "",
+      css: "",
+      nextjs: ""
+    }
+  },
+  "run-button": {
+    registryId: "run-button",
+    name: "Run Button",
+    category: "Buttons",
+    component: RunButton,
+    schema_definition: [],
+    snippets: {
+      html: "",
+      css: "",
+      nextjs: ""
+    }
+  },
+  "send-button": {
+    registryId: "send-button",
+    name: "Send Button",
+    category: "Buttons",
+    component: SendButton,
+    schema_definition: [],
+    snippets: {
+      html: "",
+      css: "",
+      nextjs: ""
+    }
+  },
+  "bookmark-button": {
+    registryId: "bookmark-button",
+    name: "Bookmark Button",
+    category: "Buttons",
+    component: BookmarkButton,
+    schema_definition: [],
+    snippets: {
+      html: "",
+      css: "",
+      nextjs: ""
+    }
+  },
+  "bubble-arrow-button": {
+    registryId: "bubble-arrow-button",
+    name: "Bubble Arrow Button",
+    category: "Buttons",
+    component: BubbleArrowButton,
+    schema_definition: [],
+    snippets: {
+      html: "",
+      css: "",
+      nextjs: ""
+    }
+  },
+  "interactive-face": {
+    registryId: "interactive-face",
+    name: "Interactive Character Face",
+    category: "Complex",
+    component: InteractiveFace,
+    schema_definition: [],
+    snippets: {
+      html: "",
+      css: "",
+      nextjs: ""
+    }
+  },
     "image-generation-preview": {
       registryId: "image-generation-preview",
       name: "Image Generation Process",
@@ -129,7 +245,91 @@ export const componentRegistry: Record<string, ComponentRegistryEntry> = {
     snippets: {
       html: `<button class="tabs-btn">Tabs</button>`,
       css: `.tabs-btn { /* styles */ }`,
-      nextjs: `// React code for TabsButton`
+      nextjs: `"use client";
+
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+
+const TABS = [
+  { 
+    id: "Telegram", 
+    label: "Telegram", 
+    iconActive: "/images/tabs/imgComponent5.svg", 
+    iconInactive: "/images/tabs/imgComponent6.svg" 
+  },
+  { 
+    id: "Instagram", 
+    label: "Instagram", 
+    iconActive: "/images/tabs/imgComponent9.svg", 
+    iconInactive: "/images/tabs/imgComponent7.svg" 
+  },
+  { 
+    id: "Thread", 
+    label: "Thread", 
+    iconActive: "/images/tabs/imgComponent10.svg", 
+    iconInactive: "/images/tabs/imgComponent8.svg" 
+  },
+];
+
+export function TabsButton() {
+  const [activeTab, setActiveTab] = useState("Telegram");
+
+  return (
+    <div className="bg-[#eef1f4] border border-[#e8e8e8] flex items-center p-[6px] rounded-[999px] h-[48px] overflow-hidden relative select-none">
+      {TABS.map((tab) => {
+        const isActive = activeTab === tab.id;
+        
+        return (
+          <motion.button
+            key={tab.id}
+            layout
+            onClick={() => setActiveTab(tab.id)}
+            className={\`relative flex items-center justify-center shrink-0 rounded-[999px] h-[36px] transition-all duration-300 ease-in-out cursor-pointer \${
+              isActive ? "px-[14px]" : "w-[36px]"
+            }\`}
+          >
+            {isActive && (
+              <motion.div
+                layoutId="tab-bubble"
+                className="absolute inset-0 bg-white rounded-[999px] shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
+                transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+              />
+            )}
+            
+            <div className="relative z-10 flex items-center justify-center gap-[6px]">
+              <div className="w-[18px] h-[18px] shrink-0 flex items-center justify-center">
+                <Image 
+                  src={isActive ? tab.iconActive : tab.iconInactive}
+                  alt={tab.label}
+                  width={18}
+                  height={18}
+                  className="w-full h-full object-contain pointer-events-none"
+                />
+              </div>
+              
+              <AnimatePresence initial={false}>
+                {isActive && (
+                  <motion.span
+                    layout
+                    initial={{ opacity: 0, width: 0, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, width: "auto", filter: "blur(0px)" }}
+                    exit={{ opacity: 0, width: 0, filter: "blur(4px)" }}
+                    transition={{ type: "spring", bounce: 0.1, duration: 0.4 }}
+                    className="font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-[14px] text-[#1f2123] whitespace-nowrap overflow-hidden"
+                  >
+                    {tab.label}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.button>
+        );
+      })}
+    </div>
+  );
+}
+`
     }
   },
   "services-indicator-button": {
@@ -144,5 +344,13 @@ export const componentRegistry: Record<string, ComponentRegistryEntry> = {
     }
   }
 };
+
+
+
+
+
+
+
+
 
 
