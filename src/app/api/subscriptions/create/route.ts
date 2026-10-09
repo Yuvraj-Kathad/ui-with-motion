@@ -39,9 +39,12 @@ export async function POST(req: Request) {
     }
 
     // Create Razorpay Subscription
+    // We use 100 cycles consistently for V1.
+    // Razorpay rejects total_count > 100 for yearly plans.
+    // 100 cycles means 100 months (~8.3 years) or 100 years depending on the plan.
     const subscription = await razorpay.subscriptions.create({
       plan_id: planId,
-      total_count: 120, // max number of billing cycles (Razorpay requires this for recurring, e.g. 10 years for monthly)
+      total_count: 100,
       customer_notify: 1,
     });
 
