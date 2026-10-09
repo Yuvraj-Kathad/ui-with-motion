@@ -183,7 +183,7 @@ function ComponentsContent() {
         {!isLoaded ? (
           <div className="columns-1 md:columns-2 lg:columns-3 gap-[24px] w-full">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-[#FBFCFD] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[32px] w-full overflow-clip h-[253px] break-inside-avoid mb-[24px]">
+              <div key={i} className="bg-[#F7F9FB] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[32px] w-full overflow-clip min-h-[253px] break-inside-avoid mb-[24px]">
                 {/* Top action bar skeleton */}
                 <div className="flex items-center justify-between p-[8px] w-full shrink-0 relative z-10 min-h-[50px]">
                   <div className="w-[50px] h-[20px] bg-[#E5E7EB] rounded-full animate-pulse ml-1" />
@@ -217,7 +217,7 @@ function ComponentsContent() {
                 <div 
                   key={comp.id}
                   onClick={() => setActiveModalComponent(comp)}
-                  className="bg-[#FBFCFD] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[32px] w-full overflow-clip group cursor-pointer h-[253px] break-inside-avoid mb-[24px]"
+                  className="bg-[#F7F9FB] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[32px] w-full overflow-clip group cursor-pointer break-inside-avoid mb-[24px] min-h-[251px]"
                 >
                   {/* Top action bar */}
                   <div className="flex items-center justify-between p-[8px] w-full shrink-0 relative z-10 bg-transparent min-h-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -251,7 +251,7 @@ function ComponentsContent() {
                   </div>
                   
                   {/* Component Display Area */}
-                  <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-transparent pointer-events-auto z-0">
+                  <div className="relative w-full flex-1 flex items-center justify-center overflow-hidden bg-transparent pointer-events-auto z-0">
                     <div className="w-full h-full transform flex items-center justify-center scale-[0.9]">
                       {(() => {
                         const overrides = getOverrides(comp.id);
@@ -334,5 +334,11 @@ export default function ComponentsPage() {
     </Suspense>
   );
 }
+
+
+
+
+
+
 
 

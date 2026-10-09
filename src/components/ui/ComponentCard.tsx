@@ -271,7 +271,7 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
     <>
       <div 
         onClick={() => setIsModalOpen(true)}
-        className="bg-[#FBFCFD] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[12px] w-full max-w-[420px] overflow-clip cursor-pointer group"
+        className="bg-[#F7F9FB] border border-[#DEE1E4] flex flex-col gap-px items-start relative rounded-[12px] w-full max-w-[420px] overflow-clip cursor-pointer group min-h-[251px]"
       >
         {/* Top action bar */}
         <div className="flex gap-[6px] items-center justify-end p-[8px] w-full shrink-0 relative z-10">
@@ -296,7 +296,7 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
         </div>
         
         {/* Component Display Area */}
-        <div className="h-[151px] w-full relative flex items-center justify-center shrink-0 overflow-clip">
+        <div className="w-full relative flex-1 flex items-center justify-center shrink-0 overflow-clip">
           <div onClick={(e) => e.stopPropagation()} ref={contentRef}>
             {renderedContent}
           </div>
@@ -339,5 +339,10 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
     </>
   );
 }
+
+
+
+
+
 
 
