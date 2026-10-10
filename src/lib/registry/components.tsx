@@ -19,17 +19,20 @@ import { TabsButton } from "@/components/motion-components/buttons/TabsButton";
 import { FourItemTabs } from "@/components/motion-components/buttons/FourItemTabs";
 import { ServicesIndicatorButton } from "@/components/motion-components/buttons/ServicesIndicatorButton";
 
+export type ComponentRegistrySnippets = {
+  html: string;
+  css: string;
+  nextjs?: string;
+  react?: string;
+};
+
 export type ComponentRegistryEntry = {
   registryId: string;
   name: string;
   category: string;
   component: React.ComponentType<any>;
   schema_definition?: any[];
-  snippets: {
-    html: string;
-    css: string;
-    nextjs: string;
-  };
+  snippets: ComponentRegistrySnippets;
 };
 
 export const componentRegistry: Record<string, ComponentRegistryEntry> = {
@@ -41,7 +44,7 @@ export const componentRegistry: Record<string, ComponentRegistryEntry> = {
     snippets: {
       html: `<div class="four-tabs"></div>`,
       css: `.four-tabs { /* styles */ }`,
-      nextjs: `// React code for FourItemTabs`
+      react: `// React code for FourItemTabs`
     }
   },
   "search-suggestions": {
