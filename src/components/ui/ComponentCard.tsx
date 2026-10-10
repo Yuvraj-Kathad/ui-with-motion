@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Play, Bookmark, Square } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
 import { ComponentModal } from './ComponentModal';
 
 export interface ComponentTag {
@@ -158,8 +158,10 @@ function injectMappedColors(node: React.ReactNode, colorMapping: Record<string, 
 
 export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, accessTier }: ComponentCardProps) {
   const [isSaved, setIsSaved] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [playState, setPlayState] = useState<'idle' | 'hover' | 'active' | 'loading'>('idle');
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const [playState, setPlayState] = useState<'idle' | 'hover' | 'active' | 'loading'>('idle');
+  const isPlaying = false;
+  const playState = 'idle';
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -187,39 +189,39 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
 
   const [customStyles, setCustomStyles] = useState<ComponentCustomStyles | undefined>(undefined);
 
-  useEffect(() => {
-    if (!isPlaying) {
-      setTimeout(() => setPlayState('idle'), 0);
-      return;
-    }
-
-    let timeoutId: NodeJS.Timeout;
-    let isCancelled = false;
-
-    const runSequence = async () => {
-      setPlayState('hover');
-      await new Promise(r => setTimeout(r, 800));
-      if (isCancelled) return;
-      
-      setPlayState('active');
-      await new Promise(r => setTimeout(r, 400));
-      if (isCancelled) return;
-      
-      setPlayState('loading');
-      await new Promise(r => setTimeout(r, 1200));
-      if (isCancelled) return;
-      
-      setPlayState('idle');
-      timeoutId = setTimeout(runSequence, 800);
-    };
-
-    runSequence();
-
-    return () => {
-      isCancelled = true;
-      clearTimeout(timeoutId);
-    };
-  }, [isPlaying]);
+  // useEffect(() => {
+  //   if (!isPlaying) {
+  //     setTimeout(() => setPlayState('idle'), 0);
+  //     return;
+  //   }
+  //
+  //   let timeoutId: NodeJS.Timeout;
+  //   let isCancelled = false;
+  //
+  //   const runSequence = async () => {
+  //     setPlayState('hover');
+  //     await new Promise(r => setTimeout(r, 800));
+  //     if (isCancelled) return;
+  //     
+  //     setPlayState('active');
+  //     await new Promise(r => setTimeout(r, 400));
+  //     if (isCancelled) return;
+  //     
+  //     setPlayState('loading');
+  //     await new Promise(r => setTimeout(r, 1200));
+  //     if (isCancelled) return;
+  //     
+  //     setPlayState('idle');
+  //     timeoutId = setTimeout(runSequence, 800);
+  //   };
+  //
+  //   runSequence();
+  //
+  //   return () => {
+  //     isCancelled = true;
+  //     clearTimeout(timeoutId);
+  //   };
+  // }, [isPlaying]);
 
   const contentRef = React.useRef<HTMLDivElement>(null);
 
@@ -276,17 +278,6 @@ export function ComponentCard({ id, title, tags = DEFAULT_TAGS, children, access
         {/* Top action bar */}
         <div className="flex gap-[6px] items-center justify-end p-[8px] w-full shrink-0 relative z-10">
           <button 
-            onClick={(e) => { e.stopPropagation(); setIsPlaying(!isPlaying); }}
-          className={`flex items-center justify-center size-[34px] transition-colors ${isPlaying ? 'text-[#1566E5]' : 'text-[#B0B0B0] hover:text-black'}`} 
-          aria-label={isPlaying ? "Stop" : "Play"}
-        >
-          {isPlaying ? (
-            <Square size={20} className="fill-current stroke-current" />
-          ) : (
-            <Play size={20} className="fill-transparent stroke-current stroke-2" />
-          )}
-        </button>
-        <button 
             onClick={toggleSave}
             className={`flex items-center justify-center size-[34px] transition-colors ${isSaved ? 'text-[#454545]' : 'text-[#B0B0B0] hover:text-black'}`}
             aria-label={isSaved ? "Saved" : "Bookmark"}

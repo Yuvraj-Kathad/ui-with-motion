@@ -3,7 +3,7 @@
 import React, { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { ComponentCard } from "@/components/ui/ComponentCard";
-import { ChevronDown, Check, X, Play, Bookmark, Square } from "lucide-react";
+import { ChevronDown, Check, X, Bookmark } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ComponentModalPublic, ComponentItem } from "@/components/ui/ComponentModalPublic";
 import { getPublishedComponents } from "@/lib/admin/components/queries";
@@ -242,17 +242,6 @@ function ComponentsContent() {
                       )}
                     </div>
                     <div className="flex gap-[6px] items-center">
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); setPlayingId(isPlaying ? null : comp.id); }}
-                        className={`flex items-center justify-center size-[34px] transition-colors ${isPlaying ? 'text-[#1566E5]' : 'text-[#B0B0B0] hover:text-black'}`} 
-                        aria-label={isPlaying ? "Stop" : "Play"}
-                      >
-                        {isPlaying ? (
-                          <Square size={20} className="fill-current stroke-current" />
-                        ) : (
-                          <Play size={20} className="fill-transparent stroke-current stroke-2" />
-                        )}
-                      </button>
                       <button 
                         onClick={(e) => toggleSave(e, comp.id)}
                         className={`flex items-center justify-center size-[34px] transition-colors ${isSaved ? 'text-[#454545]' : 'text-[#B0B0B0] hover:text-black'}`}
