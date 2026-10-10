@@ -41,7 +41,7 @@ export const componentRegistry: Record<string, ComponentRegistryEntry> = {
     snippets: {
       html: `<div class="four-tabs"></div>`,
       css: `.four-tabs { /* styles */ }`,
-      react: `// React code for FourItemTabs`
+      nextjs: `// React code for FourItemTabs`
     }
   },
   "search-suggestions": {
